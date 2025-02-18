@@ -1,11 +1,11 @@
-import React from 'react';
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Navbar from './components/Navbar';
-import { AuthProvider } from './context/AuthContext';
+import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Navbar from './components/Navbar.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
 
 function App() {
   return (
