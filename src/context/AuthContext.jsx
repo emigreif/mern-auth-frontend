@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 
 const AuthContext = createContext();
 
@@ -10,7 +10,11 @@ export const AuthProvider = ({ children }) => {
       credentials: 'include'
     })
       .then(res => res.json())
-      .then(data => setUser(data.user));
+      .then(data => {
+        if (data.email) {
+          setUser(data);
+        }
+      });
   }, []);
 
   const login = async (email, password) => {
@@ -26,11 +30,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    await fetch('https://your-backend-url.onrender.com/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+    setUser(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);
 
 export default AuthContext;
