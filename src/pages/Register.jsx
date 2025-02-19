@@ -1,3 +1,4 @@
+
 // frontend/src/pages/Register.jsx
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -29,4 +30,3 @@ const Register = () => {
 };
 
 export default Register;
-
