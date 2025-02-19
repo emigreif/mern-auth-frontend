@@ -1,8 +1,8 @@
-
 // frontend/src/pages/Register.jsx
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import '../styles/auth.css';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -17,11 +17,14 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit">Registrarse</button>
-    </form>
+    <div className="auth-container">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <h2>Registrarse</h2>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Crear cuenta</button>
+      </form>
+    </div>
   );
 };
 

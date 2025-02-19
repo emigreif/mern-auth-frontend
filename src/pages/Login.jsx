@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import '../styles/auth.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,12 +17,16 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit">Iniciar Sesión</button>
-    </form>
+    <div className="auth-container">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <h2>Iniciar Sesión</h2>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
   );
 };
 
 export default Login;
+
