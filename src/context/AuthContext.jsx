@@ -1,4 +1,3 @@
-// frontend/src/context/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from 'react';
 
 const AuthContext = createContext();
@@ -7,7 +6,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch('https://your-backend-url.onrender.com/api/user/profile', {
+    fetch('http://localhost:5000/api/user/profile', {
       credentials: 'include'
     })
       .then(res => res.json())
@@ -15,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await fetch('https://your-backend-url.onrender.com/api/auth/login', {
+    const response = await fetch('http://localhost:5000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -28,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await fetch('https://your-backend-url.onrender.com/api/auth/logout', {
+    await fetch('http://localhost:5000/api/auth/logout', {
       method: 'POST',
       credentials: 'include'
     });
@@ -43,5 +42,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-
 export default AuthContext;
