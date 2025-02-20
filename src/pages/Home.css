@@ -1,0 +1,110 @@
+/* Ejemplo para un contenedor centralizado y estilo suave */
+/* .home-container {
+    height: calc(100vh - 60px); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #e9f7ef 0%, #f8fdfb 100%);
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .home-content {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+  }
+  
+  .home-content h1 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .home-content p {
+    margin-bottom: 1rem;
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  /* Estilo para los enlaces de inicio/registro 
+  .home-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .home-link:hover {
+    text-decoration: underline;
+  }
+   */
+   /* Estructura general */
+.home-container {
+  display: flex;
+  height: calc(100vh - 60px); /* Si tu navbar fija mide ~60px, ajusta si difiere */
+}
+
+/* Sección Izquierda (blanca) */
+.home-left {
+  flex: 1;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Contenido textual en la sección izquierda */
+.home-text {
+  max-width: 500px;
+  text-align: left;
+}
+
+.planner-title {
+  font-size: 3rem;
+  color: #00a46e; /* Verde principal */
+  margin: 0;
+}
+
+.griff-subtitle {
+  font-size: 1.4rem;
+  color: #555;
+  margin: 0.3rem 0 1.5rem 0;
+}
+
+.home-description {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.home-button {
+  display: inline-block;
+  background-color: #00a46e; /* Mismo verde */
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+.home-button:hover {
+  background-color: #008e5f;
+}
+
+/* Sección Derecha (verde + opcional ilustración) */
+.home-right {
+  flex: 1;
+  background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+.home-right img {
+  max-width: 80%;
+  height: auto;
+}

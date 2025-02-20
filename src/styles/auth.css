@@ -1,11 +1,161 @@
+/* frontend/src/styles/auth.css */
+
+/* Contenedor principal: divide la pantalla en 2 columnas */
 .auth-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Lado izquierdo (blanco) */
+.auth-left {
+  width: 50%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Lado derecho (verde) */
+.auth-right {
+  width: 50%;
+  background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Formulario */
+.auth-form {
+  max-width: 300px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.auth-form input {
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.auth-form button {
+  background-color: #00a46e;
+  color: white;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.auth-form button:hover {
+  background-color: #008e60;
+}
+
+/* Texto extra */
+.or-social {
+  text-align: center;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.social-icons span {
+  background-color: #ddd;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Botón de Signup */
+.signup-button {
+  margin-top: 1rem;
+  padding: 0.7rem 1.2rem;
+  background-color: #ffffff22;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.signup-button:hover {
+  background-color: #ffffff44;
+}
+/* Estilo general del contenedor */
+.auth-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Si quieres reaprovechar la misma clase de login,
+   crea una clase distinta para la versión invertida. */
+.reverse-layout {
+  flex-direction: row; /* izq a der */
+}
+
+/* SECCIÓN IZQUIERDA - FONDO VERDE */
+.auth-left-green {
+  width: 50%;
+  background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Títulos y texto en la sección izquierda */
+.register-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.register-message {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.white-link {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* SECCIÓN DERECHA - FORMULARIO BLANCO */
+.auth-right-white {
+  width: 50%;
+  background-color: #f8f8f8;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f0f2f5;
 }
 
+/* Reaprovechamos la clase .auth-form existente para el formulario */
 .auth-form {
   background: white;
   padding: 2rem;
@@ -14,4 +164,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.auth-form h2 {
+  margin-bottom: 1rem;
+}
+.auth-form input {
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  width: 100%;
+}
+.auth-form button {
+  padding: 0.8rem;
+  width: 100%;
+  border: none;
+  background-color: #00aa63;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.auth-form button:hover {
+  background-color: #008e56;
 }

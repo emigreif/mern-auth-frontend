@@ -1,25 +1,37 @@
+// frontend/src/components/Navbar.jsx
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import './Navbar.css'; // Asegúrate de crear este archivo
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+
   return (
-    <nav>
-      <ul>
-        <li><Link to='/'>Inicio</Link></li>
+    <header className="top-nav">
+      {/* Izquierda: marca o logo */}
+      <div className="nav-left">
+        <Link to="/" className="brand">PLANNER</Link>
+      </div>
+
+      {/* Derecha: menú centrado + Sign Up o Dashboard */}
+      <div className="nav-right">
+        <nav className="nav-center">
+          <Link to="/">Home</Link>
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
         {user ? (
           <>
-            <li><Link to='/dashboard'>Dashboard</Link></li>
-            <li><button onClick={logout}>Cerrar sesión</button></li>
+            <Link to="/dashboard">Dashboard</Link>
+            <button className="logout-btn" onClick={logout}>Logout</button>
           </>
         ) : (
-          <>
-            <li><Link to='/login'>Iniciar sesión</Link></li>
-            <li><Link to='/register'>Registrarse</Link></li>
-          </>
+          <Link to="/register" className="signup-btn">Sign Up</Link>
         )}
-      </ul>
-    </nav>
+      </div>
+    </header>
   );
 };
 

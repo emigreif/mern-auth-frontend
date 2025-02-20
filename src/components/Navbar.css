@@ -1,0 +1,64 @@
+/* Contenedor principal del nav */
+.top-nav {
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #fff; /* Ajusta si prefieres transparente */
+  /* Quita el box-shadow si no quieres sombra */
+}
+
+/* Izquierda: marca / logo */
+.nav-left .brand {
+  color: #333;
+  text-decoration: none;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* Derecha: todo alineado al final */
+.nav-right {
+  flex: 1;                  /* Ocupa el espacio restante */
+  display: flex;
+  justify-content: flex-end; /* Alinea a la derecha */
+  align-items: center;
+  gap: 1.5rem;              /* Espacio entre elementos */
+}
+
+/* nav-center: enlaces estilo 'Home', 'About', etc. */
+.nav-center {
+  display: flex;
+  gap: 1.5rem;
+}
+.nav-center a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1rem;
+}
+
+/* Botón Sign Up */
+.signup-btn {
+  background-color: #00a46e; /* Verde principal, ajusta a tu gusto */
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+.signup-btn:hover {
+  background-color: #008e5f;
+}
+
+/* Botón Logout */
+.logout-btn {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.logout-btn:hover {
+  color: #00a46e; 
+}
