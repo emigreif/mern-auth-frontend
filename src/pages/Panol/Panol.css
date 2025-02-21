@@ -1,0 +1,18 @@
+.panol-background {
+    background-color: #00a46e;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  
+  .panol-container {
+    width: 90%;
+    max-width: 900px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+  

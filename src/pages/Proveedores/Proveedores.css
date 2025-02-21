@@ -1,0 +1,34 @@
+/* Fondo verde */
+.proveedores-background {
+    background-color: #00a46e;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  
+  /* Contenedor blanco */
+  .proveedores-container {
+    width: 90%;
+    max-width: 900px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+  
+  /* Lista de proveedores */
+  .proveedores-list {
+    margin-top: 1rem;
+    list-style: none;
+    padding: 0;
+  }
+  .proveedores-list li {
+    background: #f9f9f9;
+    margin-bottom: 0.5rem;
+    padding: 0.7rem 1rem;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
