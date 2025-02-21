@@ -1,0 +1,62 @@
+/* Fondo verde */
+.planner-background {
+  background-color: #00a46e; /* Ajusta el verde a tu gusto */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2rem;
+}
+
+/* Contenedor blanco */
+.planner-container {
+  width: 90%;
+  max-width: 900px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Texto introductorio */
+.intro-text {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+/* Cada sección con borde superior */
+.planner-section {
+  border-top: 1px solid #ccc;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.planner-section h2 {
+  color: #333;
+  font-size: 1.25rem;
+  margin-bottom: 0.8rem;
+}
+
+.planner-section p,
+.planner-section ul {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.planner-section ul {
+  list-style: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.planner-section ul li {
+  margin-bottom: 0.5rem;
+}
+
+/* Negritas destacadas */
+.planner-section strong {
+  color: #00a46e;
+}

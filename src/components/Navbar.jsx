@@ -18,7 +18,7 @@ const Navbar = () => {
         <nav className="nav-center">
           <Link to="/">Home</Link>
           <Link to="/about">About</Link>
-          <Link to="/services">Services</Link>
+          <Link to="/Planner">Planner</Link>
           <a href="#contact">Contact</a>
         </nav>
 

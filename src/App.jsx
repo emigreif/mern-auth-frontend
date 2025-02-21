@@ -9,7 +9,7 @@ import Calendario from "./pages/Calendario/Calendario.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 import Reportes from "./pages/Reportes/Reportes.jsx";
 import About from "./pages/About.jsx"; // Página "About"
-import Services from "./pages/Services.jsx"; // Página "Services" (crea este archivo)
+import Planner from "./pages/Planner.jsx"; // Página "Planner" (crea este archivo)
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Navbar from "./components/Navbar.jsx";
@@ -23,7 +23,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
+          <Route path="/Planner" element={<Planner />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -47,7 +47,7 @@ const App = () => {
           {/* Reportes */}
           <Route path="/reportes" element={<Reportes />} />
 
-          {/* Resto de Rutas (Home, About, Services, etc.) */}
+          {/* Resto de Rutas (Home, About, Planner, etc.) */}
         </Routes>
       </Router>
     </AuthProvider>

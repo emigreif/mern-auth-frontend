@@ -14,8 +14,8 @@ const About = () => {
           <p>
             Somos Greif Software Solutions, una empresa fundada por profesionales apasionados 
             por la innovación y la eficiencia en la industria de la construcción y la fabricación 
-            de aberturas. Nuestro nombre surge de la experiencia y el compromiso de nuestro equipo 
-            —inspirado en el apellido Greif— con el desarrollo de software especializado que 
+            de aberturas. Este proyecto surge de la experiencia y el compromiso de nuestro equipo 
+            con el desarrollo de software especializado que 
             transforme la manera en que se gestionan los proyectos productivos.
           </p>
         </section>
