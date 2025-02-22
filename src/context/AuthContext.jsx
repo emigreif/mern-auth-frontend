@@ -33,9 +33,30 @@ export const AuthProvider = ({ children }) => {
     });
     setUser(null);
   };
+  const register = async (formData) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/r egister', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(formData),
+      });
 
+      if (response.ok) {
+        // Usuario creado con éxito
+        // Puedes parsear la respuesta si deseas datos extras
+        // const data = await response.json();
+        // setUser(data.user); // si el backend retorna un user
+      } else {
+        // Manejar error (400, 500, etc.)
+        console.log('Error al registrar usuario');
+      }
+    } catch (error) {
+      console.log('Error en la petición:', error);
+    }
+  };
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, register, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

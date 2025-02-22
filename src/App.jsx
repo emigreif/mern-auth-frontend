@@ -27,27 +27,14 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-
-          {/* Obras */}
           <Route path="/obras" element={<ObrasList />} />
           <Route path="/obras/:id" element={<ObraDetail />} />
-
-          {/* Proveedores */}
           <Route path="/proveedores" element={<ProveedoresList />} />
-
-          {/* Panol */}
           <Route path="/panol" element={<Panol />} />
-
-          {/* Calendario */}
           <Route path="/calendario" element={<Calendario />} />
-
-          {/* Admin */}
           <Route path="/admin" element={<Admin />} />
-
-          {/* Reportes */}
           <Route path="/reportes" element={<Reportes />} />
 
-          {/* Resto de Rutas (Home, About, Planner, etc.) */}
         </Routes>
       </Router>
     </AuthProvider>
