@@ -20,12 +20,14 @@ export const AuthProvider = ({ children }) => {
       credentials: 'include',
       body: JSON.stringify({ email, password })
     });
+  
     if (response.ok) {
       const data = await response.json();
+      localStorage.setItem('token', data.token);  // Guardar token
       setUser(data.user);
     }
   };
-
+  
   const logout = async () => {
     await fetch('http://localhost:5000/api/auth/logout', {
       method: 'POST',
@@ -35,26 +37,24 @@ export const AuthProvider = ({ children }) => {
   };
   const register = async (formData) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/r egister', {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(formData),
       });
-
+  
       if (response.ok) {
-        // Usuario creado con éxito
-        // Puedes parsear la respuesta si deseas datos extras
-        // const data = await response.json();
-        // setUser(data.user); // si el backend retorna un user
+        const data = await response.json(); // Obtener datos
+        setUser(data.user); // Establecer usuario en el estado
       } else {
-        // Manejar error (400, 500, etc.)
         console.log('Error al registrar usuario');
       }
     } catch (error) {
       console.log('Error en la petición:', error);
     }
   };
+  
   return (
     <AuthContext.Provider value={{ user, setUser, register, login, logout }}>
       {children}
