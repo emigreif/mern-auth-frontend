@@ -26,14 +26,16 @@ const App = () => {
           <Route path="/Planner" element={<Planner />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/obras" element={<ObrasList />} />
           <Route path="/obras/:id" element={<ObraDetail />} />
-          <Route path="/proveedores" element={<ProveedoresList />} />
-          <Route path="/panol" element={<Panol />} />
-          <Route path="/calendario" element={<Calendario />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/reportes" element={<Reportes />} />
+          import ProtectedRoute from "./components/ProtectedRoute.jsx"; // Importa el componente
+
+<Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+<Route path="/obras" element={<ProtectedRoute><ObrasList /></ProtectedRoute>} />
+<Route path="/proveedores" element={<ProtectedRoute><ProveedoresList /></ProtectedRoute>} />
+<Route path="/panol" element={<ProtectedRoute><Panol /></ProtectedRoute>} />
+<Route path="/calendario" element={<ProtectedRoute><Calendario /></ProtectedRoute>} />
+<Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+<Route path="/reportes" element={<ProtectedRoute><Reportes /></ProtectedRoute>} />
 
         </Routes>
       </Router>

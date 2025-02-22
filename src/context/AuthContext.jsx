@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -14,6 +15,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
+    const navigate = useNavigate(); // Importamos useNavigate
+  
     const response = await fetch('http://localhost:5000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -23,11 +26,12 @@ export const AuthProvider = ({ children }) => {
   
     if (response.ok) {
       const data = await response.json();
-      localStorage.setItem('token', data.token);  // Guardar token
+      localStorage.setItem('token', data.token);  // Guarda token
       setUser(data.user);
+      navigate('/dashboard'); // Redirige automáticamente al Dashboard
     }
   };
-  
+   
   const logout = async () => {
     await fetch('http://localhost:5000/api/auth/logout', {
       method: 'POST',
