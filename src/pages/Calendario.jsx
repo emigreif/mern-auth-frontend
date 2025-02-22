@@ -1,6 +1,6 @@
-// frontend/src/pages/Calendario/Calendario.jsx
+
 import React from 'react';
-import './Calendario.css';
+import '../styles/Calendario.css';
 
 const Calendario = () => {
   return (

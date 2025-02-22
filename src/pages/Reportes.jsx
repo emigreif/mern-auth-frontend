@@ -1,6 +1,6 @@
 // frontend/src/pages/Reportes/Reportes.jsx
 import React from 'react';
-import './Reportes.css';
+import '../styles/Reportes.css';
 
 const Reportes = () => {
   return (

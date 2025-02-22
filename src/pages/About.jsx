@@ -1,6 +1,6 @@
 // frontend/src/pages/About.jsx
 import React from 'react';
-import './About.css'; // Importa el CSS para About
+import '../styles/About.css'; // Importa el CSS para About
 
 const About = () => {
   return (

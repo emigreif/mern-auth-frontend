@@ -1,6 +1,5 @@
-// frontend/src/pages/Proveedores/ProveedoresList.jsx
 import React from 'react';
-import './Proveedores.css';
+import '../styles/Proveedores.css';
 
 const ProveedoresList = () => {
   return (

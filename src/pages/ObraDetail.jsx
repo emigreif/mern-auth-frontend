@@ -1,5 +1,5 @@
 import React from 'react';
-import './Obras.css';
+import '../styles/Obras.css';
 
 const ObraDetail = () => {
   return (

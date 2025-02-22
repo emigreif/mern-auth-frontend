@@ -1,7 +1,7 @@
 // frontend/src/components/Navbar.jsx
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
-import './Navbar.css'; // Mantiene tu estilo actual
+import '../styles/Navbar.css'; // Mantiene tu estilo actual
 
 const Navbar = () => {
   const { user, logout } = useAuth();

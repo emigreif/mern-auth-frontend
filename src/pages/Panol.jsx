@@ -1,6 +1,6 @@
 // frontend/src/pages/Panol/Panol.jsx
 import React from 'react';
-import './Panol.css';
+import '../styles/Panol.css';
 
 const Panol = () => {
   return (

@@ -1,6 +1,5 @@
-// frontend/src/pages/Planner.jsx
 import React from 'react';
-import './Planner.css'; // Asegúrate de crear/ajustar este CSS
+import '../styles/Planner.css';
 
 const Planner = () => {
   return (

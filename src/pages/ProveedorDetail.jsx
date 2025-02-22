@@ -1,6 +1,6 @@
-// frontend/src/pages/Proveedores/ProveedorDetail.jsx
+
 import React from 'react';
-import './Proveedores.css';
+import '../styles/Proveedores.css';
 
 const ProveedorDetail = () => {
   return (

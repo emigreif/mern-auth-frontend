@@ -1,29 +1,5 @@
-/* // frontend/src/pages/Home.jsx
 import { Link } from 'react-router-dom';
-import './Home.css'; // opcional si quieres separar los estilos
-
-const Home = () => {
-return (
-<div className="home-container">
-  <div className="home-content">
-    <h1>Planner de Greif Software Solutions</h1>
-    <p>
-      ¡Bienvenido/a! Nos alegra verte por aquí. En nuestra plataforma podrás organizar tus tareas y proyectos de forma sencilla y eficiente.
-    </p>
-    <p>
-      ¿Ya tienes una cuenta? <Link to="/login" className="home-link">Inicia sesión</Link> 
-      <br />
-      ¿Aún no te has registrado? <Link to="/register" className="home-link">Crea tu cuenta</Link> para acceder al dashboard.
-    </p>
-  </div>
-</div>
-);
-};
-
-export default Home;
- */
-import { Link } from 'react-router-dom';
-import './Home.css'; // Importa un CSS propio para Home, si prefieres separar estilos
+import '../styles/Home.css';
 
 const Home = () => {
   return (

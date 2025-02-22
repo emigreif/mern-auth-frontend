@@ -1,6 +1,6 @@
-// frontend/src/pages/Admin/Admin.jsx
+
 import React from 'react';
-import './Admin.css';
+import '../styles/Admin.css';
 
 const Admin = () => {
   return (
