@@ -5,40 +5,68 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
+  const [loading, setLoading] = useState(true);
+  
   useEffect(() => {
-    fetch('http://localhost:5000/api/user/profile', {
-      credentials: 'include'
-    })
-      .then(res => res.json())
-      .then(data => setUser(data));
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/user/profile', {
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('No autenticado');
+        }
+
+        const data = await response.json();
+        setUser(data);
+      } catch (error) {
+        console.error('Error obteniendo perfil de usuario:', error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
   const login = async (email, password) => {
-    const navigate = useNavigate(); // Importamos useNavigate
-  
-    const response = await fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ email, password })
-    });
-  
-    if (response.ok) {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Credenciales incorrectas');
+      }
+
       const data = await response.json();
-      localStorage.setItem('token', data.token);  // Guarda token
+      localStorage.setItem('token', data.token);  
       setUser(data.user);
-      navigate('/dashboard'); // Redirige automáticamente al Dashboard
+      return true; // Retorna true para manejar la redirección en Login.jsx
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      return false; // Retorna false si hay error
     }
   };
-   
+
   const logout = async () => {
-    await fetch('http://localhost:5000/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    });
-    setUser(null);
+    try {
+      await fetch('http://localhost:5000/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      setUser(null);
+      localStorage.removeItem('token');
+    } catch (error) {
+      console.error('Error cerrando sesión:', error);
+    }
   };
+
   const register = async (formData) => {
     try {
       const response = await fetch('http://localhost:5000/api/auth/register', {
@@ -47,20 +75,22 @@ export const AuthProvider = ({ children }) => {
         credentials: 'include',
         body: JSON.stringify(formData),
       });
-  
-      if (response.ok) {
-        const data = await response.json(); // Obtener datos
-        setUser(data.user); // Establecer usuario en el estado
-      } else {
-        console.log('Error al registrar usuario');
+
+      if (!response.ok) {
+        throw new Error('Error al registrar usuario');
       }
+
+      const data = await response.json();
+      setUser(data.user);
+      return true;
     } catch (error) {
-      console.log('Error en la petición:', error);
+      console.error('Error en la petición:', error);
+      return false;
     }
   };
-  
+
   return (
-    <AuthContext.Provider value={{ user, setUser, register, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, register, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

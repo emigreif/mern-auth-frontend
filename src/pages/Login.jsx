@@ -1,19 +1,24 @@
-// frontend/src/pages/Login.jsx
-import { useState } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useNavigate, Link } from 'react-router-dom';
-import '../styles/auth.css';
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
+import { useNavigate, Link } from "react-router-dom";
+import "../styles/auth.css";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(email, password);
-    navigate('/dashboard');
+    
+    const success = await login(email, password);
+    
+    if (success) {
+      navigate("/dashboard"); // Solo si el login fue exitoso
+    } else {
+      alert("Error al iniciar sesión. Verifica tus credenciales.");
+    }
   };
 
   return (
@@ -23,8 +28,8 @@ const Login = () => {
         <form className="auth-form" onSubmit={handleSubmit}>
           <h2>Sign In</h2>
           <input
-            type="text"
-            placeholder="ByteWebster"
+            type="email"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -50,8 +55,8 @@ const Login = () => {
       <div className="auth-right">
         <h2>Welcome back!</h2>
         <p>
-          We are so happy to have you here. It’s great to see you again. 
-          We hope you had a safe and enjoyable time away.
+          We are so happy to have you here. It’s great to see you again. We hope
+          you had a safe and enjoyable time away.
         </p>
         <Link to="/register" className="signup-button">
           No account yet? Signup.

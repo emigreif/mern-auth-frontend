@@ -14,6 +14,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Navbar from "./components/Navbar.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx"; // Importa el componente
 
 const App = () => {
   return (
@@ -27,7 +28,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/obras/:id" element={<ObraDetail />} />
-          import ProtectedRoute from "./components/ProtectedRoute.jsx"; // Importa el componente
+          
 
 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 <Route path="/obras" element={<ProtectedRoute><ObrasList /></ProtectedRoute>} />
