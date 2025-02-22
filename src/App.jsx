@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
-import Dashboard from "./pages/Dashboard/Dashboard.jsx";
-import ObrasList from "./pages/Obras/ObrasList.jsx";
-import ObraDetail from "./pages/Obras/ObraDetail.jsx";
-import ProveedoresList from "./pages/Proveedores/ProveedoresList.jsx";
-import Panol from "./pages/Panol/Panol.jsx";
-import Calendario from "./pages/Calendario/Calendario.jsx";
-import Admin from "./pages/Admin/Admin.jsx";
-import Reportes from "./pages/Reportes/Reportes.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import ObrasList from "./pages/ObrasList.jsx";
+import ObraDetail from "./pages/ObraDetail.jsx";
+import ProveedoresList from "./pages/ProveedoresList.jsx";
+import Panol from "./pages/Panol.jsx";
+import Calendario from "./pages/Calendario.jsx";
+import Admin from "./pages/Admin.jsx";
+import Reportes from "./pages/Reportes.jsx";
 import About from "./pages/About.jsx"; // Página "About"
 import Planner from "./pages/Planner.jsx"; // Página "Planner" (crea este archivo)
 import Login from "./pages/Login.jsx";
