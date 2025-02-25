@@ -112,9 +112,10 @@ const ObrasList = () => {
                 <span className={`estado-${obra.estado.perfiles}`}>Perfiles</span>
                 <span className={`estado-${obra.estado.vidrios}`}>Vidrios</span>
                 <span className={`estado-${obra.estado.accesorios}`}>Accesorios</span>
-                <span className={`estado-${obra.estado.produccion}`}>Listo para Producir</span>
+                
                 <span className={`estado-${obra.estado.medicion}`}>Medición</span>
                 <span className={`estado-${obra.estado.aprobada}`}>OP Aprobada Cliente</span>
+                <span className={`estado-${obra.estado.produccion}`}>Listo para Producir</span>
               </div>
 
               {/* Última línea: Saldo */}
