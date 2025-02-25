@@ -1,12 +1,5 @@
-/* Fondo general verde */
-body, html, #root {
+#root {
   background-color: #00a46e; /* Verde */
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-  padding: 0;
 }
 
 /* Contenedor principal de la lista de obras */
