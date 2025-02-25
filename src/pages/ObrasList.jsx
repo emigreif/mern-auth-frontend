@@ -27,27 +27,26 @@ const ObrasList = () => {
       <div className="obras-list">
         {obras.map((obra) => (
           <div key={obra.id} className="obra-card">
-            <div className="obra-header">
-              <span className="obra-id">{`#${obra.id}`}</span>
-              <span className="obra-nombre">{obra.nombre}</span>
-              <span className="obra-entrega">Entrega: {obra.fechaEntrega}</span>
-            </div>
+            <div className="obra-header">{`#${obra.id} - ${obra.nombre}`}</div>
             <div className="obra-info">
               <span>{obra.direccion}</span>
-              <a href={obra.mapa} target="_blank" rel="noopener noreferrer" className="location-link">
-                📍
+              <a href={obra.mapa} target="_blank" rel="noopener noreferrer">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Google_Maps_pin.svg"
+                  alt="Ubicación"
+                  className="location-icon"
+                />
               </a>
             </div>
             <div className="obra-contacto">{obra.contacto}</div>
             <div className="estados">
-              <div className="estado-group">
-                <span className={`estado ${obra.estado.perfiles}`}>Perfiles</span>
-                <span className={`estado ${obra.estado.vidrios}`}>Vidrios</span>
-                <span className={`estado ${obra.estado.accesorios}`}>Accesorios</span>
-              </div>
-              <span className={`estado produccion ${obra.estado.produccion}`}>Listo para Producir</span>
+              <span className={`estado-${obra.estado.perfiles}`}>Perfiles</span>
+              <span className={`estado-${obra.estado.vidrios}`}>Vidrios</span>
+              <span className={`estado-${obra.estado.accesorios}`}>Accesorios</span>
+              <span className={`estado-${obra.estado.produccion}`}>Listo para Producir</span>
             </div>
             <div className="obra-footer">
+              <span>Entrega: {obra.fechaEntrega}</span>
               <span>{obra.saldo}</span>
             </div>
           </div>
