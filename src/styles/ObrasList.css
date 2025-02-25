@@ -9,7 +9,7 @@
 }
 
 /* Contenedor blanco centrado */
-.obras-list {
+.obras-list-wrapper {
   background: white;
   padding: 2rem;
   border-radius: 8px;
@@ -18,10 +18,9 @@
   max-width: 900px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
 
-/* Cabecera con título y botón de agregar */
+/* Cabecera con título, buscador y botón */
 .header {
   display: flex;
   justify-content: space-between;
@@ -29,6 +28,17 @@
   margin-bottom: 1.5rem;
 }
 
+/* Buscador */
+.search-input {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-right: 1rem;
+}
+
+/* Botón de agregar obra */
 .add-button {
   background-color: #007bff;
   color: white;
@@ -44,15 +54,23 @@
   background-color: #0056b3;
 }
 
+/* Lista de tarjetas */
+.obras-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
 /* Tarjeta de obra */
 .obra-card {
   background: white;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  border-bottom: 1px solid #ddd; /* Separador sutil */
 }
 
 /* Primera línea: ID, Nombre y Fecha */
@@ -90,7 +108,6 @@
 .estados {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   flex-wrap: wrap;
   gap: 5px;
 }
