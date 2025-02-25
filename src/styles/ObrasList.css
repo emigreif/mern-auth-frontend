@@ -1,170 +1,137 @@
-/* Estilos para la lista de obras manteniendo la estética de la aplicación */
-
+/* Contenedor principal */
 .obras-container {
-  background-color: #00a46e;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   padding: 2rem;
+  background-color: #f8f9fa;
 }
 
+/* Cabecera con título y botón */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 90%;
-  max-width: 900px;
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1.5rem;
-}
-
-.header h1 {
-  color: #007b55;
-  font-size: 1.8rem;
-  margin: 0;
-}
-
-.header input {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  margin-bottom: 1rem;
 }
 
 .add-button {
-  background-color: #007b55;
+  background-color: #00a46e;
   color: white;
-  padding: 0.6rem 1rem;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
   border-radius: 4px;
-  text-decoration: none;
-  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 .add-button:hover {
-  background-color: #005a3e;
+  background-color: #008e5f;
 }
 
+/* Lista de obras */
 .obras-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 90%;
-  max-width: 1000px;
 }
 
+/* Tarjeta de obra */
 .obra-card {
   background: white;
-  padding: 1.5rem;
-  border-radius: 4px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 6px;
   display: flex;
   flex-direction: column;
-  border-left: 6px solid #007b55;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Primera línea: ID, nombre y fecha de entrega */
 .obra-header {
-  font-size: 1.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: bold;
-  color: #007b55;
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
 }
 
+.obra-fecha {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: black;
+}
+
+/* Dirección + ícono */
 .obra-info {
-  font-size: 1rem;
-  color: #333;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0.5rem 0;
 }
 
 .location-icon {
   width: 20px;
   height: 20px;
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/9b/Google_Maps_pin.svg');
-  background-size: cover;
-  background-position: center;
-  cursor: pointer;
+  margin-left: 0.5rem;
+  filter: grayscale(100%);
 }
 
+/* Contacto */
 .obra-contacto {
-  font-size: 1rem;
-  color: #444;
-  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.5rem;
 }
 
+/* Estados */
 .estados {
   display: flex;
   justify-content: space-between;
-  margin-top: 1rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
 }
 
 .estados span {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.9rem;
-  font-weight: bold;
+  padding: 0.4rem;
+  width: 80px;
   text-align: center;
-  position: relative;
+  font-weight: bold;
+  border-bottom: 4px solid;
 }
 
-.estados span::after {
-  content: '';
-  display: block;
-  height: 5px;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
+/* Colores de los estados */
+.estado-pendiente {
+  color: gray;
+  border-bottom-color: gray;
 }
 
-.estado-pendiente::after {
-  background-color: #6c757d;
+.estado-proximo {
+  color: orange;
+  border-bottom-color: orange;
 }
 
-.estado-vencido::after {
-  background-color: #dc3545;
+.estado-cumplido {
+  color: green;
+  border-bottom-color: green;
 }
 
-.estado-proximo::after {
-  background-color: #ffc107;
+.estado-vencido {
+  color: red;
+  border-bottom-color: red;
 }
 
-.estado-cumplido::after {
-  background-color: #28a745;
-}
-
+/* Footer con saldo */
 .obra-footer {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  font-size: 0.9rem;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-  font-size: 1rem;
-  color: #333;
 }
 
-.pagination {
-  margin-top: 2rem;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: #007b55;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.pagination button:hover {
-  background-color: #005a3e;
-}
-
-/* Estilo para el cuadro emergente */
+/* Modal emergente */
 .modal-background {
   position: fixed;
   top: 0;
@@ -180,32 +147,33 @@
 .modal-container {
   background: white;
   padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  width: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .modal-container h2 {
   margin-bottom: 1rem;
-  color: #007b55;
 }
 
-.modal-container input,
+.modal-container input {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
 .modal-container button {
   width: 100%;
-  padding: 0.8rem;
-  margin-bottom: 1rem;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-
-.modal-container button {
-  background-color: #007b55;
+  padding: 0.6rem;
+  background-color: #00a46e;
   color: white;
+  border: none;
+  font-size: 1rem;
   cursor: pointer;
 }
 
 .modal-container button:hover {
-  background-color: #005a3e;
+  background-color: #008e5f;
 }
