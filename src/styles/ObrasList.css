@@ -37,23 +37,20 @@
   font-size: 1rem;
   margin-right: 1rem;
 }
-
-/* Botón de agregar obra */
 .add-button {
-  background-color: #007bff;
+  background-color: #007b55;
   color: white;
   border: none;
-  padding: 0.7rem 1.2rem;
-  border-radius: 4px;
-  font-size: 1rem;
+  padding: 8px 16px;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  width: 160px;
+  text-align: center;
 }
 
 .add-button:hover {
-  background-color: #0056b3;
+  background-color: #005f3f;
 }
-
 /* Lista de tarjetas */
 .obras-list {
   display: flex;
