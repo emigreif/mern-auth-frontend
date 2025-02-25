@@ -14,6 +14,26 @@ const ObrasList = () => {
       fechaEntrega: "2024-07-15",
       saldo: "Con saldo a cobrar",
     },
+    {
+      id: 2,
+      nombre: "Residencial Las Palmas",
+      direccion: "Calle Secundaria 456",
+      contacto: "María Gómez - 987654321",
+      mapa: "https://www.google.com/maps",
+      estado: { perfiles: "cumplido", vidrios: "pendiente", accesorios: "proximo", produccion: "pendiente" },
+      fechaEntrega: "2024-08-10",
+      saldo: "Pagada",
+    },
+    {
+      id: 3,
+      nombre: "Torre Norte",
+      direccion: "Av. Libertador 789",
+      contacto: "Carlos López - 456123789",
+      mapa: "https://www.google.com/maps",
+      estado: { perfiles: "proximo", vidrios: "cumplido", accesorios: "pendiente", produccion: "pendiente" },
+      fechaEntrega: "2024-09-05",
+      saldo: "Con saldo a cobrar",
+    }
   ]);
 
   return (
@@ -27,12 +47,15 @@ const ObrasList = () => {
       <div className="obras-list">
         {obras.map((obra) => (
           <div key={obra.id} className="obra-card">
-            <div className="obra-header">{`#${obra.id} - ${obra.nombre}`}</div>
+            <div className="obra-header">
+              <span className="obra-id-nombre">{`${obra.id} - ${obra.nombre}`}</span>
+              <span className="obra-fecha">Entrega: {obra.fechaEntrega}</span>
+            </div>
             <div className="obra-info">
               <span>{obra.direccion}</span>
               <a href={obra.mapa} target="_blank" rel="noopener noreferrer">
                 <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Google_Maps_pin.svg"
+                  src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Maps_icon.svg"
                   alt="Ubicación"
                   className="location-icon"
                 />
@@ -46,7 +69,6 @@ const ObrasList = () => {
               <span className={`estado-${obra.estado.produccion}`}>Listo para Producir</span>
             </div>
             <div className="obra-footer">
-              <span>Entrega: {obra.fechaEntrega}</span>
               <span>{obra.saldo}</span>
             </div>
           </div>
