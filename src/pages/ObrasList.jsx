@@ -65,6 +65,7 @@ const ObrasList = () => {
   );
 
   return (
+    <div className="proveedores-background">
     <div className="obras-container">
       <div className="obras-list-wrapper">
         {/* Header con título, buscador y botón */}
@@ -140,6 +141,7 @@ const ObrasList = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
