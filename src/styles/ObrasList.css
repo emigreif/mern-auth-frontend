@@ -1,179 +1,31 @@
-/* Contenedor principal */
-.obras-container {
-  padding: 2rem;
-  background-color: #f8f9fa;
-}
-
-/* Cabecera con título y botón */
-.header {
+/* Botones adicionales */
+.obra-botones {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.add-button {
-  background-color: #00a46e;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.add-button:hover {
-  background-color: #008e5f;
-}
-
-/* Lista de obras */
-.obras-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Tarjeta de obra */
-.obra-card {
-  background: white;
-  border: 1px solid #ddd;
-  padding: 1rem;
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Primera línea: ID, nombre y fecha de entrega */
-.obra-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.obra-fecha {
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: black;
-}
-
-/* Dirección + ícono */
-.obra-info {
-  display: flex;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #555;
-  margin: 0.5rem 0;
-}
-
-.location-icon {
-  width: 20px;
-  height: 20px;
-  margin-left: 0.5rem;
-  filter: grayscale(100%);
-}
-
-/* Contacto */
-.obra-contacto {
-  font-size: 0.9rem;
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-/* Estados */
-.estados {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
   margin-top: 0.5rem;
 }
 
-.estados span {
-  padding: 0.4rem;
-  width: 80px;
-  text-align: center;
-  font-weight: bold;
-  border-bottom: 4px solid;
-}
-
-/* Colores de los estados */
-.estado-pendiente {
-  color: gray;
-  border-bottom-color: gray;
-}
-
-.estado-proximo {
-  color: orange;
-  border-bottom-color: orange;
-}
-
-.estado-cumplido {
-  color: green;
-  border-bottom-color: green;
-}
-
-.estado-vencido {
-  color: red;
-  border-bottom-color: red;
-}
-
-/* Footer con saldo */
-.obra-footer {
-  margin-top: 0.5rem;
-  font-weight: bold;
+.btn-mediciones, .btn-op-aprobada {
+  padding: 0.4rem 0.8rem;
   font-size: 0.9rem;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Modal emergente */
-.modal-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 6px;
-  width: 400px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.modal-container h2 {
-  margin-bottom: 1rem;
-}
-
-.modal-container input {
-  width: 100%;
-  padding: 0.6rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.modal-container button {
-  width: 100%;
-  padding: 0.6rem;
-  background-color: #00a46e;
-  color: white;
   border: none;
-  font-size: 1rem;
   cursor: pointer;
+  border-radius: 4px;
+  color: white;
 }
 
-.modal-container button:hover {
-  background-color: #008e5f;
+.btn-mediciones {
+  background-color: #0084ff; /* Azul */
+}
+
+.btn-op-aprobada {
+  background-color: #ff8000; /* Naranja */
+}
+
+.btn-mediciones:hover {
+  background-color: #0066cc;
+}
+
+.btn-op-aprobada:hover {
+  background-color: #cc6600;
 }

@@ -68,6 +68,10 @@ const ObrasList = () => {
               <span className={`estado-${obra.estado.accesorios}`}>Accesorios</span>
               <span className={`estado-${obra.estado.produccion}`}>Listo para Producir</span>
             </div>
+            <div className="obra-botones">
+              <button className="btn-mediciones">Medición</button>
+              <button className="btn-op-aprobada">OP Aprobada Cliente</button>
+            </div>
             <div className="obra-footer">
               <span>{obra.saldo}</span>
             </div>
