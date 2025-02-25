@@ -1,66 +1,48 @@
-/* Fondo verde global */
 .calendario-background {
   background-color: #00a46e;
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  align-items: flex-start;
+  padding-top: 2rem;
 }
 
-/* Contenedor principal del calendario */
 .calendario-container {
   width: 90%;
-  max-width: 1200px;
+  max-width: 900px;
   background-color: #fff;
   border-radius: 8px;
   padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* Título */
-.calendario-container h1 {
-  color: #007b55;
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
+.calendario {
+  margin-top: 1rem;
 }
 
-/* Estilización específica para el componente de calendario */
-.e-schedule {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Mejor visibilidad de las tareas */
-.e-schedule .e-appointment {
+.evento {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
   border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  padding: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* Personalización de los colores de las etapas */
-.e-appointment[style*="background: rgb(0, 164, 110)"] {
-  background-color: #00a46e !important;
-}
-.e-appointment[style*="background: rgb(243, 156, 18)"] {
-  background-color: #f39c12 !important;
-}
-.e-appointment[style*="background: rgb(231, 76, 60)"] {
-  background-color: #e74c3c !important;
-}
-.e-appointment[style*="background: rgb(52, 152, 219)"] {
-  background-color: #3498db !important;
-}
-.e-appointment[style*="background: rgb(155, 89, 182)"] {
-  background-color: #9b59b6 !important;
-}
-
-/* Ajuste en las filas del calendario */
-.e-timeline-view .e-resource-left-td {
+.fecha {
   font-weight: bold;
-  font-size: 1rem;
   color: #333;
 }
 
+.tipo {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #007b55;
+}
+
+.obra {
+  font-style: italic;
+  color: #555;
+}
