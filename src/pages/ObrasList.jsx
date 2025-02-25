@@ -67,21 +67,16 @@ const ObrasList = () => {
   return (
     <div className="obras-container">
       <div className="obras-list-wrapper">
-        {/* Título principal */}
-        <h1 className="obras-title">Lista de Obras</h1>
-
-        {/* Buscador y botón */}
+        {/* Header con título, buscador y botón */}
         <div className="header">
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder="Buscar obra..."
-              className="search-input"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <span className="search-icon">🔍</span>
-          </div>
+          <h1>Lista de Obras</h1>
+          <input
+            type="text"
+            placeholder="Buscar obra..."
+            className="search-input"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
           <button className="add-button" onClick={() => setShowModal(true)}>
             Agregar Nueva Obra
           </button>
@@ -117,9 +112,9 @@ const ObrasList = () => {
                 <span className={`estado-${obra.estado.perfiles}`}>Perfiles</span>
                 <span className={`estado-${obra.estado.vidrios}`}>Vidrios</span>
                 <span className={`estado-${obra.estado.accesorios}`}>Accesorios</span>
+                
                 <span className={`estado-${obra.estado.medicion}`}>Medición</span>
                 <span className={`estado-${obra.estado.aprobada}`}>OP Aprobada Cliente</span>
-                
                 <span className={`estado-${obra.estado.produccion}`}>Listo para Producir</span>
               </div>
 
