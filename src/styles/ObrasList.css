@@ -1,124 +1,123 @@
 /* Estilos para la lista de obras manteniendo la estética de la aplicación */
 
 .obras-container {
-    background-color: #00a46e;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 90%;
-    max-width: 900px;
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.5rem;
-  }
-  
-  .header h1 {
-    color: #007b55;
-    font-size: 1.8rem;
-    margin: 0;
-  }
-  
-  .header input {
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .add-button {
-    background-color: #007b55;
-    color: white;
-    padding: 0.6rem 1rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  
-  .add-button:hover {
-    background-color: #005a3e;
-  }
-  
-  .obras-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
-    width: 90%;
-    max-width: 1000px;
-  }
-  
-  .obra-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .obra-card h2 {
-    color: #007b55;
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .obra-card p {
-    color: #333;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .location-icon {
-    color: red;
-    margin-right: 0.3rem;
-  }
-  
-  .estados {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-  }
-  
-  .estados span {
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    text-align: center;
-  }
-  
-  .ok {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .pending {
-    background-color: #ffc107;
-    color: black;
-  }
-  
-  .pagination {
-    margin-top: 2rem;
-  }
-  
-  .pagination button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: #007b55;
-    color: white;
-    margin: 0 0.2rem;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .pagination button:hover {
-    background-color: #005a3e;
-  }
-  
+  background-color: #00a46e;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 900px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  color: #007b55;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.header input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.add-button {
+  background-color: #007b55;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.add-button:hover {
+  background-color: #005a3e;
+}
+
+.obras-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  width: 90%;
+  max-width: 1000px;
+}
+
+.obra-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.obra-card h2 {
+  color: #007b55;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.obra-card p {
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.location-icon {
+  color: red;
+  margin-right: 0.3rem;
+}
+
+.estados {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.estados span {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ok {
+  background-color: #28a745;
+  color: white;
+}
+
+.pending {
+  background-color: #ffc107;
+  color: black;
+}
+
+.pagination {
+  margin-top: 2rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #007b55;
+  color: white;
+  margin: 0 0.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background-color: #005a3e;
+}

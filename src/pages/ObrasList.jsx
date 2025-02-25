@@ -1,30 +1,4 @@
-// import React from 'react';
-// import '../styles/Obras.css';
 
-// const ObrasList = () => {
-//   return (
-//     <div className="obras-background">
-//       <div className="obras-container">
-//         <h1>Lista de Obras</h1>
-//         <p>Aquí irán todas las obras con paginación, filtrado, etc.</p>
-
-//         {/* Ejemplo de tabla o tarjetas */}
-//         <div className="obras-list">
-//           {/* Mapea tus obras y muestra la info */}
-//           <div className="obra-item">Obra #1 - Cliente X - Estado: ...</div>
-//           <div className="obra-item">Obra #2 - Cliente Y - Estado: ...</div>
-//           {/* etc. */}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ObrasList;
-
-
-
-// frontend/src/pages/ObrasList.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/ObrasList.css';
@@ -85,7 +59,7 @@ const ObrasList = () => {
         {filteredObras.length > 0 ? (
           filteredObras.map((obra) => (
             <div key={obra.id} className="obra-card">
-              <h2>#{obra.id} - {obra.nombre}</h2>
+              <h2>{obra.id} - {obra.nombre}</h2>
               <p>{obra.direccion} - {obra.contacto}</p>
               <a href={obra.ubicacion} target="_blank" rel="noopener noreferrer" className="location-icon">
                 📍
