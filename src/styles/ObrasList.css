@@ -1,7 +1,7 @@
 /* Fondo general verde */
 /* Fondo general verde */
 body, html, #root {
-  background-color: #00a46e; /* Verde */
+  background-color: #005f3f; /* Verde */
   min-height: 100vh;
   display: flex;
   justify-content: center;
