@@ -136,10 +136,12 @@
 
 /* Pie de la tarjeta */
 .obra-footer {
-  font-size: 1rem;
+  font-size: 0.85rem; /* Se reduce el tamaño para que todo quede en una línea */
   font-weight: bold;
   color: #333;
   text-align: right;
+  display: flex;
+  justify-content: space-between;
 }
 
 /* Modal */
