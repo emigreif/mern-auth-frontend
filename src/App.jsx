@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import ObrasList from "./pages/ObrasList.jsx";
 import ObraDetail from "./pages/ObraDetail.jsx";
 import ProveedoresList from "./pages/ProveedoresList.jsx";
+import "leaflet/dist/leaflet.css";
 import Panol from "./pages/Panol.jsx";
 import Calendario from "./pages/Calendario.jsx";
 import Admin from "./pages/Admin.jsx";
