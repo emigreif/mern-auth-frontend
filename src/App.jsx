@@ -4,7 +4,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import ObrasList from "./pages/ObrasList.jsx";
 import ObraDetail from "./pages/ObraDetail.jsx";
 import ProveedoresList from "./pages/ProveedoresList.jsx";
-import MapaObras from "./components/MapaObras.jsx";
+
 import Panol from "./pages/Panol.jsx";
 import Calendario from "./pages/Calendario.jsx";
 import Admin from "./pages/Admin.jsx";
@@ -34,7 +34,7 @@ const App = () => {
           <Route path="/proveedores" element={<ProtectedRoute><ProveedoresList /></ProtectedRoute>} />
           <Route path="/panol" element={<ProtectedRoute><Panol /></ProtectedRoute>} />
           <Route path="/calendario" element={<ProtectedRoute><Calendario /></ProtectedRoute>} />
-          <Route path="/mapa-obras" element={<MapaObras />} />
+          
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/reportes" element={<ProtectedRoute><Reportes /></ProtectedRoute>} />
 

@@ -71,7 +71,7 @@ const ObrasList = () => {
         {/* Header con título, buscador y botón */}
         <div className="header">
           <h1>Lista de Obras</h1>
-          <MapaObras obras={obras} />
+         
           <input
             type="text"
             placeholder="Buscar obra..."
