@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/ProveedoresList.css";
 
-const ProveedorDetail = () => {
+const ProveedoresList = () => {
   const [showModal, setShowModal] = useState(false);
   const [proveedores, setProveedores] = useState([
     {
@@ -84,7 +84,4 @@ const ProveedorDetail = () => {
   );
 };
 
-
-
-
-export default ProveedorDetail;
+export default ProveedoresList;
