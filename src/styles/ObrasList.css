@@ -67,7 +67,7 @@
 }
 
 .obra-header {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: bold;
   color: #007b55;
   margin-bottom: 0.5rem;
@@ -82,7 +82,11 @@
 }
 
 .location-icon {
-  color: #007b55;
+  width: 20px;
+  height: 20px;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/9b/Google_Maps_pin.svg');
+  background-size: cover;
+  background-position: center;
   cursor: pointer;
 }
 
@@ -103,28 +107,42 @@
   font-size: 0.9rem;
   font-weight: bold;
   text-align: center;
-  border: 2px solid;
-  border-radius: 2px;
+  position: relative;
 }
 
-.estado-pendiente {
-  border-color: #6c757d;
-  color: #6c757d;
+.estados span::after {
+  content: '';
+  display: block;
+  height: 5px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
-.estado-vencido {
-  border-color: #dc3545;
-  color: #dc3545;
+.estado-pendiente::after {
+  background-color: #6c757d;
 }
 
-.estado-proximo {
-  border-color: #ffc107;
-  color: #ffc107;
+.estado-vencido::after {
+  background-color: #dc3545;
 }
 
-.estado-cumplido {
-  border-color: #28a745;
-  color: #28a745;
+.estado-proximo::after {
+  background-color: #ffc107;
+}
+
+.estado-cumplido::after {
+  background-color: #28a745;
+}
+
+.obra-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #333;
 }
 
 .pagination {
