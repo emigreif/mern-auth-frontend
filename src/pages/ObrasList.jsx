@@ -17,7 +17,7 @@ const ObrasList = () => {
         accesorios: "cumplido",
         produccion: "pendiente",
         medicion: "pendiente",
-        aprobada: "cumplido"
+        aprobada: "cumplido",
       },
       fechaEntrega: "2024-07-15",
       saldo: "Con saldo a cobrar",
@@ -34,7 +34,7 @@ const ObrasList = () => {
         accesorios: "proximo",
         produccion: "pendiente",
         medicion: "proximo",
-        aprobada: "pendiente"
+        aprobada: "pendiente",
       },
       fechaEntrega: "2024-08-10",
       saldo: "Pagada",
@@ -51,17 +51,18 @@ const ObrasList = () => {
         accesorios: "pendiente",
         produccion: "pendiente",
         medicion: "cumplido",
-        aprobada: "cumplido"
+        aprobada: "cumplido",
       },
       fechaEntrega: "2024-09-05",
       saldo: "Con saldo a cobrar",
-    }
+    },
   ]);
 
   // Filtrar obras por nombre o dirección
-  const filteredObras = obras.filter((obra) =>
-    obra.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    obra.direccion.toLowerCase().includes(search.toLowerCase())
+  const filteredObras = obras.filter(
+    (obra) =>
+      obra.nombre.toLowerCase().includes(search.toLowerCase()) ||
+      obra.direccion.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -69,17 +70,24 @@ const ObrasList = () => {
       <div className="obras-list-wrapper">
         {/* Header con título, buscador y botón */}
         <div className="header">
-          <h1>Lista de Obras</h1>
-          <input
-            type="text"
-            placeholder="Buscar obra..."
-            className="search-input"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button className="add-button" onClick={() => setShowModal(true)}>
-            Agregar Nueva Obra
-          </button>
+          <div>
+            <h1>Lista de Obras</h1>
+          </div>
+          <div>
+            {" "}
+            <input
+              type="text"
+              placeholder="Buscar obra..."
+              className="search-input"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div>
+            <button className="add-button" onClick={() => setShowModal(true)}>
+              Agregar Nueva Obra
+            </button>
+          </div>
         </div>
 
         {/* Lista de Obras */}
@@ -109,13 +117,23 @@ const ObrasList = () => {
 
               {/* Estados en una sola línea */}
               <div className="estados">
-                <span className={`estado-${obra.estado.perfiles}`}>Perfiles</span>
+                <span className={`estado-${obra.estado.perfiles}`}>
+                  Perfiles
+                </span>
                 <span className={`estado-${obra.estado.vidrios}`}>Vidrios</span>
-                <span className={`estado-${obra.estado.accesorios}`}>Accesorios</span>
-                
-                <span className={`estado-${obra.estado.medicion}`}>Medición</span>
-                <span className={`estado-${obra.estado.aprobada}`}>OP Aprobada Cliente</span>
-                <span className={`estado-${obra.estado.produccion}`}>Listo para Producir</span>
+                <span className={`estado-${obra.estado.accesorios}`}>
+                  Accesorios
+                </span>
+
+                <span className={`estado-${obra.estado.medicion}`}>
+                  Medición
+                </span>
+                <span className={`estado-${obra.estado.aprobada}`}>
+                  OP Aprobada Cliente
+                </span>
+                <span className={`estado-${obra.estado.produccion}`}>
+                  Listo para Producir
+                </span>
               </div>
 
               {/* Última línea: Saldo */}
