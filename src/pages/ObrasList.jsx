@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import MapaObras from "../components/MapaObras";
 import "../styles/ObrasList.css";
 
 const ObrasList = () => {
