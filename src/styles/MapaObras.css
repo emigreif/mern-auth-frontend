@@ -1,13 +1,13 @@
 .mapa-container {
-    width: 100%;
-    height: 500px;
-    margin-top: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .mapa {
-    width: 100%;
-    height: 100%;
-  }
-  
+  text-align: center;
+  padding: 20px;
+  background-color: #00a46e;
+  color: white;
+}
+
+.mapa {
+  width: 90%;
+  height: 500px;
+  margin: auto;
+  border-radius: 8px;
+}

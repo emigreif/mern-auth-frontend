@@ -1,63 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
-// Icono personalizado para los marcadores
+// Definir icono personalizado para el marcador
 const customIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/535/535239.png",
-  iconSize: [35, 45],
-  iconAnchor: [17, 42],
-  popupAnchor: [1, -35],
+  iconUrl: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Google_Maps_pin.svg",
+  iconSize: [30, 40],
+  iconAnchor: [15, 40],
+  popupAnchor: [0, -35],
 });
 
-const MapaObras = ({ obras }) => {
-  const [markers, setMarkers] = useState([]);
+// Coordenadas de ejemplo
+const obras = [
+  { id: 1, nombre: "Edificio Central", direccion: "Av. Principal 123", lat: -34.6037, lng: -58.3816 },
+  { id: 2, nombre: "Torre Norte", direccion: "Calle Secundaria 456", lat: -34.605, lng: -58.383 },
+];
 
-  useEffect(() => {
-    const obtenerCoordenadas = async () => {
-      const geocodedObras = await Promise.all(
-        obras.map(async (obra) => {
-          try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/search?format=json&q=${obra.direccion}`
-            );
-            const data = await response.json();
-            if (data.length > 0) {
-              return {
-                id: obra.id,
-                nombre: obra.nombre,
-                contacto: obra.contacto,
-                direccion: obra.direccion,
-                lat: parseFloat(data[0].lat),
-                lon: parseFloat(data[0].lon),
-              };
-            }
-          } catch (error) {
-            console.error("Error obteniendo coordenadas:", error);
-          }
-          return null;
-        })
-      );
-      setMarkers(geocodedObras.filter((obra) => obra !== null));
-    };
-
-    obtenerCoordenadas();
-  }, [obras]);
-
+const MapaObras = () => {
   return (
     <div className="mapa-container">
-      <MapContainer center={[-34.6037, -58.3816]} zoom={10} className="mapa">
+      <h2>Mapa de Obras</h2>
+      <MapContainer center={[-34.6037, -58.3816]} zoom={13} className="mapa">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        {markers.map((obra) => (
-          <Marker key={obra.id} position={[obra.lat, obra.lon]} icon={customIcon}>
+        {obras.map((obra) => (
+          <Marker key={obra.id} position={[obra.lat, obra.lng]} icon={customIcon}>
             <Popup>
-              <strong>{obra.nombre}</strong> <br />
-              📍 {obra.direccion} <br />
-              📞 {obra.contacto}
+              <strong>{obra.nombre}</strong>
+              <br />
+              {obra.direccion}
             </Popup>
           </Marker>
         ))}
