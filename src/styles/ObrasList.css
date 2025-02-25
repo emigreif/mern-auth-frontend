@@ -1,19 +1,30 @@
-/* Fondo general */
+/* Fondo general verde */
 .obras-container {
   background-color: #00a46e;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 2rem;
+}
+
+/* Contenedor blanco centrado */
+.obras-list {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 1rem;
 }
 
 /* Cabecera con título y botón de agregar */
 .header {
   display: flex;
   justify-content: space-between;
-  width: 90%;
-  max-width: 900px;
   align-items: center;
   margin-bottom: 1.5rem;
 }
@@ -33,15 +44,6 @@
   background-color: #0056b3;
 }
 
-/* Lista de obras */
-.obras-list {
-  width: 90%;
-  max-width: 900px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 /* Tarjeta de obra */
 .obra-card {
   background: white;
@@ -58,12 +60,6 @@
   display: flex;
   justify-content: space-between;
   font-size: 1.2rem;
-  font-weight: bold;
-  color: black;
-}
-
-.obra-fecha {
-  font-size: 1rem;
   font-weight: bold;
   color: black;
 }
@@ -90,7 +86,7 @@
   font-weight: 500;
 }
 
-/* Estados: Perfiles, Vidrios, Accesorios, Producción */
+/* Estados */
 .estados {
   display: flex;
   justify-content: space-between;
@@ -124,19 +120,20 @@
   color: green;
 }
 
-.estado-medicion {
-  border-color: blue;
-  color: blue;
+.estado-vencido {
+  border-color: red;
+  color: red;
 }
 
-.estado-op-aprobada {
-  border-color: purple;
-  color: purple;
+/* Botones alineados en una línea */
+.estados span {
+  flex: 1;
+  text-align: center;
 }
 
 /* Pie de la tarjeta */
 .obra-footer {
-  font-size: 0.85rem; /* Se reduce el tamaño para que todo quede en una línea */
+  font-size: 0.85rem;
   font-weight: bold;
   color: #333;
   text-align: right;
