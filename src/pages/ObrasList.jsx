@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMapMarkerAlt,
+  faPlusCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import "../styles/ObrasList.css";
 
 const ObrasList = () => {
@@ -81,7 +86,7 @@ const ObrasList = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
             <button className="add-button" onClick={() => setShowModal(true)}>
-              Agregar Nueva Obra
+              <FontAwesomeIcon icon={faPlusCircle} /> Agregar Nueva Obra
             </button>
           </div>
 
@@ -100,12 +105,13 @@ const ObrasList = () => {
                 {/* Segunda línea: Dirección + Icono de Mapa */}
                 <div className="obra-info">
                   <span>{obra.direccion}</span>
-                  <a href={obra.mapa} target="_blank" rel="noopener noreferrer">
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Google_Maps_pin.svg"
-                      alt="Ubicación"
-                      className="location-icon"
-                    />{" "}
+                  <a
+                    href={obra.mapa}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="location-icon"
+                  >
+                    <FontAwesomeIcon icon={faMapMarkerAlt} />
                   </a>
                 </div>
 
