@@ -107,9 +107,9 @@ const ObrasList = () => {
                     className="location-icon"
                   >
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
-                  </a>
+                  </a><h3>
                   {obra.direccion}
-                  
+                  </h3>
                 </div>
 
                 {/* Contacto */}
