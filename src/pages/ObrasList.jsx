@@ -108,7 +108,7 @@ const ObrasList = () => {
                   >
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
                   </a>
-                  <span>{obra.direccion}</span>
+                  {obra.direccion}
                   
                 </div>
 
