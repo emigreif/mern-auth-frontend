@@ -5,6 +5,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",
     "@syncfusion/ej2-react-schedule": "^28.2.7",
+    "@vercel/speed-insights": "^1.2.0",
     "@vitejs/plugin-react": "^3.0.0",
     "esbuild": "^0.25.0",
     "leaflet": "^1.9.4",
