@@ -100,16 +100,16 @@ const ObrasList = () => {
                 </div>
 
                 {/* Segunda línea: Dirección + Icono de Mapa */}
-                <div className="obra-info"><a
+                <div className="obra-info">
+                  <span>{obra.direccion}</span>
+                  <a
                     href={obra.mapa}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="location-icon"
                   >
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
-                  </a><h3>
-                  {obra.direccion}
-                  </h3>
+                  </a>
                 </div>
 
                 {/* Contacto */}
