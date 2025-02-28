@@ -4,8 +4,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import ObrasList from "./pages/ObrasList.jsx";
 import ObraDetail from "./pages/ObraDetail.jsx";
 import ProveedoresList from "./pages/ProveedoresList.jsx";
-import Compras from "./pages/Compras.jsx"
-import Mediciones from "./pages/Mediciones.jsx";
+import Compras from "./pages/Compras.jsx";
 import Panol from "./pages/Panol.jsx";
 import Calendario from "./pages/Calendario.jsx";
 import Configuracion from "./pages/Configuracion.jsx";
@@ -31,17 +30,79 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/obras/:id" element={<ObraDetail />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/obras" element={<ProtectedRoute><ObrasList /></ProtectedRoute>} />
-          <Route path="/proveedores" element={<ProtectedRoute><ProveedoresList /></ProtectedRoute>} />
-          <Route path="/panol" element={<ProtectedRoute><Panol /></ProtectedRoute>} />
-          <Route path="/calendario" element={<ProtectedRoute><Calendario /></ProtectedRoute>} />  
-          <Route path="/Mediciones" element={<ProtectedRoute><Mediciones /></ProtectedRoute>} />  
-          <Route path="/Compras" element={<ProtectedRoute><Compras/></ProtectedRoute>} />
-          
-          <Route path="/Configuracion" element={<ProtectedRoute><Configuracion /></ProtectedRoute>} />
-          <Route path="/reportes" element={<ProtectedRoute><Reportes /></ProtectedRoute>} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/obras"
+            element={
+              <ProtectedRoute>
+                <ObrasList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proveedores"
+            element={
+              <ProtectedRoute>
+                <ProveedoresList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panol"
+            element={
+              <ProtectedRoute>
+                <Panol />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/calendario"
+            element={
+              <ProtectedRoute>
+                <Calendario />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Mediciones"
+            element={
+              <ProtectedRoute>
+                <Mediciones />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Compras"
+            element={
+              <ProtectedRoute>
+                <Compras />
+              </ProtectedRoute>
+            }
+          />
 
+          <Route
+            path="/Configuracion"
+            element={
+              <ProtectedRoute>
+                <Configuracion />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reportes"
+            element={
+              <ProtectedRoute>
+                <Reportes />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>
