@@ -1,155 +1,147 @@
 import React, { useState } from "react";
 import "../styles/Mediciones.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExcel, faPlusCircle, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 
 const Mediciones = () => {
-  const [obraSeleccionada, setObraSeleccionada] = useState(null);
+  const [obraSeleccionada, setObraSeleccionada] = useState("");
   const [ubicaciones, setUbicaciones] = useState([]);
   const [tipologias, setTipologias] = useState([]);
+  const [tipologiasSeleccionadas, setTipologiasSeleccionadas] = useState([]);
+  const [conjuntos, setConjuntos] = useState([]);
 
-  // Función para seleccionar una obra
-  const handleSeleccionObra = (obra) => {
-    setObraSeleccionada(obra);
-    setUbicaciones([]); // Reiniciar ubicaciones al cambiar de obra
+  // Función para agregar ubicaciones con múltiples pisos
+  const agregarUbicaciones = (pisoStr, cantidad) => {
+    if (!obraSeleccionada) {
+      alert("Selecciona una obra antes de agregar ubicaciones.");
+      return;
+    }
+
+    const pisos = parsePisos(pisoStr);
+    const nuevasUbicaciones = pisos.flatMap((piso) =>
+      Array.from({ length: cantidad }, (_, i) => ({
+        piso,
+        ubicacion: `${piso}-${i + 1}`,
+        tipologias: [],
+      }))
+    );
+
+    setUbicaciones([...ubicaciones, ...nuevasUbicaciones]);
   };
 
-  // Función para agregar una nueva ubicación de vano
-  const agregarUbicacion = () => {
-    setUbicaciones([
-      ...ubicaciones,
-      { piso: "", cantidad: 1, tipologias: [] },
-    ]);
+  // Función para convertir texto de pisos a array
+  const parsePisos = (pisoStr) => {
+    const pisos = [];
+    pisoStr.split(",").forEach((parte) => {
+      if (parte.includes("-")) {
+        const [inicio, fin] = parte.split("-").map(Number);
+        for (let i = inicio; i <= fin; i++) {
+          pisos.push(i);
+        }
+      } else {
+        pisos.push(Number(parte));
+      }
+    });
+    return pisos;
   };
 
-  // Función para actualizar ubicaciones
-  const handleUbicacionChange = (index, field, value) => {
-    const updatedUbicaciones = [...ubicaciones];
-    updatedUbicaciones[index][field] = value;
-    setUbicaciones(updatedUbicaciones);
-  };
-
-  // Función para agregar una nueva tipología
+  // Función para agregar tipologías
   const agregarTipologia = () => {
-    setTipologias([
-      ...tipologias,
-      { codigo: "", tipo: "", ancho: "", alto: "" },
-    ]);
+    setTipologias([...tipologias, { codigo: "", tipo: "", ancho: "", alto: "", esConjunto: false }]);
   };
 
-  // Función para actualizar una tipología
-  const handleTipologiaChange = (index, field, value) => {
-    const updatedTipologias = [...tipologias];
-    updatedTipologias[index][field] = value;
-    setTipologias(updatedTipologias);
-  };
+  // Función para asignar tipologías a ubicaciones seleccionadas
+  const asignarTipologia = () => {
+    if (tipologiasSeleccionadas.length === 0) {
+      alert("Selecciona al menos una tipología para asignar.");
+      return;
+    }
 
-  // Función para asignar tipologías a ubicaciones
-  const asignarTipologia = (ubicacionIndex, tipologia) => {
-    const updatedUbicaciones = [...ubicaciones];
-    updatedUbicaciones[ubicacionIndex].tipologias.push(tipologia);
+    const updatedUbicaciones = ubicaciones.map((ubicacion) =>
+      tipologiasSeleccionadas.includes(ubicacion.ubicacion)
+        ? { ...ubicacion, tipologias: [...ubicacion.tipologias, ...tipologias] }
+        : ubicacion
+    );
+
     setUbicaciones(updatedUbicaciones);
+    setTipologiasSeleccionadas([]); // Limpiar selección
+  };
+
+  // Función para crear conjuntos de tipologías
+  const crearConjunto = () => {
+    if (tipologias.length < 2) {
+      alert("Debe haber al menos dos tipologías para formar un conjunto.");
+      return;
+    }
+
+    const medidaConjunto = Math.max(...tipologias.map((t) => parseFloat(t.ancho))) + " x " + Math.max(...tipologias.map((t) => parseFloat(t.alto)));
+    const conjunto = { id: conjuntos.length + 1, tipologias, medidaConjunto };
+
+    setConjuntos([...conjuntos, conjunto]);
+    setTipologias([]);
   };
 
   return (
     <div className="mediciones-container">
-      <h1><FontAwesomeIcon icon={faClipboardList} /> Mediciones</h1>
+      <h1>Mediciones</h1>
 
-      {/* Selección de obra */}
+      {/* Selección de Obra */}
       <div className="seleccion-obra">
         <label>Seleccionar Obra:</label>
-        <select onChange={(e) => handleSeleccionObra(e.target.value)}>
-          <option value="">-- Seleccione una obra --</option>
-          <option value="obra1">Obra 1</option>
-          <option value="obra2">Obra 2</option>
+        <select value={obraSeleccionada} onChange={(e) => setObraSeleccionada(e.target.value)}>
+          <option value="">-- Seleccionar --</option>
+          <option value="Obra 1">Obra 1</option>
+          <option value="Obra 2">Obra 2</option>
         </select>
       </div>
 
-      {/* Sección de ubicaciones */}
-      {obraSeleccionada && (
-        <div className="ubicaciones-container">
-          <h2>Ubicaciones de Vanos</h2>
-          <button className="add-button" onClick={agregarUbicacion}>
-            <FontAwesomeIcon icon={faPlusCircle} /> Agregar Ubicación
-          </button>
-          <table>
-            <thead>
-              <tr>
-                <th>Piso</th>
-                <th>Cantidad</th>
-                <th>Tipologías Asignadas</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ubicaciones.map((ubicacion, index) => (
-                <tr key={index}>
-                  <td>
-                    <input type="text" value={ubicacion.piso} onChange={(e) => handleUbicacionChange(index, "piso", e.target.value)} />
-                  </td>
-                  <td>
-                    <input type="number" min="1" value={ubicacion.cantidad} onChange={(e) => handleUbicacionChange(index, "cantidad", e.target.value)} />
-                  </td>
-                  <td>
-                    {ubicacion.tipologias.map((t, i) => (
-                      <span key={i} className="tipologia-tag">{t.codigo}</span>
-                    ))}
-                  </td>
-                  <td>
-                    <button onClick={() => asignarTipologia(index, { codigo: "T1", tipo: "Ventana", ancho: 100, alto: 200 })}>
-                      Asignar Tipología
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {/* Carga de Ubicaciones */}
+      <div className="ubicaciones-container">
+        <h2>Agregar Ubicaciones</h2>
+        <input type="text" placeholder="Ej: 1,2,3-5" id="pisos" />
+        <input type="number" min="1" placeholder="Cantidad por piso" id="cantidad" />
+        <button onClick={() => agregarUbicaciones(document.getElementById("pisos").value, parseInt(document.getElementById("cantidad").value))}>Agregar</button>
 
-      {/* Sección de tipologías */}
-      {obraSeleccionada && (
-        <div className="tipologias-container">
-          <h2>Lista de Tipologías</h2>
-          <button className="add-button" onClick={agregarTipologia}>
-            <FontAwesomeIcon icon={faPlusCircle} /> Agregar Tipología
-          </button>
-          <table>
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Tipo</th>
-                <th>Ancho (cm)</th>
-                <th>Alto (cm)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tipologias.map((tipologia, index) => (
-                <tr key={index}>
-                  <td>
-                    <input type="text" value={tipologia.codigo} onChange={(e) => handleTipologiaChange(index, "codigo", e.target.value)} />
-                  </td>
-                  <td>
-                    <input type="text" value={tipologia.tipo} onChange={(e) => handleTipologiaChange(index, "tipo", e.target.value)} />
-                  </td>
-                  <td>
-                    <input type="number" min="1" value={tipologia.ancho} onChange={(e) => handleTipologiaChange(index, "ancho", e.target.value)} />
-                  </td>
-                  <td>
-                    <input type="number" min="1" value={tipologia.alto} onChange={(e) => handleTipologiaChange(index, "alto", e.target.value)} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+        <h3>Ubicaciones</h3>
+        <ul>
+          {ubicaciones.map((ubicacion, index) => (
+            <li key={index}>{`Piso ${ubicacion.piso} - Ubicación ${ubicacion.ubicacion}`}</li>
+          ))}
+        </ul>
+      </div>
 
-      {/* Subida de archivo Excel */}
-      <div className="file-upload">
-        <label>Cargar Tipologías desde Excel</label>
-        <input type="file" accept=".xls,.xlsx" />
-        <FontAwesomeIcon icon={faFileExcel} className="excel-icon" />
+      {/* Carga de Tipologías */}
+      <div className="tipologias-container">
+        <h2>Tipologías</h2>
+        <button onClick={agregarTipologia}>Agregar Tipología</button>
+        {tipologias.map((tipologia, index) => (
+          <div key={index} className="tipologia-item">
+            <input type="text" placeholder="Código" value={tipologia.codigo} onChange={(e) => handleTipologiaChange(index, "codigo", e.target.value)} />
+            <input type="text" placeholder="Tipo" value={tipologia.tipo} onChange={(e) => handleTipologiaChange(index, "tipo", e.target.value)} />
+            <input type="number" placeholder="Ancho" value={tipologia.ancho} onChange={(e) => handleTipologiaChange(index, "ancho", e.target.value)} />
+            <input type="number" placeholder="Alto" value={tipologia.alto} onChange={(e) => handleTipologiaChange(index, "alto", e.target.value)} />
+          </div>
+        ))}
+      </div>
+
+      {/* Asignar Tipologías */}
+      <div className="asignacion-container">
+        <h2>Asignar Tipologías</h2>
+        <select multiple value={tipologiasSeleccionadas} onChange={(e) => setTipologiasSeleccionadas([...e.target.selectedOptions].map((option) => option.value))}>
+          {ubicaciones.map((ubicacion, index) => (
+            <option key={index} value={ubicacion.ubicacion}>{`Piso ${ubicacion.piso} - Ubicación ${ubicacion.ubicacion}`}</option>
+          ))}
+        </select>
+        <button onClick={asignarTipologia}>Asignar</button>
+      </div>
+
+      {/* Creación de Conjuntos */}
+      <div className="conjuntos-container">
+        <h2>Conjuntos de Tipologías</h2>
+        <button onClick={crearConjunto}>Crear Conjunto</button>
+        <ul>
+          {conjuntos.map((conjunto, index) => (
+            <li key={index}>{`Conjunto ${conjunto.id} - Medida: ${conjunto.medidaConjunto}`}</li>
+          ))}
+        </ul>
       </div>
     </div>
   );

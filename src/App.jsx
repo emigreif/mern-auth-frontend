@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
 import ObrasList from "./pages/ObrasList.jsx";
 import ObraDetail from "./pages/ObraDetail.jsx";
 import ProveedoresList from "./pages/ProveedoresList.jsx";
@@ -30,14 +29,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/obras/:id" element={<ObraDetail />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+         
           <Route
             path="/obras"
             element={

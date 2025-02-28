@@ -33,7 +33,7 @@ const Register = () => {
     e.preventDefault();
     await register(formData);
     // Si se registra con éxito, redirige
-    navigate('/dashboard');
+    navigate('/Obras');
   };
 
   return (

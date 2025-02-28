@@ -1,97 +1,36 @@
-/* Fondo verde general */
-body {
-    background-color: #00a46e;
-    font-family: Arial, sans-serif;
-    margin: 0;
-  }
-  
-  /* Contenedor principal */
-  .compras-container {
-    max-width: 900px;
-    margin: 40px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Título */
-  h1 {
-    text-align: center;
-    color: #333;
-  }
-  
-  /* Selección de tipo de compra */
-  .tipo-compra, .obra-seleccion, .file-upload {
-    margin-bottom: 20px;
-  }
-  
-  label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  select, input[type="text"], input[type="number"], input[type="file"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  /* Botón importar */
-  .import-button, .add-material, .save-button {
-    width: 100%;
-    background-color: #00a46e;
-    color: white;
-    padding: 10px;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .import-button:hover, .add-material:hover, .save-button:hover {
-    background-color: #008e5f;
-  }
-  
-  /* Contenedor de materiales */
-  .materiales-container {
-    margin-top: 20px;
-  }
-  
-  h2 {
-    text-align: center;
-    color: #333;
-  }
-  
-  /* Tabla */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  thead {
-    background: #00a46e;
-    color: white;
-  }
-  
-  th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  th {
-    text-align: left;
-  }
-  
-  /* Inputs en la tabla */
-  td input, td select {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
+.compras-container {
+  background-color: #00a46e;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.compras-container h1 {
+  color: white;
+  font-size: 2rem;
+}
+
+.tipo-compra {
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 800px;
+}
+
+.add-button {
+  background-color: #008e5f;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+}
+
+.file-upload {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

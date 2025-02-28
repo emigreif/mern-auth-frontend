@@ -15,7 +15,7 @@ const Login = () => {
     const success = await login(email, password);
     
     if (success) {
-      navigate("/dashboard"); // Solo si el login fue exitoso
+      navigate("/Obras"); // Solo si el login fue exitoso
     } else {
       alert("Error al iniciar sesión. Verifica tus credenciales.");
     }

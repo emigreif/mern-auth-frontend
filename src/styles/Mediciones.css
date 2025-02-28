@@ -1,0 +1,37 @@
+.mediciones-container {
+  background-color: #00a46e;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+h1, h2, h3 {
+  color: white;
+}
+
+.seleccion-obra, .ubicaciones-container, .tipologias-container, .asignacion-container, .conjuntos-container {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 900px;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #008e5f;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+input, select {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

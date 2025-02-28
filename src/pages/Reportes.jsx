@@ -19,6 +19,15 @@ const Reportes = () => {
               <span className="fecha">{reporte.fecha}</span>
               <span className="categoria">{reporte.categoria}</span>
               <span className="descripcion">{reporte.descripcion}</span>
+              <h1>Dashboard (Panel General)</h1>
+        <p>
+          Aquí se mostrarán las obras/presupuestos aprobados con tarjetas/renglones 
+          que incluyan N° de Obra, Nombre, Cliente, Fechas, Semáforos de estado, etc.
+        </p>
+        <p>
+          También habrá accesos rápidos a filtros (por estado, cliente, fecha).
+          Usa tu imaginación para mostrar info relevante y mantener la estética.
+        </p>
             </div>
           ))}
         </div>
