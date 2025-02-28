@@ -33,10 +33,11 @@ const Navbar = () => {
             <>
               <Link to="/dashboard">Dashboard</Link>
               <Link to="/obras">Obras</Link>
-   
-              <Link to="/proveedores">Proveedores</Link>
+                 <Link to="/proveedores">Proveedores</Link>
               <Link to="/panol">Pañol</Link>
               <Link to="/calendario">Calendario</Link>
+              <Link to="/Mediciones">Mediciones</Link>
+              <Link to="/Compras">Compras</Link>
               <Link to="/Configuracion">Configuracion</Link>
               <Link to="/reportes">Reportes</Link>
             </>
