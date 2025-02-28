@@ -7,7 +7,7 @@ import ProveedoresList from "./pages/ProveedoresList.jsx";
 
 import Panol from "./pages/Panol.jsx";
 import Calendario from "./pages/Calendario.jsx";
-import Admin from "./pages/Admin.jsx";
+import Configuracion from "./pages/Configuracion.jsx";
 import Reportes from "./pages/Reportes.jsx";
 import About from "./pages/About.jsx"; // Página "About"
 import Planner from "./pages/Planner.jsx"; // Página "Planner" (crea este archivo)
@@ -35,7 +35,7 @@ const App = () => {
           <Route path="/panol" element={<ProtectedRoute><Panol /></ProtectedRoute>} />
           <Route path="/calendario" element={<ProtectedRoute><Calendario /></ProtectedRoute>} />
           
-          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+          <Route path="/Configuracion" element={<ProtectedRoute><Configuracion /></ProtectedRoute>} />
           <Route path="/reportes" element={<ProtectedRoute><Reportes /></ProtectedRoute>} />
 
         </Routes>

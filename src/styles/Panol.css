@@ -1,18 +1,93 @@
-.panol-background {
-    background-color: #00a46e;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
-  
-  .panol-container {
-    width: 90%;
-    max-width: 900px;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  }
-  
+/* Fondo verde */
+body {
+  background-color: #00a46e;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+/* Contenedor principal */
+.panol-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+/* Botones de agregar */
+.panol-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 0;
+}
+
+.panol-buttons button {
+  background-color: #00a46e;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.panol-buttons button:hover {
+  background-color: #008e5f;
+}
+
+/* Sección */
+.panol-section {
+  margin-top: 20px;
+}
+
+.panol-section h2 {
+  color: #333;
+  border-bottom: 2px solid #00a46e;
+  padding-bottom: 5px;
+}
+
+/* Tarjetas de elementos */
+.panol-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.panol-card {
+  background: #f9f9f9;
+  padding: 15px;
+  border-left: 5px solid #00a46e;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 30%;
+}
+
+/* Modal */
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}

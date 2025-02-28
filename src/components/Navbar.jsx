@@ -37,7 +37,7 @@ const Navbar = () => {
               <Link to="/proveedores">Proveedores</Link>
               <Link to="/panol">Pañol</Link>
               <Link to="/calendario">Calendario</Link>
-              <Link to="/admin">Admin</Link>
+              <Link to="/Configuracion">Configuracion</Link>
               <Link to="/reportes">Reportes</Link>
             </>
           )}
