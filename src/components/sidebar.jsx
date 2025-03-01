@@ -5,7 +5,7 @@ import "../styles/Sidebar.css";
 
 const Sidebar = ({ onLogout }) => {
   const [isExpanded, setIsExpanded] = useState(() => {
-    return localStorage.getItem("sidebarMode") === "expanded";
+    return localStorage.getItem("SidebarMode") === "expanded";
   });
 
   const [hoverExpand, setHoverExpand] = useState(false);
@@ -14,7 +14,7 @@ const Sidebar = ({ onLogout }) => {
   });
 
   useEffect(() => {
-    localStorage.setItem("sidebarMode", isExpanded ? "expanded" : "collapsed");
+    localStorage.setItem("SidebarMode", isExpanded ? "expanded" : "collapsed");
   }, [isExpanded]);
 
   useEffect(() => {
@@ -23,50 +23,47 @@ const Sidebar = ({ onLogout }) => {
 
   return (
     <div
-      className={`sidebar ${isExpanded || hoverExpand ? "expanded" : "collapsed"}`}
+      className={`Sidebar ${isExpanded || hoverExpand ? "expanded" : "collapsed"}`}
       onMouseEnter={() => expandOnHover && setHoverExpand(true)}
       onMouseLeave={() => expandOnHover && setHoverExpand(false)}
     >
-      <div className="sidebar-header">
+      <div className="Sidebar-header">
         <h3 className="logo">Planner</h3>
       </div>
 
-      <nav className="sidebar-menu">
-        <Link to="/dashboard" className="sidebar-item">
-          <FaHome className="icon" />
-          <span className="text">Dashboard</span>
-        </Link>
-        <Link to="/obras" className="sidebar-item">
+      <nav className="Sidebar-menu">
+       
+        <Link to="/obras" className="Sidebar-item">
           <FaBuilding className="icon" />
           <span className="text">Obras</span>
         </Link>
-        <Link to="/proveedores" className="sidebar-item">
+        <Link to="/proveedores" className="Sidebar-item">
           <FaTruck className="icon" />
           <span className="text">Proveedores</span>
         </Link>
-        <Link to="/panol" className="sidebar-item">
+        <Link to="/panol" className="Sidebar-item">
           <FaClipboardList className="icon" />
           <span className="text">Pañol</span>
         </Link>
-        <Link to="/calendario" className="sidebar-item">
+        <Link to="/calendario" className="Sidebar-item">
           <FaCalendarAlt className="icon" />
           <span className="text">Calendario</span>
         </Link>
-        <Link to="/reportes" className="sidebar-item">
+        <Link to="/reportes" className="Sidebar-item">
           <FaChartBar className="icon" />
           <span className="text">Reportes</span>
         </Link>
-        <Link to="/configuracion" className="sidebar-item">
+        <Link to="/configuracion" className="Sidebar-item">
           <FaCog className="icon" />
           <span className="text">Configuración</span>
         </Link>
-        <button className="sidebar-item logout" onClick={onLogout}>
+        <button className="Sidebar-item logout" onClick={onLogout}>
           <FaSignOutAlt className="icon" />
           <span className="text">Cerrar Sesión</span>
         </button>
       </nav>
 
-      <div className="sidebar-footer">
+      <div className="Sidebar-footer">
         <button onClick={() => setIsExpanded(!isExpanded)} className="toggle-btn">
           {isExpanded ? "❮" : "❯"}
         </button>

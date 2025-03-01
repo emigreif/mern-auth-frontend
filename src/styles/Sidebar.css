@@ -1,5 +1,5 @@
 /* Estilos generales */
-.sidebar {
+.Sidebar {
     height: 100vh;
     width: 60px;
     background-color: #1e1e2d;
@@ -14,16 +14,16 @@
   }
   
   /* Expandido */
-  .sidebar.expanded {
+  .Sidebar.expanded {
     width: 250px;
   }
   
   /* Contraído */
-  .sidebar.collapsed {
+  .Sidebar.collapsed {
     width: 60px;
   }
   
-  .sidebar-header {
+  .Sidebar-header {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -35,17 +35,17 @@
     display: none;
   }
   
-  .sidebar.expanded .logo {
+  .Sidebar.expanded .logo {
     display: block;
   }
   
-  .sidebar-menu {
+  .Sidebar-menu {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
   }
   
-  .sidebar-item {
+  .Sidebar-item {
     display: flex;
     align-items: center;
     padding: 10px 15px;
@@ -54,7 +54,7 @@
     transition: background 0.3s ease;
   }
   
-  .sidebar-item:hover {
+  .Sidebar-item:hover {
     background-color: #29293d;
   }
   
@@ -68,7 +68,7 @@
     font-size: 16px;
   }
   
-  .sidebar.expanded .text {
+  .Sidebar.expanded .text {
     display: inline;
   }
   
@@ -89,7 +89,7 @@
   }
   
   /* Botón de colapsar */
-  .sidebar-footer {
+  .Sidebar-footer {
     padding: 10px;
     display: flex;
     justify-content: center;
