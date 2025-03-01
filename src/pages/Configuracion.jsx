@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Configuracion.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faCogs, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Configuracion = () => {
-  const [config, setConfig] = useState({
+  // Cargar configuración desde localStorage o valores por defecto
+  const initialConfig = JSON.parse(localStorage.getItem("config")) || {
     roles: ["Administrador", "Producción", "Ventas"],
     indicesSaldo: 1.05,
     impuestos: [{ nombre: "IVA", porcentaje: 21 }, { nombre: "IIBB", porcentaje: 3.5 }],
@@ -12,7 +13,14 @@ const Configuracion = () => {
     tiemposProduccion: { perfiles: 2, dvh: 4, accesorios: 3 },
     topeAccesorios: 5,
     stockCritico: { perfiles: 20, accesorios: 50 }
-  });
+  };
+
+  const [config, setConfig] = useState(initialConfig);
+
+  // Guardar cambios en localStorage al actualizar configuración
+  useEffect(() => {
+    localStorage.setItem("config", JSON.stringify(config));
+  }, [config]);
 
   const handleChange = (e, section, key, index) => {
     const newConfig = { ...config };
@@ -29,6 +37,11 @@ const Configuracion = () => {
       ...config,
       impuestos: [...config.impuestos, { nombre: "", porcentaje: 0 }]
     });
+  };
+
+  const saveConfig = () => {
+    localStorage.setItem("config", JSON.stringify(config));
+    alert("Configuración guardada con éxito!");
   };
 
   return (
@@ -94,7 +107,7 @@ const Configuracion = () => {
       </div>
 
       {/* Guardar Configuración */}
-      <button className="save-button">
+      <button className="save-button" onClick={saveConfig}>
         <FontAwesomeIcon icon={faSave} /> Guardar Configuración
       </button>
     </div>
