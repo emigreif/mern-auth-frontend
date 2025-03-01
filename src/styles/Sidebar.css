@@ -1,0 +1,105 @@
+/* Estilos generales */
+.sidebar {
+    height: 100vh;
+    width: 60px;
+    background-color: #1e1e2d;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease-in-out;
+    overflow: hidden;
+    position: fixed;
+    left: 0;
+    top: 0;
+  }
+  
+  /* Expandido */
+  .sidebar.expanded {
+    width: 250px;
+  }
+  
+  /* Contraído */
+  .sidebar.collapsed {
+    width: 60px;
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+  }
+  
+  .logo {
+    font-size: 20px;
+    display: none;
+  }
+  
+  .sidebar.expanded .logo {
+    display: block;
+  }
+  
+  .sidebar-menu {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+  
+  .sidebar-item:hover {
+    background-color: #29293d;
+  }
+  
+  .icon {
+    font-size: 20px;
+  }
+  
+  .text {
+    display: none;
+    margin-left: 10px;
+    font-size: 16px;
+  }
+  
+  .sidebar.expanded .text {
+    display: inline;
+  }
+  
+  .logout {
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logout:hover {
+    background-color: #ff4d4d;
+  }
+  
+  /* Botón de colapsar */
+  .sidebar-footer {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  

@@ -16,11 +16,19 @@ import Navbar from "./components/Navbar.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx"; // Importa el componente
 import Mediciones from "./pages/Mediciones.jsx";
+import Sidebar from "./components/Sidebar.jsx";
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
+        <Sidebar onLogout={logout} />
+        <div className="content">
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/configuracion" element={<Configuracion />} />
+          </Routes>
+        </div>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -29,7 +37,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/obras/:id" element={<ObraDetail />} />
-         
+
           <Route
             path="/obras"
             element={
