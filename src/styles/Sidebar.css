@@ -1,105 +1,62 @@
-/* Estilos generales */
-.Sidebar {
-    height: 100vh;
-    width: 60px;
-    background-color: #1e1e2d;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    transition: width 0.3s ease-in-out;
-    overflow: hidden;
-    position: fixed;
-    left: 0;
-    top: 0;
-  }
-  
-  /* Expandido */
-  .Sidebar.expanded {
-    width: 250px;
-  }
-  
-  /* Contraído */
-  .Sidebar.collapsed {
-    width: 60px;
-  }
-  
-  .Sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-  }
-  
-  .logo {
-    font-size: 20px;
-    display: none;
-  }
-  
-  .Sidebar.expanded .logo {
-    display: block;
-  }
-  
-  .Sidebar-menu {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .Sidebar-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    color: white;
-    text-decoration: none;
-    transition: background 0.3s ease;
-  }
-  
-  .Sidebar-item:hover {
-    background-color: #29293d;
-  }
-  
-  .icon {
-    font-size: 20px;
-  }
-  
-  .text {
-    display: none;
-    margin-left: 10px;
-    font-size: 16px;
-  }
-  
-  .Sidebar.expanded .text {
-    display: inline;
-  }
-  
-  .logout {
-    background: none;
-    border: none;
-    color: white;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .logout:hover {
-    background-color: #ff4d4d;
-  }
-  
-  /* Botón de colapsar */
-  .Sidebar-footer {
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .toggle-btn {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 18px;
-  }
-  
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 60px; /* Debajo de la Navbar */
+  left: 0;
+  background-color: #1e1e2f;
+  color: white;
+  padding-top: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+.sidebar .logout {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+}
+
+.sidebar .logout button {
+  background: none;
+  color: white;
+  border: none;
+  font-size: 16px;
+  padding: 12px 20px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar .logout button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+/* Ajustar el contenido principal */
+.main-content {
+  margin-left: 250px; /* Espacio para el sidebar */
+  padding: 20px;
+}
