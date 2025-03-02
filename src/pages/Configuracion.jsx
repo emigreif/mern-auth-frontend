@@ -45,7 +45,8 @@ const Configuracion = () => {
   };
 
   return (
-    <div className="config-container">
+<div className="config-background">
+<div className="config-container">
       <h1><FontAwesomeIcon icon={faCogs} /> Configuración General</h1>
 
       {/* Roles de Usuario */}
@@ -111,7 +112,8 @@ const Configuracion = () => {
         <FontAwesomeIcon icon={faSave} /> Guardar Configuración
       </button>
     </div>
-  );
+    </div>
+    );
 };
 
 export default Configuracion;

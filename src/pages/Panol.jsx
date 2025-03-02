@@ -28,6 +28,8 @@ const Panol = () => {
   };
 
   return (
+    <div className="panol-background">
+    
     <div className="panol-container">
       <h1>Pañol - Gestión de Stock</h1>
 
@@ -99,6 +101,7 @@ const Panol = () => {
           </div>
         </div>
       )}
+    </div> 
     </div>
   );
 };
