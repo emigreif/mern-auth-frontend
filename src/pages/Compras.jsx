@@ -1,124 +1,182 @@
 import React, { useState, useEffect } from "react";
+import * as XLSX from "xlsx";
 import "../styles/Compras.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle, faEdit, faTrash, faFileUpload } from "@fortawesome/free-solid-svg-icons";
-import * as XLSX from "xlsx";
+import { faShoppingCart, faFileUpload, faPlusCircle, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const Compras = () => {
+  const [tipoCompra, setTipoCompra] = useState("stock");
   const [compras, setCompras] = useState([]);
+  const [proveedores, setProveedores] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [tipoCompra, setTipoCompra] = useState("perfiles");
-  const [proveedor, setProveedor] = useState("");
-  const [lugarEntrega, setLugarEntrega] = useState("");
-  const [pedido, setPedido] = useState([]);
-  
+  const [selectedCompra, setSelectedCompra] = useState(null);
+
   useEffect(() => {
-    fetchCompras();
+    fetch(`${API_URL}/api/proveedores`)
+      .then((res) => res.json())
+      .then((data) => setProveedores(data))
+      .catch((err) => console.error("Error cargando proveedores:", err));
   }, []);
 
-  const fetchCompras = async () => {
-    const response = await fetch("http://localhost:5000/api/compras");
-    const data = await response.json();
-    setCompras(data);
+  const agregarCompra = () => {
+    setCompras([
+      ...compras,
+      { id: compras.length + 1, proveedor: "", lugarEntrega: "", materiales: [] },
+    ]);
   };
 
-  const agregarMaterial = () => {
-    const nuevoItem = tipoCompra === "vidrios"
-      ? { composicion: "", cantidad: "", ancho: "", alto: "", tipologia: "", observaciones: "" }
-      : tipoCompra === "perfiles"
-      ? { codigo: "", descripcion: "", cantidad: "", tratamiento: "", largo: "", observaciones: "" }
-      : { codigo: "", descripcion: "", color: "", cantidad: "", unidad: "unidades", observaciones: "" };
-    setPedido([...pedido, nuevoItem]);
+  const handleCompraChange = (index, field, value) => {
+    const updatedCompras = [...compras];
+    updatedCompras[index][field] = value;
+    setCompras(updatedCompras);
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const data = new Uint8Array(event.target.result);
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: "array" });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(sheet);
-      setPedido(json);
+      const parsedData = XLSX.utils.sheet_to_json(sheet);
+
+      setCompras([...compras, { id: compras.length + 1, materiales: parsedData }]);
     };
+
     reader.readAsArrayBuffer(file);
   };
 
-  const getEstadoClase = (compra) => {
-    if (compra.estado === "recibido") return "estado-verde";
-    if (compra.estado === "vencido") return "estado-rojo";
-    if (compra.estado === "parcial" || compra.estado === "proximo") return "estado-naranja";
-    return "";
+  const guardarCompras = async () => {
+    if (compras.length === 0) {
+      alert("No hay compras para guardar.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/api/compras`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(compras),
+      });
+
+      if (!response.ok) throw new Error("Error al guardar las compras");
+
+      alert("Compras guardadas con éxito");
+    } catch (error) {
+      console.error("Error guardando compras:", error);
+    }
+  };
+
+  // Mostrar el modal con los materiales de una compra
+  const openModal = (compra) => {
+    setSelectedCompra(compra);
+    setShowModal(true);
   };
 
   return (
     <div className="compras-container">
-      <h1>Portal de Compras</h1>
-      <button onClick={() => { setShowModal(true); setTipoCompra("perfiles"); }}>Nueva Compra</button>
-      <table className="compras-table">
+      <h1><FontAwesomeIcon icon={faShoppingCart} /> Compras</h1>
+
+      <div className="tipo-compra">
+        <label>Seleccionar Tipo de Compra:</label>
+        <select onChange={(e) => setTipoCompra(e.target.value)}>
+          <option value="stock">Compra para Stock</option>
+          <option value="obra">Compra para Obra</option>
+          <option value="no-productiva">Compra No Productiva</option>
+        </select>
+      </div>
+
+      <button className="add-button" onClick={agregarCompra}>
+        <FontAwesomeIcon icon={faPlusCircle} /> Agregar Compra
+      </button>
+
+      <table>
         <thead>
           <tr>
-            <th>N° Compra</th>
-            <th>Obra</th>
+            <th>ID</th>
             <th>Proveedor</th>
+            <th>Lugar de Entrega</th>
+            <th>Materiales</th>
             <th>Tipo</th>
-            <th>Fecha Compra</th>
-            <th>Fecha Esperada</th>
-            <th>Estado</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {compras.map((compra) => (
-            <tr key={compra.id} className={getEstadoClase(compra)}>
-              <td>{compra.numero}</td>
-              <td>{compra.obra}</td>
-              <td>{compra.proveedor}</td>
-              <td>{compra.tipo}</td>
-              <td>{compra.fechaCompra}</td>
-              <td>{compra.fechaEsperada}</td>
-              <td>{compra.estado}</td>
+          {compras.map((compra, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
               <td>
-                <button><FontAwesomeIcon icon={faEdit} /></button>
-                <button><FontAwesomeIcon icon={faTrash} /></button>
+                <select
+                  value={compra.proveedor}
+                  onChange={(e) => handleCompraChange(index, "proveedor", e.target.value)}
+                >
+                  <option value="">Seleccionar Proveedor</option>
+                  {proveedores.map((prov) => (
+                    <option key={prov.id} value={prov.nombre}>{prov.nombre}</option>
+                  ))}
+                </select>
               </td>
+              <td>
+                <input
+                  type="text"
+                  value={compra.lugarEntrega}
+                  onChange={(e) => handleCompraChange(index, "lugarEntrega", e.target.value)}
+                />
+              </td>
+              <td>
+                <button onClick={() => openModal(compra)}>
+                  <FontAwesomeIcon icon={faBoxOpen} /> Ver Materiales
+                </button>
+              </td>
+              <td>{tipoCompra}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      {showModal && (
-        <div className="modal-background">
-          <div className="modal-container">
-            <h2>Nueva Compra de {tipoCompra}</h2>
-            <label>Proveedor:</label>
-            <input type="text" value={proveedor} onChange={(e) => setProveedor(e.target.value)} />
-            <label>Lugar de Entrega:</label>
-            <input type="text" value={lugarEntrega} onChange={(e) => setLugarEntrega(e.target.value)} />
-            <input type="file" accept=".xls,.xlsx" onChange={handleFileUpload} />
+
+      <div className="file-upload">
+        <label>Cargar desde archivo Excel:</label>
+        <input type="file" accept=".xls,.xlsx" onChange={handleFileUpload} />
+        <FontAwesomeIcon icon={faFileUpload} className="upload-icon" />
+      </div>
+
+      <button className="save-button" onClick={guardarCompras}>
+        Guardar Compras
+      </button>
+
+      {/* MODAL */}
+      {showModal && selectedCompra && (
+        <div className="modal-background" onClick={() => setShowModal(false)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <h2>Materiales de la Compra {selectedCompra.id}</h2>
             <table>
               <thead>
                 <tr>
-                  {tipoCompra === "perfiles" && <><th>Código</th><th>Descripción</th><th>Cantidad</th><th>Tratamiento</th><th>Largo</th><th>Observaciones</th></>}
-                  {tipoCompra === "vidrios" && <><th>Composición</th><th>Cantidad</th><th>Ancho</th><th>Alto</th><th>Tipología</th><th>Observaciones</th></>}
-                  {tipoCompra === "accesorios" && <><th>Código</th><th>Descripción</th><th>Color</th><th>Cantidad</th><th>Unidad</th><th>Observaciones</th></>}
+                  <th>Código</th>
+                  <th>Descripción</th>
+                  <th>Cantidad</th>
+                  <th>Observaciones</th>
                 </tr>
               </thead>
               <tbody>
-                {pedido.map((item, index) => (
-                  <tr key={index}>
-                    {Object.keys(item).map((key) => (
-                      <td key={key}><input type="text" value={item[key]} onChange={(e) => {
-                        let updatedPedido = [...pedido];
-                        updatedPedido[index][key] = e.target.value;
-                        setPedido(updatedPedido);
-                      }} /></td>
-                    ))}
-                  </tr>
-                ))}
+                {selectedCompra.materiales.length > 0 ? (
+                  selectedCompra.materiales.map((mat, index) => (
+                    <tr key={index}>
+                      <td>{mat.codigo || "N/A"}</td>
+                      <td>{mat.descripcion || "Sin descripción"}</td>
+                      <td>{mat.cantidad || 0}</td>
+                      <td>{mat.observaciones || "-"}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr><td colSpan="4">No hay materiales cargados</td></tr>
+                )}
               </tbody>
             </table>
-            <button onClick={agregarMaterial}><FontAwesomeIcon icon={faPlusCircle} /> Agregar Material</button>
-            <button onClick={() => setShowModal(false)}>Guardar</button>
+            <button onClick={() => setShowModal(false)}>Cerrar</button>
           </div>
         </div>
       )}
