@@ -6,7 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_URL = import.meta.env.VITE_API_URL || "https://mern-auth-backend-sn56.onrender.com"; // URL del backend
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";  // URL del backend
 
   useEffect(() => {
     const fetchUser = async () => {
