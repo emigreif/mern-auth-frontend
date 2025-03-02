@@ -1,62 +1,26 @@
-.sidebar {
-  width: 250px;
-  height: 100vh;
+.Sidebar {
   position: fixed;
-  top: 60px; /* Debajo de la Navbar */
+  top: 60px;
   left: 0;
+  height: calc(100vh - 60px);
+  width: 250px;
   background-color: #1e1e2f;
   color: white;
-  padding-top: 20px;
 }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
+.Sidebar.expanded {
+  width: 250px;
 }
 
-.sidebar ul li {
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
+.Sidebar.collapsed {
+  width: 60px;
 }
 
-.sidebar ul li a {
-  text-decoration: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.sidebar ul li a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-}
-
-.sidebar .logout {
-  position: absolute;
-  bottom: 20px;
-  width: 100%;
-}
-
-.sidebar .logout button {
-  background: none;
-  color: white;
-  border: none;
-  font-size: 16px;
-  padding: 12px 20px;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-}
-
-.sidebar .logout button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-}
-
-/* Ajustar el contenido principal */
 .main-content {
-  margin-left: 250px; /* Espacio para el sidebar */
+  flex-grow: 1;
   padding: 20px;
+}
+
+.with-sidebar {
+  margin-left: 250px;
 }
