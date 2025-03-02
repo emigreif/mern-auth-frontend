@@ -13,7 +13,7 @@ import Planner from "./pages/Planner.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Navbar from "./components/Navbar.jsx";
-import Sidebar from "./components/Sidebar.jsx";
+import Sidebar from "./components/Sidebar";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Mediciones from "./pages/Mediciones.jsx";
