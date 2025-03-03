@@ -1,7 +1,8 @@
-/* Estilos generales del Sidebar */
+/* sidebar.css */
+
 .sidebar {
   position: fixed;
-  top: 60px; /* Ajusta según la altura de la Navbar */
+  top: 60px; /* Si tu navbar mide 60px de alto */
   left: 0;
   height: calc(100vh - 60px);
   background-color: #1e1e2f;
@@ -10,23 +11,23 @@
   overflow: hidden;
 }
 
-/* Sidebar contraído */
+/* Colapsada vs Expandida */
 .sidebar.collapsed {
   width: 60px;
 }
-
-/* Sidebar expandido */
 .sidebar.expanded {
   width: 220px;
 }
 
-/* Header con botón de menú */
+/* Encabezado (donde va el botón) */
 .sidebar-header {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  justify-content: flex-start; /* Para alinear a la izq */
   padding: 10px;
 }
 
+/* Botón con > o < */
 .menu-btn {
   background: none;
   border: none;
@@ -35,15 +36,14 @@
   cursor: pointer;
 }
 
-/* Contenedor del menú */
+/* Menú principal */
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   margin-top: 10px;
 }
 
-/* Estilos de cada ítem */
+/* Ítems del menú */
 .sidebar-item {
   display: flex;
   align-items: center;
@@ -58,23 +58,23 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Ícono de cada opción */
+/* Ícono a la izquierda, texto a la derecha */
 .icon {
   font-size: 20px;
   margin-right: 10px;
 }
 
-/* Ocultar texto cuando está contraído */
+/* El span de texto se oculta en modo colapsado */
 .sidebar.collapsed .text {
   display: none;
 }
 
-/* Mostrar texto cuando está expandido */
+/* El span se muestra en expandido */
 .sidebar.expanded .text {
   display: inline;
 }
 
-/* Estilos del botón de cerrar sesión */
+/* Botón de cerrar sesión fijo al fondo */
 .sidebar-item.logout {
   position: absolute;
   bottom: 10px;
