@@ -1,1 +1,28 @@
-node_modules
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Vite cache
+.vite/
+
+# Archivos de entorno
+.env
+.env.* # Para .env.development .env.production, etc.
+
+# Logs
+*.log
+npm-debug.log*
+
+# Archivos de bloqueos de versiones
+package-lock.json
+yarn.lock
+
+# IDE / Config
+.vscode/
+.idea/
+
+# Otros
+.DS_Store
