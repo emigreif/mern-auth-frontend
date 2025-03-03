@@ -26,6 +26,21 @@
   display: flex;
   gap: 1.5rem;
 }
+.nav-comp {
+  color: #808080;                /* Color gris medio */
+  background-color: transparent; /* Fondo transparente */
+  font-family: Arial, sans-serif;/* Fuente Arial */
+  text-decoration: none;         /* Sin subrayado */
+  font-weight: 500;               /* Negrita */
+
+  &:hover {
+    color: #00a46e;             /* Color verde cuando se pasa el mouse */
+ 
+  }
+
+}
+
+
 .nav-center a {
   text-decoration: none;
   color: #333;
