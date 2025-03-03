@@ -28,24 +28,17 @@ const Sidebar = () => {
 
       <nav className="sidebar-menu">
         <Link to="/obras" className="sidebar-item"> <FaBuilding className="icon" /><span className="text">Obras</span>  </Link>
-
-        <Link to="/proveedores" className="sidebar-item"> <FaTruck className="icon" /><span className="text">Proveedores</span>  </Link>
-
+        <Link to="/presupuestos" className="sidebar-item"> <FaFileInvoiceDollar className="icon" /><span className="text">Presupuestos</span>  </Link>
         <Link to="/compras" className="sidebar-item"> <FaShoppingCart className="icon" /><span className="text">Compras</span>  </Link>
-
+        <Link to="/proveedores" className="sidebar-item"> <FaTruck className="icon" /><span className="text">Proveedores</span>  </Link>
         <Link to="/panol" className="sidebar-item"> <FaClipboardList className="icon" /><span className="text">Pañol</span>  </Link>
-
         <Link to="/calendario" className="sidebar-item"> <FaCalendarAlt className="icon" /><span className="text">Calendario</span>  </Link>
-
+        <Link to="/contabilidad" className="sidebar-item"> <FaCalculator className="icon" /><span className="text">Contabilidad</span>  </Link>
         <Link to="/reportes" className="sidebar-item"> <FaChartBar className="icon" /><span className="text">Reportes</span>  </Link>
-
         <Link to="/configuracion" className="sidebar-item"> <FaCog className="icon" /><span className="text">Configuración</span>  </Link>
-
         <Link to="/profile" className="sidebar-item"> <FaUser className="icon" /><span className="text">Mi Perfil</span>  </Link>
 
-        <Link to="/presupuestos" className="sidebar-item"> <FaFileInvoiceDollar className="icon" /><span className="text">Presupuestos</span>  </Link>
 
-        <Link to="/contabilidad" className="sidebar-item"> <FaCalculator className="icon" /><span className="text">Contabilidad</span>  </Link>
       </nav>
       <button className="sidebar-item logout" onClick={onLogout}>
         <FaSignOutAlt className="icon" /><span className="text">Cerrar Sesión</span>
