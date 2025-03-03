@@ -48,6 +48,10 @@ const Sidebar = ({ onLogout }) => {
         <Link to="/proveedores" className="sidebar-item">
           <FaTruck className="icon" />
           <span className="text">Proveedores</span>
+        </Link> 
+         <Link to="/compras" className="sidebar-item">
+          <FaTruck className="icon" />
+          <span className="text">Proveedores</span>
         </Link>
         <Link to="/panol" className="sidebar-item">
           <FaClipboardList className="icon" />
