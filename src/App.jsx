@@ -25,15 +25,20 @@ import Sidebar from "./components/Sidebar.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 
 const PublicRoutes = () => (
-  <Routes>
-    <Route path="/login" element={<Login />} />
-    <Route path="/register" element={<Register />} />
-    <Route path="/" element={<Home />} />
-    <Route path="/about" element={<About />} />
-    <Route path="/planner" element={<Planner />} />
-    {/* Si se intenta acceder a otra ruta, redirige a login */}
-    <Route path="*" element={<Navigate to="/" />} />
-  </Routes>
+  <div className="app-container">
+    <Navbar />
+    <div className="main-content">
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/planner" element={<Planner />} />
+        {/* Redirige a la home si se ingresa una ruta desconocida */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </div>
+  </div>
 );
 
 const ProtectedRoutes = () => (

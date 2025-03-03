@@ -1,13 +1,10 @@
-/* Contenedor principal del nav */
 .top-nav {
   display: flex;
   align-items: center;
   padding: 1rem 2rem;
   background-color: #fff; /* Ajusta si prefieres transparente */
-  /* Quita el box-shadow si no quieres sombra */
 }
 
-/* Izquierda: marca / logo */
 .nav-left .brand {
   color: #333;
   text-decoration: none;
