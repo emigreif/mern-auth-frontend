@@ -21,39 +21,23 @@
   gap: 1.5rem;              /* Espacio entre elementos */
 }
 
-/* nav-center: enlaces estilo 'Home', 'About', etc. */
-.nav-center {
-  display: flex;
-  gap: 1.5rem;
-}
 .nav-comp {
-  color: #808080;                /* Color gris medio */
-  background-color: transparent; /* Fondo transparente */
-  font-family: Arial, sans-serif;/* Fuente Arial */
-  text-decoration: none;         /* Sin subrayado */
-  font-weight: 500;               /* Negrita */
-
+  text-decoration: none;
+  color: #333;
+  font-size: 1rem;
   &:hover {
-    color: #00a46e;             /* Color verde cuando se pasa el mouse */
- 
+    color: #00a46e;
   }
 
 }
 
 
-.nav-center a {
-  text-decoration: none;
-  color: #333;
-  font-size: 1rem;
-}
-
-/* Botón Sign Up */
 .signup-btn {
   background-color: #00a46e; /* Verde principal, ajusta a tu gusto */
   color: #fff;
   border: none;
   padding: 0.6rem 1.2rem;
-  border-radius: 4px;
+  border-radius: 1px;
   text-decoration: none;
   font-weight: 500;
   transition: background-color 0.3s ease;
