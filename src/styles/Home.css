@@ -1,7 +1,7 @@
-
-.home-container {
+.home-contenedor {
   display: flex;
-  height: calc(100vh - 60px); /* Si tu navbar fija mide ~60px, ajusta si difiere */
+  height: calc(100vh - 60px);
+  /* Si tu navbar fija mide ~60px, ajusta si difiere */
 }
 
 /* Sección Izquierda (blanca) */
@@ -22,7 +22,8 @@
 
 .planner-title {
   font-size: 3rem;
-  color: #00a46e; /* Verde principal */
+  color: #00a46e;
+  /* Verde principal */
   margin: 0;
 }
 
@@ -41,7 +42,8 @@
 
 .home-button {
   display: inline-block;
-  background-color: #00a46e; /* Mismo verde */
+  background-color: #00a46e;
+  /* Mismo verde */
   color: #fff;
   padding: 0.8rem 1.5rem;
   border-radius: 4px;
@@ -49,6 +51,7 @@
   font-weight: 600;
   transition: background-color 0.3s ease;
 }
+
 .home-button:hover {
   background-color: #008e5f;
 }
@@ -62,6 +65,7 @@
   align-items: center;
   padding: 2rem;
 }
+
 .home-right img {
   max-width: 80%;
   height: auto;

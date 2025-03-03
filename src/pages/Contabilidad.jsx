@@ -64,7 +64,7 @@ const Contabilidad = () => {
   };
 
   return (
-    <div className="contabilidad-container">
+    <div className="page-contenedor">
       <h1>Contabilidad</h1>
       <h2>Movimientos Registrados</h2>
       <table>

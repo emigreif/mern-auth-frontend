@@ -9,7 +9,7 @@
   }
   
   /* Recuadro blanco */
-  .about-container {
+  .page-contenedor {
     width: 90%;
     max-width: 900px;
     background-color: #fff;
@@ -20,48 +20,48 @@
   }
   
   /* Títulos */
-  .about-container h1 {
+  .page-contenedor h1 {
     color: #007b55; /* Un verde un poco más oscuro, ajusta si quieres */
     font-size: 2rem;
     margin-bottom: 1rem;
   }
   
   /* Subtítulo */
-  .about-container h2 {
+  .page-contenedor h2 {
     color: #555;
     font-size: 1.3rem;
     margin-bottom: 1.5rem;
   }
   
   /* Sección */
-  .about-container section {
+  .page-contenedor section {
     border-top: 1px solid #ccc;
     padding-top: 1rem;
     margin-top: 1rem;
   }
   
   /* Encabezados de sección */
-  .about-container h3 {
+  .page-contenedor h3 {
     color: #333;
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
   }
   
   /* Texto */
-  .about-container p,
-  .about-container ul {
+  .page-contenedor p,
+  .page-contenedor ul {
     color: #444;
     line-height: 1.6;
     font-size: 0.95rem;
   }
   
-  .about-container ul {
+  .page-contenedor ul {
     list-style: disc;
     margin-left: 1.5rem;
     margin-bottom: 1rem;
   }
   
-  .about-container ul li {
+  .page-contenedor ul li {
     margin-bottom: 0.5rem;
   }
   

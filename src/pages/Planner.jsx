@@ -4,7 +4,7 @@ import '../styles/Planner.css';
 const Planner = () => {
   return (
     <div className="planner-background">
-      <div className="planner-container">
+      <div className="page-contenedor">
         <h1>Planner</h1>
         <p className="intro-text">
           Planner es la herramienta integral para optimizar tus procesos de producción y organizar cada etapa 

@@ -32,7 +32,7 @@ const ProveedoresList = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="proveedores-container">
+    <div className="page-contenedor">
       <h1>Proveedores</h1>
       {proveedores.length === 0 ? (
         <p>No hay proveedores registrados.</p>

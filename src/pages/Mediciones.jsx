@@ -32,7 +32,7 @@ const Mediciones = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="mediciones-container">
+    <div className="page-contenedor">
       <h1>Mediciones</h1>
       {mediciones.length === 0 ? (
         <p>No hay mediciones registradas.</p>

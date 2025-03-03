@@ -32,7 +32,7 @@ const Reportes = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="reportes-container">
+    <div className="page-contenedor">
       <h1>Reportes</h1>
       {reportes.length === 0 ? (
         <p>No hay reportes disponibles.</p>

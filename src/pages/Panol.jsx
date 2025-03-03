@@ -34,7 +34,7 @@ const Panol = () => {
   if (!panol) return <div>Cargando datos del panol...</div>;
 
   return (
-    <div className="panol-container">
+    <div className="page-contenedor">
       <h1>Pañol</h1>
       <h2>Herramientas</h2>
       {panol.herramientas && panol.herramientas.map((item) => (

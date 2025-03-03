@@ -32,7 +32,7 @@ const ObrasList = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="obras-container">
+    <div className="page-contenedor">
       <h1>Obras</h1>
       {obras.length === 0 ? (
         <p>No hay obras registradas para este usuario.</p>

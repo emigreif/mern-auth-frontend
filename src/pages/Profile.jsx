@@ -63,7 +63,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile-container">
+    <div className="page-contenedor">
       <h1>Mi Perfil</h1>
 
       <div className="profile-form">

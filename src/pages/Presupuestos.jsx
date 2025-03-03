@@ -54,7 +54,7 @@ const Presupuestos = () => {
   };
 
   return (
-    <div className="presupuestos-container">
+    <div className="page-contenedor">
       <h1>Presupuestos</h1>
       <table>
         <thead>

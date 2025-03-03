@@ -4,3 +4,12 @@ body {
   padding: 0;
   background-color: #f5f5f5;
 }
+.page-contenedor {
+  width: 90%;
+  max-width: 900px;
+  background-color: #fff;
+  border: 2px solid #fff; /* Borde blanco sutil, puedes cambiarlo a #ddd si prefieres */
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}

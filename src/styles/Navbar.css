@@ -1,7 +1,7 @@
 .top-nav {
   display: flex;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: .5rem .5rem;
   background-color: #fff; /* Ajusta si prefieres transparente */
 }
 
@@ -12,13 +12,12 @@
   font-weight: 600;
 }
 
-/* Derecha: todo alineado al final */
 .nav-right {
-  flex: 1;                  /* Ocupa el espacio restante */
+  flex: 1; /* Ocupa el espacio restante */
   display: flex;
   justify-content: flex-end; /* Alinea a la derecha */
   align-items: center;
-  gap: 1.5rem;              /* Espacio entre elementos */
+  gap: 1.5rem; /* Espacio entre elementos */
 }
 
 .nav-comp {
@@ -28,12 +27,10 @@
   &:hover {
     color: #00a46e;
   }
-
 }
 
-
 .signup-btn {
-  background-color: #00a46e; /* Verde principal, ajusta a tu gusto */
+  background-color: #00a46e;
   color: #fff;
   border: none;
   padding: 0.6rem 1.2rem;
@@ -46,7 +43,6 @@
   background-color: #008e5f;
 }
 
-/* Botón Logout */
 .logout-btn {
   background: none;
   border: none;
@@ -56,5 +52,5 @@
   transition: color 0.2s ease;
 }
 .logout-btn:hover {
-  color: #00a46e; 
+  color: #00a46e;
 }
