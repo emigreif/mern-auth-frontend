@@ -19,6 +19,7 @@ import Calendario from "./pages/Calendario.jsx";
 import Mediciones from "./pages/Mediciones.jsx";
 import Compras from "./pages/Compras.jsx";
 import Configuracion from "./pages/Configuracion.jsx";
+import Profile from "./pages/Profile.jsx";
 import Reportes from "./pages/Reportes.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Sidebar from "./components/Sidebar.jsx";
@@ -58,7 +59,7 @@ const ProtectedRoutes = () => (
         <Route path="/compras" element={<Compras />} />
         <Route path="/configuracion" element={<Configuracion />} />
         <Route path="/reportes" element={<Reportes />} />
-        {/* Si se ingresa una ruta desconocida, redirige a Home */}
+        <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
