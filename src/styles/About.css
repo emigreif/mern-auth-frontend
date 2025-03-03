@@ -1,39 +1,4 @@
-/* Fondo general verde */
-.about-background {
-    background-color: #00a46e; /* Ajusta al tono de verde que desees */
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
-  
-  /* Recuadro blanco */
-  .page-contenedor {
-    width: 90%;
-    max-width: 900px;
-    background-color: #fff;
-    border: 2px solid #fff; /* Borde blanco sutil, puedes cambiarlo a #ddd si prefieres */
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  }
-  
-  /* Títulos */
-  .page-contenedor h1 {
-    color: #007b55; /* Un verde un poco más oscuro, ajusta si quieres */
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-  
-  /* Subtítulo */
-  .page-contenedor h2 {
-    color: #555;
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Sección */
+
   .page-contenedor section {
     border-top: 1px solid #ccc;
     padding-top: 1rem;

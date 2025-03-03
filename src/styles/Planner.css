@@ -1,13 +1,3 @@
-/* Fondo verde */
-.planner-background {
-  background-color: #00a46e; /* Ajusta el verde a tu gusto */
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 2rem;
-}
-
 .intro-text {
   font-size: 1rem;
   color: #444;

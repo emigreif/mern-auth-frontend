@@ -32,19 +32,24 @@ const Calendario = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="calendario-container">
-      <h1>Calendario de Producción</h1>
-      {eventos.length === 0 ? (
-        <p>No hay eventos registrados.</p>
-      ) : (
-        eventos.map((evento) => (
-          <div key={evento._id} className={`evento ${evento.tipo.toLowerCase()}`}>
-            <span className="fecha">{evento.fecha}</span>
-            <span className="tipo">{evento.tipo}</span>
-            <span className="obra">{evento.obra}</span>
-          </div>
-        ))
-      )}
+    <div className="page-background">
+      <div className="calendario-container">
+        <h1>Calendario de Producción</h1>
+        {eventos.length === 0 ? (
+          <p>No hay eventos registrados.</p>
+        ) : (
+          eventos.map((evento) => (
+            <div
+              key={evento._id}
+              className={`evento ${evento.tipo.toLowerCase()}`}
+            >
+              <span className="fecha">{evento.fecha}</span>
+              <span className="tipo">{evento.tipo}</span>
+              <span className="obra">{evento.obra}</span>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

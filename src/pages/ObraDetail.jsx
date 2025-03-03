@@ -36,11 +36,13 @@ const ObraDetail = () => {
   if (!obra) return <div>Cargando detalle de la obra...</div>;
 
   return (
-    <div className="obra-detail-container">
-      <h1>Detalle de Obra</h1>
-      <h2>{obra.nombre}</h2>
-      <p>Dirección: {obra.direccion}</p>
-      {/* Muestra otros detalles necesarios */}
+    <div className="page-background">
+      <div className="obra-detail-container">
+        <h1>Detalle de Obra</h1>
+        <h2>{obra.nombre}</h2>
+        <p>Dirección: {obra.direccion}</p>
+        {/* Muestra otros detalles necesarios */}
+      </div>
     </div>
   );
 };

@@ -32,19 +32,21 @@ const Reportes = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="page-contenedor">
-      <h1>Reportes</h1>
-      {reportes.length === 0 ? (
-        <p>No hay reportes disponibles.</p>
-      ) : (
-        reportes.map((rep) => (
-          <div key={rep._id} className="reporte-card">
-            <h2>{rep.categoria}</h2>
-            <p>{rep.descripcion}</p>
-            <p>Fecha: {rep.fecha}</p>
-          </div>
-        ))
-      )}
+    <div className="page-background">
+      <div className="page-contenedor">
+        <h1>Reportes</h1>
+        {reportes.length === 0 ? (
+          <p>No hay reportes disponibles.</p>
+        ) : (
+          reportes.map((rep) => (
+            <div key={rep._id} className="reporte-card">
+              <h2>{rep.categoria}</h2>
+              <p>{rep.descripcion}</p>
+              <p>Fecha: {rep.fecha}</p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

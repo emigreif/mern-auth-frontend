@@ -46,7 +46,10 @@ const Configuracion = () => {
       const res = await fetch(`${API_URL}/api/configuracion`, {
         method: "PUT",
         credentials: "include",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: JSON.stringify(config),
       });
       if (!res.ok) throw new Error("Error al actualizar configuración");
@@ -59,17 +62,21 @@ const Configuracion = () => {
   if (!config) return <div>Cargando configuración...</div>;
 
   return (
-    <div className="configuracion-container">
-      <h1>Configuración</h1>
-      {/* Muestra y edita la configuración */}
-      <div>
-        <h2>Roles de Usuario</h2>
-        <ul>
-          {config.roles.map((role, idx) => <li key={idx}>{role}</li>)}
-        </ul>
+    <div className="page-background">
+      <div className="configuracion-container">
+        <h1>Configuración</h1>
+        {/* Muestra y edita la configuración */}
+        <div>
+          <h2>Roles de Usuario</h2>
+          <ul>
+            {config.roles.map((role, idx) => (
+              <li key={idx}>{role}</li>
+            ))}
+          </ul>
+        </div>
+        {/* Agregar secciones para índices, impuestos, etc. similar al código original */}
+        <button onClick={saveConfig}>Guardar Configuración</button>
       </div>
-      {/* Agregar secciones para índices, impuestos, etc. similar al código original */}
-      <button onClick={saveConfig}>Guardar Configuración</button>
     </div>
   );
 };

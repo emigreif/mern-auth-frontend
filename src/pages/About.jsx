@@ -4,7 +4,7 @@ import "../styles/About.css"; // Importa el CSS para About
 
 const About = () => {
   return (
-    <div className="about-background">
+    <div className="page-background">
       <div className="page-contenedor">
         <h1>About Planner</h1>
         <h2>by Greif Software Solutions</h2>

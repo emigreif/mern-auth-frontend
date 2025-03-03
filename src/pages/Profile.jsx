@@ -41,8 +41,8 @@ const Profile = () => {
         method: 'PUT',
         credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}` // Si guardas el token en localStorage
+          'Conten Type': 'application/json',
+          horization: `Bearer ${localStorage.getItem('token')}` // Si guardas el en localStorage
         },
         body: JSON.stringify(formData)
       });
@@ -63,53 +63,29 @@ const Profile = () => {
   };
 
   return (
-    <div className="page-contenedor">
-      <h1>Mi Perfil</h1>
+    <div className="page-background">
+      <div className="page-contenedor">
+        <h1>Mi Perfil</h1>
 
-      <div className="profile-form">
-        <label>Nombre</label>
-        <input
-          type="text"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-        />
+        <div className="profile-form">
 
-        <label>Apellido</label>
-        <input
-          type="text"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-        />
+          <label>Nombre</label>
+          <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
 
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
+          <label>Apellido</label>
+          <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
 
-        <label>Contraseña Actual</label>
-        <input
-          type="password"
-          name="password"
-          placeholder="Solo si cambias la contraseña"
-          value={formData.password}
-          onChange={handleChange}
-        />
+          <label>Email</label>
+          <input type="email" name="email" value={formData.email} onChange={handleChange} />
 
-        <label>Nueva Contraseña</label>
-        <input
-          type="password"
-          name="newPassword"
-          placeholder="Solo si cambias la contraseña"
-          value={formData.newPassword}
-          onChange={handleChange}
-        />
+          <label>Contraseña Actual</label>
+          <input type="password" name="password" placeholder="Solo si cambias la contraseña" value={formData.password} onChange={handleChange} />
 
-        <button onClick={handleUpdateProfile}>Actualizar Perfil</button>
+          <label>Nueva Contraseña</label>
+          <input type="password" name="newPassword" placeholder="Solo si cambias la contraseña" value={formData.newPassword} onChange={handleChange} />
+
+          <button onClick={handleUpdateProfile}>Actualizar Perfil</button>
+        </div>
       </div>
     </div>
   );

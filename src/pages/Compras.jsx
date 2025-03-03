@@ -63,7 +63,10 @@ const Compras = () => {
       const response = await fetch(`${API_URL}/api/compras`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: JSON.stringify(compras),
       });
       if (!response.ok) throw new Error("Error al guardar las compras");
@@ -74,10 +77,12 @@ const Compras = () => {
   };
 
   return (
-    <div className="page-contenedor">
-      <h1>Compras</h1>
-      {/* Resto de la lógica (tabla, modal, etc.) se mantiene similar */}
-      <button onClick={guardarCompras}>Guardar Compras</button>
+    <div className="page-background">
+      <div className="page-contenedor">
+        <h1>Compras</h1>
+        {/* Resto de la lógica (tabla, modal, etc.) se mantiene similar */}
+        <button onClick={guardarCompras}>Guardar Compras</button>
+      </div>
     </div>
   );
 };

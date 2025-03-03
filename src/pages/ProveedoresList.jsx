@@ -32,21 +32,23 @@ const ProveedoresList = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="page-contenedor">
-      <h1>Proveedores</h1>
-      {proveedores.length === 0 ? (
-        <p>No hay proveedores registrados.</p>
-      ) : (
-        proveedores.map((prov) => (
-          <div key={prov._id} className="proveedor-card">
-            <h2>{prov.nombre}</h2>
-            <p>Dirección: {prov.direccion}</p>
-            <p>Emails: {prov.emails.join(", ")}</p>
-            <p>Teléfono: {prov.telefono}</p>
-            <p>WhatsApp: {prov.whatsapp}</p>
-          </div>
-        ))
-      )}
+    <div className="page-background">
+      <div className="page-contenedor">
+        <h1>Proveedores</h1>
+        {proveedores.length === 0 ? (
+          <p>No hay proveedores registrados.</p>
+        ) : (
+          proveedores.map((prov) => (
+            <div key={prov._id} className="proveedor-card">
+              <h2>{prov.nombre}</h2>
+              <p>Dirección: {prov.direccion}</p>
+              <p>Emails: {prov.emails.join(", ")}</p>
+              <p>Teléfono: {prov.telefono}</p>
+              <p>WhatsApp: {prov.whatsapp}</p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

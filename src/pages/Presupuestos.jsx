@@ -54,35 +54,37 @@ const Presupuestos = () => {
   };
 
   return (
-    <div className="page-contenedor">
-      <h1>Presupuestos</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Estado</th>
-            <th>Total Blanco</th>
-            <th>Fecha Entrega</th>
-          </tr>
-        </thead>
-        <tbody>
-          {presupuestos.map((p) => (
-            <tr key={p._id}>
-              <td>{p.descripcion}</td>
-              <td>{p.estadoPresupuesto || "pendiente"}</td>
-              <td>${p.totalBlanco}</td>
-              <td>{p.fechaEntrega ? p.fechaEntrega.slice(0,10) : ""}</td>
+    <div className="page-background">
+      <div className="page-contenedor">
+        <h1>Presupuestos</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Total Blanco</th>
+              <th>Fecha Entrega</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <h2>Crear nuevo presupuesto</h2>
-      <div className="nuevo-presupuesto">
-        <input type="text" placeholder="Descripción" value={nuevo.descripcion} onChange={(e) => setNuevo({ ...nuevo, descripcion: e.target.value })} />
-        <input type="number" placeholder="Total Blanco" value={nuevo.totalBlanco} onChange={(e) => setNuevo({ ...nuevo, totalBlanco: Number(e.target.value) })} />
-        <input type="number" placeholder="Total Negro" value={nuevo.totalNegro} onChange={(e) => setNuevo({ ...nuevo, totalNegro: Number(e.target.value) })} />
-        <input type="date" value={nuevo.fechaEntrega} onChange={(e) => setNuevo({ ...nuevo, fechaEntrega: e.target.value })} />
-        <button onClick={crearPresupuesto}>Crear</button>
+          </thead>
+          <tbody>
+            {presupuestos.map((p) => (
+              <tr key={p._id}>
+                <td>{p.descripcion}</td>
+                <td>{p.estadoPresupuesto || "pendiente"}</td>
+                <td>${p.totalBlanco}</td>
+                <td>{p.fechaEntrega ? p.fechaEntrega.slice(0, 10) : ""}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <h2>Crear nuevo presupuesto</h2>
+        <div className="nuevo-presupuesto">
+          <input type="text" placeholder="Descripción" value={nuevo.descripcion} onChange={(e) => setNuevo({ ...nuevo, descripcion: e.target.value })} />
+          <input type="number" placeholder="Total Blanco" value={nuevo.totalBlanco} onChange={(e) => setNuevo({ ...nuevo, totalBlanco: Number(e.target.value) })} />
+          <input type="number" placeholder="Total Negro" value={nuevo.totalNegro} onChange={(e) => setNuevo({ ...nuevo, totalNegro: Number(e.target.value) })} />
+          <input type="date" value={nuevo.fechaEntrega} onChange={(e) => setNuevo({ ...nuevo, fechaEntrega: e.target.value })} />
+          <button onClick={crearPresupuesto}>Crear</button>
+        </div>
       </div>
     </div>
   );

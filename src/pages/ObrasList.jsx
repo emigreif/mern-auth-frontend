@@ -32,19 +32,21 @@ const ObrasList = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="page-contenedor">
-      <h1>Obras</h1>
-      {obras.length === 0 ? (
-        <p>No hay obras registradas para este usuario.</p>
-      ) : (
-        obras.map((obra) => (
-          <div key={obra._id} className="obra-card">
-            <h2>{obra.nombre}</h2>
-            <p>{obra.direccion}</p>
-            {/* Agrega otros campos según corresponda */}
-          </div>
-        ))
-      )}
+    <div className="page-background">
+      <div className="page-contenedor">
+        <h1>Obras</h1>
+        {obras.length === 0 ? (
+          <p>No hay obras registradas para este usuario.</p>
+        ) : (
+          obras.map((obra) => (
+            <div key={obra._id} className="obra-card">
+              <h2>{obra.nombre}</h2>
+              <p>{obra.direccion}</p>
+              {/* Agrega otros campos según corresponda */}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

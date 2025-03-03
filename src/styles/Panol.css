@@ -1,20 +1,4 @@
-/* Fondo verde */
-body {
-  background-color: #00a46e;
-  font-family: Arial, sans-serif;
-  margin: 0;
-}
-.panol-background{
-  background-color: #00a46e;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 2rem;
-}
 
-
-/* Botones de agregar */
 .panol-buttons {
   display: flex;
   justify-content: space-around;

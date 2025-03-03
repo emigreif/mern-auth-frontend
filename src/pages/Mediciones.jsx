@@ -32,18 +32,20 @@ const Mediciones = () => {
   }, [API_URL, user]);
 
   return (
-    <div className="page-contenedor">
-      <h1>Mediciones</h1>
-      {mediciones.length === 0 ? (
-        <p>No hay mediciones registradas.</p>
-      ) : (
-        mediciones.map((med) => (
-          <div key={med._id} className="medicion-card">
-            <p>{med.descripcion}</p>
-            {/* Muestra más información según el modelo */}
-          </div>
-        ))
-      )}
+    <div className="page-background">
+      <div className="page-contenedor">
+        <h1>Mediciones</h1>
+        {mediciones.length === 0 ? (
+          <p>No hay mediciones registradas.</p>
+        ) : (
+          mediciones.map((med) => (
+            <div key={med._id} className="medicion-card">
+              <p>{med.descripcion}</p>
+              {/* Muestra más información según el modelo */}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

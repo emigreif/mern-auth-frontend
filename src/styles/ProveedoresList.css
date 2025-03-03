@@ -1,135 +1,123 @@
-/* Fondo verde general */
-.proveedores-background {
-    background-color: #00a46e;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
-  
- 
-  .proveedores-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
-  /* Buscador */
-  .search-container {
-    display: flex;
-    align-items: center;
-    border-bottom: 2px solid #ccc;
-    padding: 0.5rem 0;
-  }
-  
-  .search-input {
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    flex: 1;
-  }
-  
-  .search-icon {
-    font-size: 1rem;
-    color: #666;
-    margin-left: 0.5rem;
-  }
-  
-  /* Botón agregar proveedor */
-  .add-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    margin-top: 1rem;
-  }
-  
-  .add-button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Lista de proveedores */
-  .proveedores-list {
-    margin-top: 1.5rem;
-  }
-  
-  .proveedor-card {
-    background: #f9f9f9;
-    padding: 1rem;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-  }
-  
-  .proveedor-header {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .proveedor-info p {
-    margin: 0.3rem 0;
-    color: #444;
-  }
-  
-  .proveedor-rubro {
-    margin-top: 0.5rem;
-  }
-  
-  .rubro-tag {
-    background: #007bff;
-    color: white;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    margin-right: 0.3rem;
-  }
-  
-  /* Modal */
-  .modal-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-container {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .modal-container input, .modal-container select {
-    width: 100%;
-    padding: 0.5rem;
-    margin: 0.5rem 0;
-    border: 1px solid #ccc;
-  }
-  
-  .modal-container button {
-    width: 100%;
-    padding: 0.6rem;
-    background: #00a46e;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-top: 1rem;
-  }
-  
-  .modal-container button:hover {
-    background: #008e5f;
-  }
-  
+.proveedores-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Buscador */
+.search-container {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #ccc;
+  padding: 0.5rem 0;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.search-icon {
+  font-size: 1rem;
+  color: #666;
+  margin-left: 0.5rem;
+}
+
+/* Botón agregar proveedor */
+.add-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 1rem;
+}
+
+.add-button:hover {
+  background-color: #0056b3;
+}
+
+.proveedores-list {
+  margin-top: 1.5rem;
+}
+
+.proveedor-card {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.proveedor-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  color: #333;
+}
+
+.proveedor-info p {
+  margin: 0.3rem 0;
+  color: #444;
+}
+
+.proveedor-rubro {
+  margin-top: 0.5rem;
+}
+
+.rubro-tag {
+  background: #007bff;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-right: 0.3rem;
+}
+
+/* Modal */
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-container input,
+.modal-container select {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+}
+
+.modal-container button {
+  width: 100%;
+  padding: 0.6rem;
+  background: #00a46e;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.modal-container button:hover {
+  background: #008e5f;
+}

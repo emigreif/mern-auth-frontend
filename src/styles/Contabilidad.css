@@ -1,22 +1,10 @@
-/* Contabilidad.css */
-.contabilidad-background {
-    background-color: #00a46e;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
-  
   
   .movimientos-section h2 {
     margin-bottom: 0.8rem;
     color: #007b55;
     font-size: 1.2rem;
   }
-  
-  /* Tabla */
-  .movimientos-table {
+    .movimientos-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 1.5rem;

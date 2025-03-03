@@ -37,118 +37,31 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <h2>Registrarse</h2>
+    <div className="page-background">
+      <div className="auth-container">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <h2>Registrarse</h2>
+          <input type="email" name="email" placeholder="Email"value={formData.email} onChange={handleChange} required />
+          <input type="text" name="firstName" placeholder="Nombre"value={formData.firstName} onChange={handleChange} required />
+          <input type="text" name="lastName" placeholder="Apellido"value={formData.lastName} onChange={handleChange} required />
+          <input type="text" name="razonSocial" placeholder="Razón Social (opcional)"value={formData.razonSocial} onChange={handleChange} />
+          <input type="text" name="cuit" placeholder="CUIT"value={formData.cuit} onChange={handleChange} />
+          <input type="text" name="plan" placeholder="Plan (Básico, Premium, etc.)"value={formData.plan} onChange={handleChange} />
+          <input type="number" name="cantidadUsuarios" Placeholder="Cantidad de Usuarios"value={formData.cantidadUsuarios} onChange={handleChange} />
+          <input type="text" name="direccion" placeholder="Dirección"value={formData.direccion} onChange={handleChange} />
+          <input type="text" name="localidad" placeholder="Localidad"value={formData.localidad} onChange={handleChange} />
+          <input type="text" name="codigoPostal" placeholder="Código Postal"value={formData.codigoPostal} onChange={handleChange} />
+          <input type="password" name="password" placeholder="Contraseña"value={formData.password} onChange={handleChange} required />
+          <input type="password" name="repeatPassword" placeholder="Repetir Contraseña"value={formData.repeatPassword} onChange={handleChange} required/>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+          <div className="password-visibility">
+            {/* Ejemplo de checkbox para ver la contraseña */}
+            {/* O un icono. Requiere lógica extra.  */}
+          </div>
 
-        <input
-          type="text"
-          name="firstName"
-          placeholder="Nombre"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="text"
-          name="lastName"
-          placeholder="Apellido"
-          value={formData.lastName}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="text"
-          name="razonSocial"
-          placeholder="Razón Social (opcional)"
-          value={formData.razonSocial}
-          onChange={handleChange}
-        />
-
-        <input
-          type="text"
-          name="cuit"
-          placeholder="CUIT"
-          value={formData.cuit}
-          onChange={handleChange}
-        />
-
-        <input
-          type="text"
-          name="plan"
-          placeholder="Plan (Básico, Premium, etc.)"
-          value={formData.plan}
-          onChange={handleChange}
-        />
-
-        <input
-          type="number"
-          name="cantidadUsuarios"
-          placeholder="Cantidad de Usuarios"
-          value={formData.cantidadUsuarios}
-          onChange={handleChange}
-        />
-
-        <input
-          type="text"
-          name="direccion"
-          placeholder="Dirección"
-          value={formData.direccion}
-          onChange={handleChange}
-        />
-
-        <input
-          type="text"
-          name="localidad"
-          placeholder="Localidad"
-          value={formData.localidad}
-          onChange={handleChange}
-        />
-
-        <input
-          type="text"
-          name="codigoPostal"
-          placeholder="Código Postal"
-          value={formData.codigoPostal}
-          onChange={handleChange}
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="password"
-          name="repeatPassword"
-          placeholder="Repetir Contraseña"
-          value={formData.repeatPassword}
-          onChange={handleChange}
-          required
-        />
-
-        <div className="password-visibility">
-          {/* Ejemplo de checkbox para ver la contraseña */}
-          {/* O un icono. Requiere lógica extra.  */}
-        </div>
-
-        <button type="submit">Crear cuenta</button>
-      </form>
+          <button type="submit">Crear cuenta</button>
+        </form>
+      </div>
     </div>
   );
 };
