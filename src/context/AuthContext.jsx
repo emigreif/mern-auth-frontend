@@ -55,18 +55,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    try {
-      await fetch(`${API_URL}/api/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      setUser(null);
-      localStorage.removeItem("token");
-    } catch (error) {
-      console.error("Error cerrando sesión:", error);
-    }
-  };
+  // frontend/src/context/AuthContext.jsx
+
+const logout = async () => {
+  try {
+    await fetch(`${API_URL}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    // Limpiar localStorage
+    localStorage.removeItem("token");
+    setUser(null);
+  } catch (error) {
+    console.error("Error cerrando sesión:", error);
+  }
+};
+
+  
 
   const register = async (formData) => {
     try {

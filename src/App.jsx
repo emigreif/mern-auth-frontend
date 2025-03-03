@@ -11,9 +11,10 @@ import Reportes from "./pages/Reportes.jsx";
 import About from "./pages/About.jsx";
 import Planner from "./pages/Planner.jsx";
 import Login from "./pages/Login.jsx";
+
 import Register from "./pages/Register.jsx";
 import Navbar from "./components/Navbar.jsx";
-import Sidebar from "./components/Sidebar";
+import Presupuestos from "./pages/Presupuestos.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Mediciones from "./pages/Mediciones.jsx";
@@ -33,6 +34,8 @@ const AppLayout = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/obras/:id" element={<ProtectedRoute><ObraDetail /></ProtectedRoute>} />
+          <Route path="/presupuestos" element={<ProtectedRoute><Presupuestos /></ProtectedRoute>} />
+          <Route path="/contabilidad" element={<ProtectedRoute><Contabilidad /></ProtectedRoute>} />
           <Route path="/obras" element={<ProtectedRoute><ObrasList /></ProtectedRoute>} />
           <Route path="/proveedores" element={<ProtectedRoute><ProveedoresList /></ProtectedRoute>} />
           <Route path="/panol" element={<ProtectedRoute><Panol /></ProtectedRoute>} />
