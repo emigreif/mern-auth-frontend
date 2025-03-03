@@ -14,9 +14,13 @@ const Navbar = () => {
       {/* Si el usuario NO está logueado, muestra login/register */}
       {!user && (
         <div className="nav-right">
+          <Link to="/" className="nav-comp ">home</Link>
+          <Link to="/about" className="nav-comp">about</Link>
+          <Link to="/planner" className="nav-comp">Planner</Link>     
           <Link to="/login" className="signup-btn">Login</Link>
           <Link to="/register" className="signup-btn">Sign Up</Link>
-        </div>
+          </div>
+          
       )}
     </header>
   );
