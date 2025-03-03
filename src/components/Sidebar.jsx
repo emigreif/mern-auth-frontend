@@ -25,10 +25,6 @@ const Sidebar = () => {
           {isExpanded ? "<" : ">"}
         </button>
       </div>
-      <div className="sidebar-user">
-        {/* Puedes mostrar el firstName o el email si no tienes el nombre */}
-        Hola, {user?.firstName || user?.email || "Invitado"}
-      </div>
 
       <nav className="sidebar-menu">
         <Link to="/obras" className="sidebar-item"> <FaBuilding className="icon" /><span className="text">Obras</span>  </Link>
