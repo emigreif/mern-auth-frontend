@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
 import Planner from "./pages/Planner.jsx";
@@ -24,8 +29,8 @@ const PublicRoutes = () => (
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/planner" element={<Planner />} />
+    <Route path="/about" element={<About />} />
+    <Route path="/planner" element={<Planner />} />
     {/* Si se intenta acceder a otra ruta, redirige a login */}
     <Route path="*" element={<Navigate to="/" />} />
   </Routes>
@@ -37,7 +42,6 @@ const ProtectedRoutes = () => (
     <Sidebar />
     <div className="main-content with-sidebar">
       <Routes>
-       
         <Route path="/obras" element={<ObrasList />} />
         <Route path="/obras/:id" element={<ObraDetail />} />
         <Route path="/presupuestos" element={<Presupuestos />} />
