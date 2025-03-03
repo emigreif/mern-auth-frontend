@@ -21,9 +21,7 @@ import Mediciones from "./pages/Mediciones.jsx";
 
 const AppLayout = () => {
   const { user } = useAuth();
-  if (loading) {
-    return <div>Cargando...</div>;
-  }
+  
   return (
     <div className="app-container">
       <Navbar />
