@@ -1,15 +1,4 @@
-.page-contenedor {
-  background-color: #00a46e;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
 
-h1, h2, h3 {
-  color: white;
-}
 
 .seleccion-obra, .ubicaciones-container, .tipologias-container, .asignacion-container, .conjuntos-container {
   background-color: white;

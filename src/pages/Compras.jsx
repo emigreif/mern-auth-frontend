@@ -74,7 +74,7 @@ const Compras = () => {
   };
 
   return (
-    <div className="compras-container">
+    <div className="page-contenedor">
       <h1>Compras</h1>
       {/* Resto de la lógica (tabla, modal, etc.) se mantiene similar */}
       <button onClick={guardarCompras}>Guardar Compras</button>

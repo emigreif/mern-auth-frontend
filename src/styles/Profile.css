@@ -1,15 +1,3 @@
-/* frontend/src/styles/Profile.css */
-.page-contenedor {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 1rem;
-  }
-  
-  .page-contenedor h1 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  
   .profile-form {
     display: flex;
     flex-direction: column;

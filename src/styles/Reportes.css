@@ -7,15 +7,6 @@
   padding-top: 2rem;
 }
 
-.page-contenedor {
-  width: 90%;
-  max-width: 900px;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
 .reportes-list {
   margin-top: 1rem;
 }
