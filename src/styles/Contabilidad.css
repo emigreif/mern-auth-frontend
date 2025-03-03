@@ -1,0 +1,91 @@
+/* Contabilidad.css */
+.contabilidad-background {
+    background-color: #00a46e;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  
+  .contabilidad-container {
+    width: 90%;
+    max-width: 900px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+  
+  /* Títulos */
+  .contabilidad-container h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .movimientos-section h2 {
+    margin-bottom: 0.8rem;
+    color: #007b55;
+    font-size: 1.2rem;
+  }
+  
+  /* Tabla */
+  .movimientos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+  }
+  
+  .movimientos-table th,
+  .movimientos-table td {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .movimientos-table th {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .movimientos-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Sección de formulario */
+  .nuevo-movimiento {
+    margin-top: 2rem;
+  }
+  
+  .nuevo-movimiento h2 {
+    margin-bottom: 1rem;
+  }
+  
+  .nuevo-movimiento form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .nuevo-movimiento select,
+  .nuevo-movimiento input {
+    flex: 1 1 200px;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .nuevo-movimiento button {
+    background-color: #00a46e;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-start;
+  }
+  
+  .nuevo-movimiento button:hover {
+    background-color: #008e5f;
+  }
+  

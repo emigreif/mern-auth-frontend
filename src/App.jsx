@@ -9,6 +9,7 @@ import Calendario from "./pages/Calendario.jsx";
 import Configuracion from "./pages/Configuracion.jsx";
 import Reportes from "./pages/Reportes.jsx";
 import About from "./pages/About.jsx";
+import Contabilidad from "./pages/Contabilidad.jsx";
 import Planner from "./pages/Planner.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
