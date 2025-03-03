@@ -72,7 +72,7 @@ h1 {
 .save-button:hover {
   background: #218838;
 }
-config-background{
+.config-background{
   background-color: #00a46e;
   min-height: 100vh;
   display: flex;

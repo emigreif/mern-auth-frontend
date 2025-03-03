@@ -4,7 +4,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
 }
-panol-background{
+.panol-background{
   background-color: #00a46e;
   min-height: 100vh;
   display: flex;

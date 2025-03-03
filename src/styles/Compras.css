@@ -176,3 +176,11 @@ td select, td input {
 .modal-container button:hover {
   background: #c82333;
 }
+.compras-background{
+  background-color: #00a46e;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2rem;
+}
