@@ -1,7 +1,7 @@
 // frontend/src/components/Sidebar.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {FaBuilding,  FaTruck, FaClipboardList, FaCalendarAlt,  FaChartBar,  FaCog,  FaSignOutAlt,FaShoppingCart,FaFileInvoiceDollar,FaUser,FaCalculator} from "react-icons/fa";
+import { FaBuilding, FaTruck, FaClipboardList, FaCalendarAlt, FaChartBar, FaCog, FaSignOutAlt, FaShoppingCart, FaFileInvoiceDollar, FaUser, FaCalculator } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Sidebar.css";
 
@@ -51,10 +51,9 @@ const Sidebar = () => {
 
         <Link to="/contabilidad" className="sidebar-item"> <FaCalculator className="icon" /><span className="text">Contabilidad</span>  </Link>
       </nav>
-
       <button className="sidebar-item logout" onClick={onLogout}>
-        <FaSignOutAlt className="icon"<span className="text">Cerrar Sesión</span></button>
-    </div>
+        <FaSignOutAlt className="icon" /><span className="text">Cerrar Sesión</span>
+      </button>    </div>
   );
 };
 
