@@ -55,8 +55,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // frontend/src/context/AuthContext.jsx
-
 const logout = async () => {
   try {
     await fetch(`${API_URL}/api/auth/logout`, {
@@ -70,8 +68,6 @@ const logout = async () => {
     console.error("Error cerrando sesión:", error);
   }
 };
-
-  
 
   const register = async (formData) => {
     try {
