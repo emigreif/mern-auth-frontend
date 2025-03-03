@@ -11,7 +11,6 @@ import Reportes from "./pages/Reportes.jsx";
 import About from "./pages/About.jsx";
 import Planner from "./pages/Planner.jsx";
 import Login from "./pages/Login.jsx";
-
 import Register from "./pages/Register.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Presupuestos from "./pages/Presupuestos.jsx";
