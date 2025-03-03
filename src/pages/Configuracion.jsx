@@ -63,7 +63,7 @@ const Configuracion = () => {
 
   return (
     <div className="page-background">
-      <div className="configuracion-container">
+      <div className="page-contenedor">
         <h1>Configuración</h1>
         {/* Muestra y edita la configuración */}
         <div>

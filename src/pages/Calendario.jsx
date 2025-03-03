@@ -33,7 +33,7 @@ const Calendario = () => {
 
   return (
     <div className="page-background">
-      <div className="calendario-container">
+      <div className="page-contenedor">
         <h1>Calendario de Producción</h1>
         {eventos.length === 0 ? (
           <p>No hay eventos registrados.</p>
