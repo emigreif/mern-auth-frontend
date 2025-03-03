@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import "../styles/Sidebar.css";
 
 const Sidebar = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Manejar clic en el botón
