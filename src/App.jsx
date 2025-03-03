@@ -24,7 +24,7 @@ const AppLayout = () => {
   return (
     <div className="app-container">
       <Navbar />
-      <Sidebar />
+      {user && <Sidebar />}
       <div className={`main-content ${user ? "with-sidebar" : ""}`}>
         <Routes>
           <Route path="/" element={<Home />} />
