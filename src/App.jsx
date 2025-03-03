@@ -27,7 +27,7 @@ const PublicRoutes = () => (
         <Route path="/about" element={<About />} />
         <Route path="/planner" element={<Planner />} />
     {/* Si se intenta acceder a otra ruta, redirige a login */}
-    <Route path="*" element={<Navigate to="/login" />} />
+    <Route path="*" element={<Navigate to="/" />} />
   </Routes>
 );
 
