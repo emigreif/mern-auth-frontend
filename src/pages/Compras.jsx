@@ -147,7 +147,8 @@ const ComprasPage = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="page-background">
+      <div className="page-contenedor">
       <h1>Órdenes de Compra</h1>
       {/* Botones para crear nueva orden */}
       <div style={{ marginBottom: '20px' }}>
@@ -323,6 +324,7 @@ const ComprasPage = () => {
           <button type="button" onClick={closeModal}>Cancelar</button>
         </form>
       </Modal>
+    </div>
     </div>
   );
 };
