@@ -12,7 +12,7 @@ import ProveedoresList from "./pages/ProveedoresList.jsx";
 import Panol from "./pages/Panol.jsx";
 import Calendario from "./pages/Calendario.jsx";
 import Mediciones from "./pages/MedicionesDashboard.jsx";
-
+import MedicionesPage from "./pages/MedicionesPage.jsx";
 import Compras from "./pages/Compras.jsx";
 import Configuracion from "./pages/Configuracion.jsx";
 import Profile from "./pages/Profile.jsx";
@@ -52,6 +52,7 @@ const ProtectedRoutes = () => (
         <Route path="/panol" element={<Panol />} />
         <Route path="/calendario" element={<Calendario />} />
         <Route path="/mediciones" element={<Mediciones />} />
+        <Route path="/mediciones/:id" element={<MedicionesPage />} />
         <Route path="/compras" element={<Compras />} />
         <Route path="/configuracion" element={<Configuracion />} />
         <Route path="/reportes" element={<Reportes />} />
