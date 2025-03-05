@@ -1,7 +1,7 @@
 // frontend/src/components/Sidebar.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaBuilding, FaTruck, FaClipboardList, FaCalendarAlt, FaChartBar, FaCog, FaSignOutAlt, FaShoppingCart, FaFileInvoiceDollar, FaUser, FaCalculator } from "react-icons/fa";
+import { FaBuilding, FaTruck, FaClipboardList, FaCalendarAlt, FaChartBar, FaCog, FaSignOutAlt, FaShoppingCart, FaFileInvoiceDollar, FaUser, FaCalculator, FaRulerCombined  } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Sidebar.css";
 
@@ -35,6 +35,7 @@ const Sidebar = () => {
         <Link to="/calendario" className="sidebar-item"> <FaCalendarAlt className="icon" /><span className="text">Calendario</span>  </Link>
         <Link to="/contabilidad" className="sidebar-item"> <FaCalculator className="icon" /><span className="text">Contabilidad</span>  </Link>
         <Link to="/reportes" className="sidebar-item"> <FaChartBar className="icon" /><span className="text">Reportes</span>  </Link>
+        <Link to="/mediciones" className="sidebar-item"> <FaRulerCombined className="icon" /><span className="text">Mediciones</span>  </Link>
         <Link to="/configuracion" className="sidebar-item"> <FaCog className="icon" /><span className="text">Configuración</span>  </Link>
         <Link to="/profile" className="sidebar-item"> <FaUser className="icon" /><span className="text">Mi Perfil</span>  </Link>
 
