@@ -70,7 +70,7 @@ const MedicionesPage = () => {
 
   return (
     <div className="page-background">
-      <div className="page-container">
+      <div className="page-contenedor">
         <h1>Mediciones para {obra?.nombre}</h1>
         {Object.keys(ubicacionesPorPiso).map(piso => (
           <div key={piso}>

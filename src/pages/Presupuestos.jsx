@@ -92,7 +92,7 @@ const PresupuestosList = () => {
 
   return (
     <div className="page-background">
-      <div className="page-container">
+      <div className="page-contenedor">
         <h1>Presupuestos</h1>
         {presupuestos.length === 0 ? (
           <p>No hay presupuestos registrados.</p>

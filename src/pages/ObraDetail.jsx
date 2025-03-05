@@ -37,7 +37,7 @@ const ObraDetail = () => {
 
   return (
     <div className="page-background">
-      <div className="obra-detail-container">
+      <div className="page-contenedor">
         <h1>Detalle de Obra</h1>
         <h2>{obra.nombre}</h2>
         <p>Dirección: {obra.direccion}</p>

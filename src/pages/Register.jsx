@@ -38,7 +38,7 @@ const Register = () => {
 
   return (
     <div className="page-background">
-      <div className="auth-container">
+      <div className="page-contenedor">
         <form className="auth-form" onSubmit={handleSubmit}>
           <h2>Registrarse</h2>
           <input type="email" name="email" placeholder="Email"value={formData.email} onChange={handleChange} required />

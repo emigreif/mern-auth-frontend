@@ -106,7 +106,7 @@ const MedicionesDashboard = () => {
 
   return (
     <div className="page-background">
-      <div className="page-container">
+      <div className="page-contenedor">
         <h1>Mediciones</h1>
         <table border="1" cellPadding="8" cellSpacing="0" width="100%">
           <thead>
