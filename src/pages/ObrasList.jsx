@@ -148,7 +148,7 @@ const ObrasList = () => {
 
   return (
     <div className="page-background">
-      <div className="page-container">
+      <div className="page-contenedor">
         <h1>Obras</h1>
         <button onClick={openNuevaObraModal}>Agregar Obra</button>
         {obras.length === 0 ? (
