@@ -133,7 +133,7 @@ const Panol = () => {
 
   return (
     <div className="page-background">
-      <div className="page-container">
+      <div className="page-contenedor">
         <h1>Pañol</h1>
         {panol ? (
           <>
