@@ -1,190 +1,279 @@
-import React, { useState, useEffect } from "react";
-import Modal from "react-modal";
-import { useAuth } from "../context/AuthContext.jsx";
+// frontend/src/pages/PresupuestosList.jsx
+import React, { useState, useEffect } from 'react';
+import Modal from 'react-modal';
+import { useAuth } from '../context/AuthContext.jsx';
 
-// Configuramos el elemento raíz para el modal
-Modal.setAppElement("#root");
+Modal.setAppElement('#root');
 
-const ProveedoresList = () => {
-  const [proveedores, setProveedores] = useState([]);
+const PresupuestosList = () => {
+  const [presupuestos, setPresupuestos] = useState([]);
   const { user } = useAuth();
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-  // Estados para el modal y formulario de nuevo proveedor
+  // Estado para el modal de agregar presupuesto
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [newProveedor, setNewProveedor] = useState({
-    nombre: "",
-    direccion: "",
-    emails: "",
-    telefono: "",
-    whatsapp: "",
-    rubro: ""
+  const [newPresupuesto, setNewPresupuesto] = useState({
+    nombreObra: '',
+    cliente: '',
+    estado: 'pendiente',
+    direccion: '',
+    totalPresupuestado: '',
+    totalConFactura: '',
+    totalSinFactura: '',
+    indiceCAC: '',
+    fechaEntrega: '',
+    descripcion: '',
+    empresaPerdida: ''
   });
 
-  // Cargar proveedores del usuario
+  // Cargar presupuestos
   useEffect(() => {
-    const fetchProveedores = async () => {
+    const fetchPresupuestos = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/proveedores`, {
-          method: "GET",
-          credentials: "include",
+        const res = await fetch(`${API_URL}/api/presupuestos`, {
+          method: 'GET',
+          credentials: 'include',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
-        if (!res.ok) throw new Error("Error al obtener proveedores");
+        if (!res.ok) throw new Error('Error al obtener presupuestos');
         const data = await res.json();
-        setProveedores(data);
+        setPresupuestos(data);
       } catch (error) {
-        console.error("Error fetching proveedores:", error);
+        console.error('Error fetching presupuestos:', error);
       }
     };
 
     if (user) {
-      fetchProveedores();
+      fetchPresupuestos();
     }
   }, [API_URL, user]);
 
-  // Manejo del modal
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
 
-  // Actualizar los datos del formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewProveedor((prev) => ({ ...prev, [name]: value }));
+    setNewPresupuesto((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Enviar el formulario para crear un nuevo proveedor
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Convertir emails y rubro a arrays (suponiendo que se ingresen separados por comas)
+    // Convertir valores numéricos según corresponda
     const payload = {
-      ...newProveedor,
-      emails: newProveedor.emails.split(",").map((email) => email.trim()).filter(Boolean),
-      rubro: newProveedor.rubro.split(",").map((r) => r.trim()).filter(Boolean),
+      ...newPresupuesto,
+      totalPresupuestado: Number(newPresupuesto.totalPresupuestado),
+      totalConFactura: Number(newPresupuesto.totalConFactura),
+      totalSinFactura: Number(newPresupuesto.totalSinFactura)
     };
 
     try {
-      const res = await fetch(`${API_URL}/api/proveedores`, {
-        method: "POST",
-        credentials: "include",
+      const res = await fetch(`${API_URL}/api/presupuestos`, {
+        method: 'POST',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error("Error al crear proveedor");
+      if (!res.ok) throw new Error('Error al crear presupuesto');
       const data = await res.json();
-      setProveedores((prev) => [...prev, data]);
+      setPresupuestos((prev) => [...prev, data]);
       closeModal();
-      setNewProveedor({
-        nombre: "",
-        direccion: "",
-        emails: "",
-        telefono: "",
-        whatsapp: "",
-        rubro: ""
+      // Reiniciar el formulario
+      setNewPresupuesto({
+        nombreObra: '',
+        cliente: '',
+        estado: 'pendiente',
+        direccion: '',
+        totalPresupuestado: '',
+        totalConFactura: '',
+        totalSinFactura: '',
+        indiceCAC: '',
+        fechaEntrega: '',
+        descripcion: '',
+        empresaPerdida: ''
       });
     } catch (error) {
-      console.error("Error creating proveedor:", error);
+      console.error('Error creating presupuesto:', error);
+    }
+  };
+
+  // Función para eliminar presupuesto (opcional)
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Está seguro de eliminar este presupuesto?')) {
+      try {
+        const res = await fetch(`${API_URL}/api/presupuestos/${id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (!res.ok) throw new Error('Error al eliminar presupuesto');
+        setPresupuestos((prev) => prev.filter((p) => p._id !== id));
+      } catch (error) {
+        console.error('Error deleting presupuesto:', error);
+      }
     }
   };
 
   return (
     <div className="page-background">
-      <div className="page-contenedor">
-        <h1>Proveedores</h1>
-        <button onClick={openModal}>Agregar Proveedor</button>
-        {proveedores.length === 0 ? (
-          <p>No hay proveedores registrados.</p>
+      <div className="page-container">
+        <h1>Presupuestos</h1>
+        <button onClick={openModal}>Agregar Presupuesto</button>
+        {presupuestos.length === 0 ? (
+          <p>No hay presupuestos registrados.</p>
         ) : (
-          proveedores.map((prov) => (
-            <div key={prov._id} className="proveedor-card">
-              <h2>{prov.nombre}</h2>
-              <p>Dirección: {prov.direccion}</p>
-              <p>Emails: {prov.emails.join(", ")}</p>
-              <p>Teléfono: {prov.telefono}</p>
-              <p>WhatsApp: {prov.whatsapp}</p>
-              <p>Rubros: {prov.rubro.join(", ")}</p>
-            </div>
-          ))
+          <table border="1" cellPadding="8" cellSpacing="0" width="100%">
+            <thead>
+              <tr>
+                <th>ID Obra</th>
+                <th>Nombre de la Obra</th>
+                <th>Cliente</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {presupuestos.map((p) => (
+                <tr key={p._id}>
+                  <td>{p.idObra ? p.idObra : p._id}</td>
+                  <td>{p.nombreObra}</td>
+                  <td>{p.cliente}</td>
+                  <td>{p.estado}</td>
+                  <td>
+                    <button onClick={() => handleDelete(p._id)}>Eliminar</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 
-      {/* Modal para agregar un nuevo proveedor */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        contentLabel="Agregar Proveedor"
-        style={{
-          content: { width: "500px", margin: "auto" },
-        }}
+        contentLabel="Agregar Presupuesto"
+        style={{ content: { width: '600px', margin: 'auto' } }}
       >
-        <h2>Agregar Nuevo Proveedor</h2>
+        <h2>Agregar Nuevo Presupuesto</h2>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Nombre:</label>
+            <label>Nombre de la Obra:</label>
             <input
               type="text"
-              name="nombre"
-              value={newProveedor.nombre}
+              name="nombreObra"
+              value={newPresupuesto.nombreObra}
               onChange={handleInputChange}
               required
             />
           </div>
+          <div>
+            <label>Cliente:</label>
+            <input
+              type="text"
+              name="cliente"
+              value={newPresupuesto.cliente}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Estado:</label>
+            <select
+              name="estado"
+              value={newPresupuesto.estado}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="pendiente">Pendiente</option>
+              <option value="aprobado">Aprobado</option>
+              <option value="perdido">Perdido</option>
+            </select>
+          </div>
+          {newPresupuesto.estado === 'perdido' && (
+            <div>
+              <label>Empresa Contra la que se Perdió:</label>
+              <input
+                type="text"
+                name="empresaPerdida"
+                value={newPresupuesto.empresaPerdida}
+                onChange={handleInputChange}
+              />
+            </div>
+          )}
           <div>
             <label>Dirección:</label>
             <input
               type="text"
               name="direccion"
-              value={newProveedor.direccion}
+              value={newPresupuesto.direccion}
               onChange={handleInputChange}
               required
             />
           </div>
           <div>
-            <label>Emails (separados por comas):</label>
+            <label>Total Presupuestado:</label>
             <input
-              type="text"
-              name="emails"
-              value={newProveedor.emails}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <label>Teléfono:</label>
-            <input
-              type="text"
-              name="telefono"
-              value={newProveedor.telefono}
+              type="number"
+              name="totalPresupuestado"
+              value={newPresupuesto.totalPresupuestado}
               onChange={handleInputChange}
             />
           </div>
           <div>
-            <label>WhatsApp:</label>
+            <label>Total Con Factura:</label>
             <input
-              type="text"
-              name="whatsapp"
-              value={newProveedor.whatsapp}
+              type="number"
+              name="totalConFactura"
+              value={newPresupuesto.totalConFactura}
               onChange={handleInputChange}
             />
           </div>
           <div>
-            <label>Rubros (separados por comas):</label>
+            <label>Total Sin Factura:</label>
             <input
-              type="text"
-              name="rubro"
-              value={newProveedor.rubro}
+              type="number"
+              name="totalSinFactura"
+              value={newPresupuesto.totalSinFactura}
               onChange={handleInputChange}
-              required
             />
           </div>
-          <div style={{ marginTop: "10px" }}>
-            <button type="submit">Guardar Proveedor</button>
+          <div>
+            <label>Índice CAC:</label>
+            <input
+              type="text"
+              name="indiceCAC"
+              value={newPresupuesto.indiceCAC}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label>Fecha de Entrega:</label>
+            <input
+              type="date"
+              name="fechaEntrega"
+              value={newPresupuesto.fechaEntrega}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label>Descripción:</label>
+            <textarea
+              name="descripcion"
+              value={newPresupuesto.descripcion}
+              onChange={handleInputChange}
+            ></textarea>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <button type="submit">Guardar Presupuesto</button>
             <button type="button" onClick={closeModal}>
               Cancelar
             </button>
@@ -195,4 +284,4 @@ const ProveedoresList = () => {
   );
 };
 
-export default ProveedoresList;
+export default PresupuestosList;
