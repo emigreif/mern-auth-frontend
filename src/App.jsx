@@ -11,7 +11,7 @@ import Contabilidad from "./pages/Contabilidad.jsx";
 import ProveedoresList from "./pages/ProveedoresList.jsx";
 import Panol from "./pages/Panol.jsx";
 import Calendario from "./pages/Calendario.jsx";
-import Mediciones from "./pages/MedicionesDashboard.jsx
+import Mediciones from "./pages/MedicionesDashboard.jsx";
 
 import Compras from "./pages/Compras.jsx";
 import Configuracion from "./pages/Configuracion.jsx";
