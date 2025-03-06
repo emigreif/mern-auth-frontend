@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from "react";
+import ClienteModal from "../components/ClienteModal";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-const Clientes = ({ onClienteSeleccionado }) => {
+const Clientes = () => {
     const [clientes, setClientes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [nuevoCliente, setNuevoCliente] = useState({
-        tipoCliente: "particular",
-        nombre: "",
-        apellido: "",
-        empresa: "",
-        email: "",
-        telefono: "",
-        direccion: { calle: "", ciudad: "" },
-        notas: "",
-    });
 
     useEffect(() => {
         const obtenerClientes = async () => {
@@ -34,56 +25,41 @@ const Clientes = ({ onClienteSeleccionado }) => {
         obtenerClientes();
     }, []);
 
-    const handleChange = (e) => {
-        setNuevoCliente({ ...nuevoCliente, [e.target.name]: e.target.value });
-    };
-
-    const handleSaveCliente = async () => {
-        try {
-            const res = await fetch(`${API_URL}/api/clientes`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(nuevoCliente),
-            });
-
-            if (!res.ok) throw new Error("Error al crear cliente");
-
-            const data = await res.json();
-            setClientes([...clientes, data.cliente]);
-            setIsModalOpen(false);
-            onClienteSeleccionado(data.cliente._id);
-        } catch (error) {
-            console.error("Error creando cliente:", error);
-        }
+    const handleClienteCreado = (nuevoCliente) => {
+        setClientes([...clientes, nuevoCliente]);
     };
 
     return (
+
         <div className="page-background">
             <div className="page-contenedor">
                 <h1>Clientes</h1>
                 <button onClick={() => setIsModalOpen(true)}>Agregar Cliente</button>
 
-                <select onChange={(e) => onClienteSeleccionado(e.target.value)}>
-                    <option value="">Seleccionar Cliente</option>
-                    {clientes.map((c) => (
-                        <option key={c._id} value={c._id}>{c.nombre} {c.apellido}</option>
-                    ))}
-                </select>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {clientes.map((cliente) => (
+                            <tr key={cliente._id}>
+                                <td>{cliente.nombre} {cliente.apellido}</td>
+                                <td>{cliente.email}</td>
+                                <td>{cliente.telefono}</td>
+                                <td>{cliente.direccion.calle}, {cliente.direccion.ciudad}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
-                {isModalOpen && (
-                    <div className="modal">
-                        <h2>Nuevo Cliente</h2>
-                        <input type="text" name="nombre" placeholder="Nombre" onChange={handleChange} />
-                        <input type="text" name="email" placeholder="Email" onChange={handleChange} />
-                        <button onClick={handleSaveCliente}>Guardar</button>
-                        <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
-                    </div>
-                )}
-            </div></div>
+                <ClienteModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onClienteCreado={handleClienteCreado} />
+            </div>
+        </div>
     );
 };
 
