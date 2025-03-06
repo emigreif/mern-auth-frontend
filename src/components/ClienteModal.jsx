@@ -18,7 +18,11 @@ const ClienteModal = ({ isOpen, onClose, onClienteCreado }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNuevoCliente({ ...nuevoCliente, [name]: value });
+    if (name.includes("direccion")) {
+      setNuevoCliente({ ...nuevoCliente, direccion: { ...nuevoCliente.direccion, [name.split(".")[1]]: value } });
+    } else {
+      setNuevoCliente({ ...nuevoCliente, [name]: value });
+    }
   };
 
   const handleSaveCliente = async () => {
@@ -44,13 +48,15 @@ const ClienteModal = ({ isOpen, onClose, onClienteCreado }) => {
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
+    <div className="modal-background">
+      <div className="modal-container">
         <h2>Nuevo Cliente</h2>
-        <input type="text" name="nombre" placeholder="Nombre" onChange={handleChange} />
-        <input type="text" name="apellido" placeholder="Apellido" onChange={handleChange} />
-        <input type="email" name="email" placeholder="Email" onChange={handleChange} />
-        <input type="text" name="telefono" placeholder="Teléfono" onChange={handleChange} />
+        <input type="text" name="nombre" placeholder="Nombre" onChange={handleChange} required />
+        <input type="text" name="apellido" placeholder="Apellido" onChange={handleChange} required />
+        <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+        <input type="text" name="telefono" placeholder="Teléfono" onChange={handleChange} required />
+        <input type="text" name="direccion.calle" placeholder="Calle" onChange={handleChange} required />
+        <input type="text" name="direccion.ciudad" placeholder="Ciudad" onChange={handleChange} required />
         <button onClick={handleSaveCliente}>Guardar</button>
         <button onClick={onClose}>Cancelar</button>
       </div>
