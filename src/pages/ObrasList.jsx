@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from "react";
+import ClienteModal from "../components/ClienteModal";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const ObrasList = () => {
   const [obras, setObras] = useState([]);
   const [clientes, setClientes] = useState([]); // Lista de clientes
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isClienteModalOpen, setIsClienteModalOpen] = useState(false); // Modal de Cliente
   const [newObra, setNewObra] = useState({
     nombre: "",
     direccion: "",
     contacto: "",
     fechaEntrega: "",
-    cliente: "", // Nuevo campo
+    cliente: "",
   });
 
   const { user } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Cargar obras
+  // 📌 Cargar obras
   useEffect(() => {
     const fetchObras = async () => {
       try {
@@ -41,7 +43,7 @@ const ObrasList = () => {
     }
   }, [API_URL, user]);
 
-  // Cargar clientes para seleccionar en el modal
+  // 📌 Cargar clientes para seleccionar en el modal
   useEffect(() => {
     const fetchClientes = async () => {
       try {
@@ -64,19 +66,26 @@ const ObrasList = () => {
     fetchClientes();
   }, [API_URL]);
 
-  // Manejo del modal
+  // 📌 Manejo del modal de obra
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setNewObra({ nombre: "", direccion: "", contacto: "", fechaEntrega: "", cliente: "" });
   };
 
-  // Manejar cambios en los inputs
+  // 📌 Manejo del modal de cliente
+  const handleClienteCreado = (nuevoCliente) => {
+    setClientes([...clientes, nuevoCliente]); // Agregar cliente a la lista
+    setNewObra({ ...newObra, cliente: nuevoCliente._id }); // Asignar el cliente recién creado
+    setIsClienteModalOpen(false);
+  };
+
+  // 📌 Manejar cambios en los inputs
   const handleChange = (e) => {
     setNewObra({ ...newObra, [e.target.name]: e.target.value });
   };
 
-  // Guardar nueva obra
+  // 📌 Guardar nueva obra
   const handleSave = async () => {
     if (!newObra.cliente) {
       alert("Debes seleccionar un cliente");
@@ -84,12 +93,8 @@ const ObrasList = () => {
     }
 
     try {
-      // Convertir fechaEntrega a formato correcto
       const formattedDate = newObra.fechaEntrega ? new Date(newObra.fechaEntrega).toISOString() : null;
-
       const obraToSend = { ...newObra, fechaEntrega: formattedDate };
-
-      console.log("Enviando:", JSON.stringify(obraToSend, null, 2));
 
       const res = await fetch(`${API_URL}/api/obras`, {
         method: "POST",
@@ -135,6 +140,7 @@ const ObrasList = () => {
           ))
         )}
 
+        {/* Modal para crear una nueva obra */}
         {isModalOpen && (
           <div className="modal-background" onClick={handleCloseModal}>
             <div className="modal-container" onClick={(e) => e.stopPropagation()}>
@@ -156,9 +162,14 @@ const ObrasList = () => {
               <select name="cliente" value={newObra.cliente} onChange={handleChange}>
                 <option value="">Seleccionar Cliente</option>
                 {clientes.map((c) => (
-                  <option key={c._id} value={c._id}>{c.nombre}</option>
+                  <option key={c._id} value={c._id}>
+                    {c.nombre} {c.apellido}
+                  </option>
                 ))}
               </select>
+              <button type="button" onClick={() => setIsClienteModalOpen(true)}>
+                Agregar Nuevo Cliente
+              </button>
 
               <div className="modal-actions">
                 <button onClick={handleSave}>Guardar</button>
@@ -167,6 +178,13 @@ const ObrasList = () => {
             </div>
           </div>
         )}
+
+        {/* Modal de Cliente */}
+        <ClienteModal
+          isOpen={isClienteModalOpen}
+          onClose={() => setIsClienteModalOpen(false)}
+          onClienteCreado={handleClienteCreado}
+        />
       </div>
     </div>
   );
