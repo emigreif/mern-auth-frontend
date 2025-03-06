@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+// frontend/src/pages/ObrasList.jsx
+import React, { useState, useEffect } from 'react';
+import Modal from 'react-modal';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
+import '../styles/ObrasList.css';
+
+Modal.setAppElement('#root');
 
 const ObrasList = () => {
   const [obras, setObras] = useState([]);
@@ -21,6 +27,24 @@ const ObrasList = () => {
     const fetchObras = async () => {
       try {
         const res = await fetch(`${API_URL}/api/obras`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (!res.ok) throw new Error('Error al obtener obras');
+        const data = await res.json();
+        setObras(data);
+      } catch (error) {
+        console.error('Error fetching obras:', error);
+      }
+    };
+
+    const fetchClientes = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/clientes`, {
           method: "GET",
           credentials: "include",
           headers: {
@@ -28,11 +52,11 @@ const ObrasList = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        if (!res.ok) throw new Error("Error al obtener obras");
+        if (!res.ok) throw new Error("Error al obtener clientes");
         const data = await res.json();
-        setObras(data);
+        setClientes(data);
       } catch (error) {
-        console.error("Error fetching obras:", error);
+        console.error("Error fetching clientes:", error);
       }
     };
 
@@ -60,63 +84,76 @@ const ObrasList = () => {
     }
   }, [API_URL, user]);
 
-  // Abrir el modal
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  // Función para asignar color al semáforo según estado (ejemplo)
+  const getTrafficLightColor = (status) => {
+    switch (status) {
+      case 'cumplido':
+      case 'aprobado':
+        return 'green';
+      case 'proximo':
+        return 'yellow';
+      case 'pendiente':
+      default:
+        return 'red';
+    }
   };
 
-  // Cerrar el modal y limpiar el formulario
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  // Abrir modal de detalles de obra
+  const openDetallesModal = (obra) => {
+    setSelectedObra(obra);
+    setModalDetallesOpen(true);
+  };
+
+  const closeDetallesModal = () => {
+    setSelectedObra(null);
+    setModalDetallesOpen(false);
+  };
+
+  // Abrir modal para crear nueva obra
+  const openNuevaObraModal = () => {
+    setModalNuevaObraOpen(true);
+  };
+
+  const closeNuevaObraModal = () => {
+    setModalNuevaObraOpen(false);
+    // Reiniciar formulario
     setNewObra({
       nombre: "",
       direccion: "",
       contacto: "",
       fechaEntrega: "",
-      cliente: "",
     });
   };
 
-  // Manejar cambios en los inputs
+  // Manejar cambios en los inputs del modal
   const handleChange = (e) => {
     setNewObra({ ...newObra, [e.target.name]: e.target.value });
   };
 
-  // Guardar la nueva obra
+  // Guardar la nueva obra en el backend
   const handleSave = async () => {
-    if (!newObra.cliente) {
-      alert("Debes seleccionar un cliente");
-      return;
-    }
-
-    const formattedDate = newObra.fechaEntrega
-      ? new Date(newObra.fechaEntrega).toISOString()
-      : null;
-
     try {
-      console.log("Enviando:", JSON.stringify({ ...newObra, fechaEntrega: formattedDate }, null, 2));
-
       const res = await fetch(`${API_URL}/api/obras`, {
-        method: "POST",
-        credentials: "include",
+        method: 'POST',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({ ...newObra, fechaEntrega: formattedDate }),
+        body: JSON.stringify(newObra),
       });
+      if (!res.ok) throw new Error("Error al crear la obra");
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Error al crear la obra");
-      }
-
+      // Obtener la obra recién creada
       const createdObra = await res.json();
+
+      // Actualizar la lista sin volver a hacer fetch completo
       setObras([...obras, createdObra]);
+
+      // Cerrar el modal
       handleCloseModal();
     } catch (error) {
       console.error("Error creando obra:", error);
-      alert(error.message);
     }
   };
 
@@ -125,10 +162,11 @@ const ObrasList = () => {
       <div className="page-contenedor">
         <h1>Obras</h1>
 
+        {/* Botón para abrir el modal */}
         <button onClick={handleOpenModal}>Agregar Obra</button>
 
         {obras.length === 0 ? (
-          <p>No hay obras registradas.</p>
+          <p>No hay obras registradas para este usuario.</p>
         ) : (
           obras.map((obra) => (
             <div key={obra._id} className="obra-card">
@@ -140,30 +178,43 @@ const ObrasList = () => {
           ))
         )}
 
+        {/* Modal para crear una nueva obra */}
         {isModalOpen && (
           <div className="modal-background" onClick={handleCloseModal}>
             <div className="modal-container" onClick={(e) => e.stopPropagation()}>
               <h2>Nueva Obra</h2>
 
               <label>Nombre:</label>
-              <input type="text" name="nombre" value={newObra.nombre} onChange={handleChange} />
+              <input
+                type="text"
+                name="nombre"
+                value={newObra.nombre}
+                onChange={handleChange}
+              />
 
               <label>Dirección:</label>
-              <input type="text" name="direccion" value={newObra.direccion} onChange={handleChange} />
+              <input
+                type="text"
+                name="direccion"
+                value={newObra.direccion}
+                onChange={handleChange}
+              />
 
               <label>Contacto:</label>
-              <input type="text" name="contacto" value={newObra.contacto} onChange={handleChange} />
+              <input
+                type="text"
+                name="contacto"
+                value={newObra.contacto}
+                onChange={handleChange}
+              />
 
               <label>Fecha de Entrega:</label>
-              <input type="date" name="fechaEntrega" value={newObra.fechaEntrega} onChange={handleChange} />
-
-              <label>Cliente:</label>
-              <select name="cliente" value={newObra.cliente} onChange={handleChange}>
-                <option value="">Seleccionar Cliente</option>
-                {clientes.map((c) => (
-                  <option key={c._id} value={c._id}>{c.nombre}</option>
-                ))}
-              </select>
+              <input
+                type="date"
+                name="fechaEntrega"
+                value={newObra.fechaEntrega}
+                onChange={handleChange}
+              />
 
               <div className="modal-actions">
                 <button onClick={handleSave}>Guardar</button>
@@ -172,7 +223,8 @@ const ObrasList = () => {
             </div>
           </div>
         )}
-      </div>
+        <button onClick={closeDetallesModal}>Cerrar</button>
+      </Modal>
     </div>
   );
 };
