@@ -29,6 +29,8 @@ const Sidebar = () => {
       <nav className="sidebar-menu">
         <Link to="/obras" className="sidebar-item"> <FaBuilding className="icon" /><span className="text">Obras</span>  </Link>
         <Link to="/presupuestos" className="sidebar-item"> <FaFileInvoiceDollar className="icon" /><span className="text">Presupuestos</span>  </Link>
+        <Link to="/clientes" className="sidebar-item"> <FaUser className="icon" /><span className="text">Clientes</span>  </Link>
+
         <Link to="/compras" className="sidebar-item"> <FaShoppingCart className="icon" /><span className="text">Compras</span>  </Link>
         <Link to="/proveedores" className="sidebar-item"> <FaTruck className="icon" /><span className="text">Proveedores</span>  </Link>
         <Link to="/panol" className="sidebar-item"> <FaClipboardList className="icon" /><span className="text">Pañol</span>  </Link>
