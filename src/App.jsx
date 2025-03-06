@@ -8,7 +8,7 @@ import ObrasList from "./pages/ObrasList.jsx";
 import ObraDetail from "./pages/ObraDetail.jsx";
 import Presupuestos from "./pages/Presupuestos.jsx";
 import Contabilidad from "./pages/Contabilidad.jsx";
-import Clientes from "./pages/Clientes.jsx";
+import Clientes from "./pages/clientes.jsx";
 import ProveedoresList from "./pages/ProveedoresList.jsx";
 import Panol from "./pages/Panol.jsx";
 import Calendario from "./pages/Calendario.jsx";
