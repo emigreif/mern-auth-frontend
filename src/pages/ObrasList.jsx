@@ -1,11 +1,5 @@
-// frontend/src/pages/ObrasList.jsx
-import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useNavigate } from 'react-router-dom';
-import '../styles/ObrasList.css';
-
-Modal.setAppElement('#root');
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const ObrasList = () => {
   const [obras, setObras] = useState([]);
@@ -16,7 +10,7 @@ const ObrasList = () => {
     direccion: "",
     contacto: "",
     fechaEntrega: "",
-    cliente: "",
+    cliente: "", // Nuevo campo
   });
 
   const { user } = useAuth();
@@ -36,12 +30,19 @@ const ObrasList = () => {
         });
         if (!res.ok) throw new Error("Error al obtener obras");
         const data = await res.json();
-        setClientes(data);
+        setObras(data);
       } catch (error) {
         console.error("Error fetching obras:", error);
       }
     };
 
+    if (user) {
+      fetchObras();
+    }
+  }, [API_URL, user]);
+
+  // Cargar clientes para seleccionar en el modal
+  useEffect(() => {
     const fetchClientes = async () => {
       try {
         const res = await fetch(`${API_URL}/api/clientes`, {
@@ -60,52 +61,14 @@ const ObrasList = () => {
       }
     };
 
-    if (user) {
-      fetchObras();
-      fetchClientes();
-    }
-  }, [API_URL, user]);
+    fetchClientes();
+  }, [API_URL]);
 
-  // Función para asignar color al semáforo según estado (ejemplo)
-  const getTrafficLightColor = (status) => {
-    switch (status) {
-      case 'cumplido':
-      case 'aprobado':
-        return 'green';
-      case 'proximo':
-        return 'yellow';
-      case 'pendiente':
-      default:
-        return 'red';
-    }
-  };
-
-  // Abrir modal de detalles de obra
-  const openDetallesModal = (obra) => {
-    setSelectedObra(obra);
-    setModalDetallesOpen(true);
-  };
-
-  const closeDetallesModal = () => {
-    setSelectedObra(null);
-    setModalDetallesOpen(false);
-  };
-
-  // Abrir modal para crear nueva obra
-  const openNuevaObraModal = () => {
-    setModalNuevaObraOpen(true);
-  };
-
-  const closeNuevaObraModal = () => {
-    setModalNuevaObraOpen(false);
-    // Reiniciar formulario
-    setNewObra({
-      nombre: "",
-      direccion: "",
-      contacto: "",
-      fechaEntrega: "",
-      cliente: "",
-    });
+  // Manejo del modal
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setNewObra({ nombre: "", direccion: "", contacto: "", fechaEntrega: "", cliente: "" });
   };
 
   // Manejar cambios en los inputs
@@ -113,28 +76,29 @@ const ObrasList = () => {
     setNewObra({ ...newObra, [e.target.name]: e.target.value });
   };
 
-  // Guardar la nueva obra
+  // Guardar nueva obra
   const handleSave = async () => {
     if (!newObra.cliente) {
       alert("Debes seleccionar un cliente");
       return;
     }
 
-    const formattedDate = newObra.fechaEntrega
-      ? new Date(newObra.fechaEntrega).toISOString()
-      : null;
-
     try {
-      console.log("Enviando:", JSON.stringify({ ...newObra, fechaEntrega: formattedDate }, null, 2));
+      // Convertir fechaEntrega a formato correcto
+      const formattedDate = newObra.fechaEntrega ? new Date(newObra.fechaEntrega).toISOString() : null;
+
+      const obraToSend = { ...newObra, fechaEntrega: formattedDate };
+
+      console.log("Enviando:", JSON.stringify(obraToSend, null, 2));
 
       const res = await fetch(`${API_URL}/api/obras`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ ...newObra, fechaEntrega: formattedDate }),
+        body: JSON.stringify(obraToSend),
       });
 
       if (!res.ok) {
@@ -166,7 +130,7 @@ const ObrasList = () => {
               <h2>{obra.nombre}</h2>
               <p>{obra.direccion}</p>
               <p>Contacto: {obra.contacto}</p>
-              <p>Entrega: {obra.fechaEntrega?.slice(0,10)}</p>
+              <p>Entrega: {obra.fechaEntrega?.slice(0, 10)}</p>
             </div>
           ))
         )}
@@ -203,8 +167,7 @@ const ObrasList = () => {
             </div>
           </div>
         )}
-        <button onClick={closeDetallesModal}>Cerrar</button>
-      </Modal>
+      </div>
     </div>
   );
 };
