@@ -1,57 +1,63 @@
-// frontend/src/pages/Calendario.jsx
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import React, { useState, useEffect } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 
-const Calendario = () => {
+const CalendarioProduccion = () => {
   const [eventos, setEventos] = useState([]);
-  const { user } = useAuth();
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const [obraSeleccionada, setObraSeleccionada] = useState("");
+  const [actividadSeleccionada, setActividadSeleccionada] = useState("");
 
   useEffect(() => {
-    const fetchEventos = async () => {
+    const cargarCalendario = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/calendario`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (!res.ok) throw new Error("Error al obtener eventos");
+        let url = "http://localhost:5000/api/calendario";
+        if (obraSeleccionada) url += `?obraId=${obraSeleccionada}`;
+        if (actividadSeleccionada)
+          url += `${
+            obraSeleccionada ? "&" : "?"
+          }actividad=${actividadSeleccionada}`;
+
+        const res = await fetch(url);
         const data = await res.json();
         setEventos(data);
       } catch (error) {
-        console.error("Error fetching eventos:", error);
+        console.error("Error cargando calendario:", error);
       }
     };
-
-    if (user) {
-      fetchEventos();
-    }
-  }, [API_URL, user]);
+    cargarCalendario();
+  }, [obraSeleccionada, actividadSeleccionada]);
 
   return (
     <div className="page-background">
       <div className="page-contenedor">
         <h1>Calendario de Producción</h1>
-        {eventos.length === 0 ? (
-          <p>No hay eventos registrados.</p>
-        ) : (
-          eventos.map((evento) => (
-            <div
-              key={evento._id}
-              className={`evento ${evento.tipo.toLowerCase()}`}
-            >
-              <span className="fecha">{evento.fecha}</span>
-              <span className="tipo">{evento.tipo}</span>
-              <span className="obra">{evento.obra}</span>
-            </div>
-          ))
-        )}
+
+        <label>Filtrar por Obra:</label>
+        <select onChange={(e) => setObraSeleccionada(e.target.value)}>
+          <option value="">Todas</option>
+          <option value="obra1">Obra 1</option>
+          <option value="obra2">Obra 2</option>
+        </select>
+
+        <label>Filtrar por Actividad:</label>
+        <select onChange={(e) => setActividadSeleccionada(e.target.value)}>
+          <option value="">Todas</option>
+          <option value="medicion">Medición</option>
+          <option value="compraVidrios">Compra Vidrios</option>
+          <option value="compraPerfiles">Compra Perfiles</option>
+          <option value="inicioProduccion">Inicio Producción</option>
+          <option value="montaje">Montaje</option>
+        </select>
+
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          events={eventos}
+        />
       </div>
     </div>
   );
 };
 
-export default Calendario;
+export default CalendarioProduccion;
