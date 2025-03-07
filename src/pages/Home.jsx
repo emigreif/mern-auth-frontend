@@ -12,9 +12,11 @@ const Home = () => {
             Organiza tus tareas y proyectos de forma sencilla y eficiente.
             ¡Bienvenido/a a tu nuevo espacio de productividad!
           </p>
-          <Link to="/login" className="home-button">
-            Continuar
+
+          <Link to="/login" className="nonButtonButton">continuar
+
           </Link>
+
         </div>
       </div>
       <div className="home-right"></div>

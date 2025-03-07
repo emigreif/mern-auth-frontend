@@ -16,7 +16,7 @@
 /* Lado derecho (verde) */
 .auth-right {
   width: 50%;
-  background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
+  background: linear-gradient(135deg, #00a46e 0%, #00aa63 100%);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -47,22 +47,6 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
-.auth-form button {
-  background-color: #00a46e;
-  color: white;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-.auth-form button:hover {
-  background-color: #008e60;
-}
-
 /* Texto extra */
 .or-social {
   text-align: center;
@@ -172,18 +156,7 @@
   padding: 0.8rem;
   width: 100%;
 }
-.auth-form button {
-  padding: 0.8rem;
-  width: 100%;
-  border: none;
-  background-color: #00aa63;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.auth-form button:hover {
-  background-color: #008e56;
-}
+
 .auth-container {
   display: flex;
   justify-content: center;

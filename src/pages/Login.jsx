@@ -43,18 +43,18 @@ const Login = () => {
           />
           <button type="submit">Sign-in</button>
                <div>
-            <Link to="/forgot-password">"recuperar contraseña"</Link>
+            <Link to="/forgot-password" className="hidebutton">recuperar contraseña</Link>
           </div>
         </form>
       </div>
 
       {/* Lado derecho: Mensaje de bienvenida */}
       <div className="auth-right">
-        <h1 >Bienvenido nuevamente</h1>
+        <h1 className="h1blanco" >Bienvenido a PLANNER</h1>
         <p>
-          Estas a un paso de potenciar la pruductividas de la empresa
-        </p>
-        <Link to="/register" className="signup-button">
+          La herramientas pensada para tu empresa.
+          Estas a un paso de potenciar al maximo tu pruductividas </p>
+        <Link to="/register" className="nonButtonButton">
           ¿Aun no tenes cuenta? Vamos
         </Link>
       </div>

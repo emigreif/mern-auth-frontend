@@ -18,24 +18,6 @@
   font-size: 1rem;
 }
 
-/* Botón de agregar compra */
-.add-button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.add-button:hover {
-  background-color: #218838;
-}
 
 /* Tabla de compras */
 table {
@@ -98,21 +80,7 @@ td select, td input {
   margin-top: 10px;
 }
 
-/* Botón de guardar compras */
-.save-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-}
 
-.save-button:hover {
-  background-color: #0056b3;
-}
 
 /* Modal */
 .modal-background {
@@ -145,19 +113,6 @@ td select, td input {
   width: 100%;
 }
 
-.modal-container button {
-  background: #dc3545;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-top: 10px;
-}
-
-.modal-container button:hover {
-  background: #c82333;
-}
 .compras-background{
   background-color: #00a46e;
   min-height: 100vh;

@@ -49,17 +49,5 @@
     border-radius: 4px;
   }
   
-  .nuevo-movimiento button {
-    background-color: #00a46e;
-    color: white;
-    border: none;
-    padding: 0.6rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    align-self: flex-start;
-  }
-  
-  .nuevo-movimiento button:hover {
-    background-color: #008e5f;
-  }
+
   
