@@ -8,11 +8,12 @@ Modal.setAppElement("#root");
 const PresupuestosList = () => {
   const [presupuestos, setPresupuestos] = useState([]);
   const [clientes, setClientes] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
+  const [loadingClientes, setLoadingClientes] = useState(true);
   const { user } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [clienteModalIsOpen, setClienteModalIsOpen] = useState(false);
   const [newPresupuesto, setNewPresupuesto] = useState({
     nombreObra: "",
     cliente: "",
@@ -27,6 +28,7 @@ const PresupuestosList = () => {
     empresaPerdida: "",
   });
 
+  // 📌 Cargar presupuestos
   useEffect(() => {
     const fetchPresupuestos = async () => {
       try {
@@ -43,6 +45,13 @@ const PresupuestosList = () => {
       }
     };
 
+    if (user) {
+      fetchPresupuestos();
+    }
+  }, [API_URL, user]);
+
+  // 📌 Cargar clientes para selección
+  useEffect(() => {
     const fetchClientes = async () => {
       try {
         const res = await fetch(`${API_URL}/api/clientes`, {
@@ -55,30 +64,81 @@ const PresupuestosList = () => {
         setClientes(data);
       } catch (error) {
         console.error("Error fetching clientes:", error);
+      } finally {
+        setLoadingClientes(false);
       }
     };
 
-    if (user) {
-      fetchPresupuestos();
-      fetchClientes();
-    }
-  }, [API_URL, user]);
+    fetchClientes();
+  }, [API_URL]);
 
+  // 📌 Manejo del modal
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setNewPresupuesto({
+      nombreObra: "",
+      cliente: "",
+      estado: "pendiente",
+      direccion: "",
+      totalPresupuestado: "",
+      totalConFactura: "",
+      totalSinFactura: "",
+      indiceCAC: "",
+      fechaEntrega: "",
+      descripcion: "",
+      empresaPerdida: "",
+    });
+  };
+
+  // 📌 Manejo del modal de cliente
+  const handleClienteCreado = (nuevoCliente) => {
+    setClientes([...clientes, nuevoCliente]);
+    setNewPresupuesto((prev) => ({ ...prev, cliente: nuevoCliente._id }));
+    setIsClienteModalOpen(false);
+  };
+
+  // 📌 Manejar cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewPresupuesto((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleClienteCreado = (nuevoCliente) => {
-    setClientes([...clientes, nuevoCliente]);
-    setNewPresupuesto((prev) => ({ ...prev, cliente: nuevoCliente._id }));
+  // 📌 Guardar presupuesto
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // 📌 Convertir valores numéricos correctamente
+    const payload = {
+      ...newPresupuesto,
+      totalPresupuestado: Number(newPresupuesto.totalPresupuestado) || 0,
+      totalConFactura: Number(newPresupuesto.totalConFactura) || 0,
+      totalSinFactura: Number(newPresupuesto.totalSinFactura) || 0,
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/api/presupuestos`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Error al crear presupuesto");
+
+      const data = await res.json();
+      setPresupuestos([...presupuestos, data]);
+      closeModal();
+    } catch (error) {
+      console.error("Error creating presupuesto:", error);
+    }
   };
 
   return (
     <div className="page-background">
       <div className="page-contenedor">
         <h1>Presupuestos</h1>
-        <button onClick={() => setModalIsOpen(true)}>Agregar Presupuesto</button>
+        <button onClick={openModal}>Agregar Presupuesto</button>
 
         {presupuestos.length === 0 ? (
           <p>No hay presupuestos registrados.</p>
@@ -106,28 +166,40 @@ const PresupuestosList = () => {
         )}
       </div>
 
-      {/* Modal de Presupuesto */}
-      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} contentLabel="Agregar Presupuesto">
+      {/* Modal para agregar presupuesto */}
+      <Modal isOpen={isModalOpen} onRequestClose={closeModal} contentLabel="Agregar Presupuesto">
         <h2>Agregar Nuevo Presupuesto</h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <label>Nombre de la Obra:</label>
           <input type="text" name="nombreObra" value={newPresupuesto.nombreObra} onChange={handleInputChange} required />
 
           <label>Cliente:</label>
-          <select name="cliente" value={newPresupuesto.cliente} onChange={handleInputChange} required>
-            <option value="">Seleccionar Cliente</option>
-            {clientes.map((c) => (
-              <option key={c._id} value={c._id}>{c.nombre}</option>
-            ))}
-          </select>
-          <button type="button" onClick={() => setClienteModalIsOpen(true)}>Agregar Nuevo Cliente</button>
+          {loadingClientes ? (
+            <p>Cargando clientes...</p>
+          ) : (
+            <select name="cliente" value={newPresupuesto.cliente} onChange={handleInputChange} required>
+              <option value="">Seleccionar Cliente</option>
+              {clientes.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.nombre} {c.apellido}
+                </option>
+              ))}
+            </select>
+          )}
+          <button type="button" onClick={() => setIsClienteModalOpen(true)}>
+            Agregar Nuevo Cliente
+          </button>
 
           <button type="submit">Guardar Presupuesto</button>
         </form>
       </Modal>
 
       {/* Modal de Cliente */}
-      <ClienteModal isOpen={clienteModalIsOpen} onClose={() => setClienteModalIsOpen(false)} onClienteCreado={handleClienteCreado} />
+      <ClienteModal
+        isOpen={isClienteModalOpen}
+        onClose={() => setIsClienteModalOpen(false)}
+        onClienteCreado={handleClienteCreado}
+      />
     </div>
   );
 };
