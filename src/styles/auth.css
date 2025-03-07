@@ -74,19 +74,7 @@
 }
 
 /* Botón de Signup */
-.signup-button {
-  margin-top: 1rem;
-  padding: 0.7rem 1.2rem;
-  background-color: #ffffff22;
-  color: #fff;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
 
-.signup-button:hover {
-  background-color: #ffffff44;
-}
 /* Estilo general del contenedor */
 .auth-container {
   display: flex;

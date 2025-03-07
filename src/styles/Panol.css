@@ -1,27 +1,4 @@
 
-.panol-buttons {
-  display: flex;
-  justify-content: space-around;
-  margin: 15px 0;
-}
-
-.panol-buttons button {
-  background-color: #00a46e;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.panol-buttons button:hover {
-  background-color: #008e5f;
-}
-
-/* Sección */
 .panol-section {
   margin-top: 20px;
 }

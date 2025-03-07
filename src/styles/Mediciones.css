@@ -10,13 +10,6 @@
   margin-bottom: 20px;
 }
 
-button {
-  background-color: #008e5f;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-}
 
 input, select {
   width: 100%;
