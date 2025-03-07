@@ -41,23 +41,21 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit">Signin</button>
-          <p className="or-social">or signin with</p>
-          <div className="social-icons">
-            <Link to="/forgot-password">"olvidas tu contraseña?"</Link>
+          <button type="submit">Sign-in</button>
+               <div>
+            <Link to="/forgot-password">"recuperar contraseña"</Link>
           </div>
         </form>
       </div>
 
       {/* Lado derecho: Mensaje de bienvenida */}
       <div className="auth-right">
-        <h1 color="white">Welcome back!</h1>
+        <h1 >Bienvenido nuevamente</h1>
         <p>
-          We are so happy to have you here. It’s great to see you again. We hope
-          you had a safe and enjoyable time away.
+          Estas a un paso de potenciar la pruductividas de la empresa
         </p>
         <Link to="/register" className="signup-button">
-          No account yet? Signup.
+          ¿Aun no tenes cuenta? Vamos
         </Link>
       </div>
     </div>
