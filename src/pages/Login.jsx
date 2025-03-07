@@ -44,16 +44,14 @@ const Login = () => {
           <button type="submit">Signin</button>
           <p className="or-social">or signin with</p>
           <div className="social-icons">
-            <span>F</span>
-            <span>G</span>
-            <span>in</span>
+            <Link to="/forgot-password">"olvidas tu contraseña?"</Link>
           </div>
         </form>
       </div>
 
       {/* Lado derecho: Mensaje de bienvenida */}
       <div className="auth-right">
-        <h2>Welcome back!</h2>
+        <h1 color="white">Welcome back!</h1>
         <p>
           We are so happy to have you here. It’s great to see you again. We hope
           you had a safe and enjoyable time away.

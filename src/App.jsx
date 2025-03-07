@@ -9,6 +9,7 @@ import ObraDetail from "./pages/ObraDetail.jsx";
 import Presupuestos from "./pages/Presupuestos.jsx";
 import Contabilidad from "./pages/Contabilidad.jsx";
 import Clientes from "./pages/clientes.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ProveedoresList from "./pages/ProveedoresList.jsx";
 import Panol from "./pages/Panol.jsx";
 import Calendario from "./pages/Calendario.jsx";
@@ -32,7 +33,7 @@ const PublicRoutes = () => (
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/planner" element={<Planner />} />
-        {/* Redirige a la home si se ingresa una ruta desconocida */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
