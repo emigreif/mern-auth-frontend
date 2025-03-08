@@ -1,0 +1,20 @@
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-base {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-base th, .table-base td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.table-base th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
