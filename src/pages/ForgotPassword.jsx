@@ -32,7 +32,7 @@ const ForgotPassword = () => {
   return (
     <div className="auth-container">
       <div className="auth-left">
-        <form className="auth-form" onSubmit={handleForgotPassword}>
+        <form  onSubmit={handleForgotPassword}>
           <h2>¿Olvidaste tu contraseña?</h2>
           <p>Ingresa tu email para recibir instrucciones de restablecimiento.</p>
           {message && <p style={{ color: "green" }}>{message}</p>}
@@ -50,7 +50,7 @@ const ForgotPassword = () => {
       </div>
 
       <div className="auth-right">
-        <h1>Recuperar contraseña</h1>
+        <h1 className="h1blanco">Recuperar contraseña</h1>
         <p>
           Te enviaremos un correo con los pasos a seguir para restablecer tu contraseña.
         </p>

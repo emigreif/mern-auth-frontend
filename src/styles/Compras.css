@@ -59,7 +59,6 @@ td select, td input {
   align-items: center;
   gap: 5px;
 }
-
 .ver-materiales:hover {
   background: #138496;
 }
@@ -80,9 +79,6 @@ td select, td input {
   margin-top: 10px;
 }
 
-
-
-/* Modal */
 .modal-background {
   position: fixed;
   top: 0;
@@ -111,13 +107,4 @@ td select, td input {
 
 .modal-container table {
   width: 100%;
-}
-
-.compras-background{
-  background-color: #00a46e;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 2rem;
 }

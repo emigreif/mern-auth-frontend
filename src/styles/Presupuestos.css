@@ -45,30 +45,3 @@
     color: #e00000;
     border-color: #e00000;
   }
-
-  /* Formulario para crear nuevo */
-  .nuevo-presupuesto {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .nuevo-presupuesto input {
-    flex: 1 1 200px;
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-
-  .nuevo-presupuesto button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 0.6rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  .nuevo-presupuesto button:hover {
-    background-color: #0056b3;
-  }

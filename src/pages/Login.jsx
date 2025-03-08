@@ -25,7 +25,7 @@ const Login = () => {
     <div className="auth-container">
       {/* Lado izquierdo: Formulario */}
       <div className="auth-left">
-        <form className="auth-form" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <h2>Sign In</h2>
           <input
             type="email"
@@ -52,8 +52,8 @@ const Login = () => {
       <div className="auth-right">
         <h1 className="h1blanco" >Bienvenido a PLANNER</h1>
         <p>
-          La herramientas pensada para tu empresa.
-          Estas a un paso de potenciar al maximo tu pruductividas </p>
+          La herramienta pensada para tu empresa.
+          Estas a un paso de potenciar al maximo tu pruductividad </p>
         <Link to="/register" className="nonButtonButton">
           ¿Aun no tenes cuenta? Vamos
         </Link>
