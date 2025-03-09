@@ -39,6 +39,7 @@ const Sidebar = () => {
         <Link to="/reportes" className="sidebar-item"> <FaChartBar className="icon" /><span className="text">Reportes</span>  </Link>
         <Link to="/mediciones" className="sidebar-item"> <FaRulerCombined className="icon" /><span className="text">Mediciones</span>  </Link>
         <Link to="/configuracion" className="sidebar-item"> <FaCog className="icon" /><span className="text">Configuración</span>  </Link>
+        <Link to="/nomina" className="sidebar-item"> <FaCog className="icon" /><span className="text"></span> </Link>
         <Link to="/profile" className="sidebar-item"> <FaUser className="icon" /><span className="text">Mi Perfil</span>  </Link>
 
 

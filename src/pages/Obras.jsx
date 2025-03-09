@@ -4,34 +4,27 @@ import ModalBase from "../components/ModalBase.jsx";
 
 const Obras = () => {
   const [obras, setObras] = useState([]);
-  const [clientes, setClientes] = useState([]);
+  const [filteredObras, setFilteredObras] = useState([]);////
+  const [clientes, setClientes] = useState([]); // Lista de clientes
+  const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState({});
-  const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
-  const [mostrarOpcionales, setMostrarOpcionales] = useState(false);
+  const [isClienteModalOpen, setIsClienteModalOpen] = useState(false); // Modal de agregar cliente
   const { user } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "https://mern-auth-backend.onrender.com";
 
-  const [newObra, setNewObra] = useState({
+  const [obraData, setObraData] = useState({
     nombre: "",
     cliente: "",
     direccion: "",
-    contacto: "",
     fechaEntrega: "",
     importeConFactura: "",
     importeSinFactura: "",
-    mapa: "",
-    encargado: "",
+    importeTotal: 0, // Se calcula automáticamente
   });
 
-  const [nuevoCliente, setNuevoCliente] = useState({
-    nombre: "",
-    apellido: "",
-    email: "",
-    telefono: "",
-  });
+  const [newCliente, setNewCliente] = useState({ nombre: "", apellido: "", email: "", telefono: "" });
 
-  // 📌 Cargar obras existentes
+  // 📌 Cargar Obras desde el Backend
   useEffect(() => {
     const fetchObras = async () => {
       try {
@@ -43,6 +36,7 @@ const Obras = () => {
         if (!res.ok) throw new Error("Error al obtener obras");
         const data = await res.json();
         setObras(data);
+        setFilteredObras(data);
       } catch (error) {
         console.error("Error fetching obras:", error);
       }
@@ -51,7 +45,7 @@ const Obras = () => {
     if (user) fetchObras();
   }, [API_URL, user]);
 
-  // 📌 Cargar clientes existentes
+  // 📌 Cargar clientes desde el Backend
   useEffect(() => {
     const fetchClientes = async () => {
       try {
@@ -71,61 +65,62 @@ const Obras = () => {
     fetchClientes();
   }, [API_URL]);
 
-  // 📌 Manejo del modal de obra
+  // 📌 Filtrar obras por nombre o cliente
+  useEffect(() => {
+    setFilteredObras(
+      obras.filter(
+        (obra) =>
+          obra.nombre.toLowerCase().includes(search.toLowerCase()) ||
+          (obra.cliente?.nombre && obra.cliente.nombre.toLowerCase().includes(search.toLowerCase()))
+      )
+    );
+  }, [search, obras]);
+
+  // 📌 Manejo del modal
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
-    setNewObra({
+    setObraData({
       nombre: "",
       cliente: "",
       direccion: "",
-      contacto: "",
       fechaEntrega: "",
       importeConFactura: "",
       importeSinFactura: "",
-      mapa: "",
-      encargado: "",
+      importeTotal: 0,
     });
-    setMostrarOpcionales(false);
-  };
-
-  // 📌 Manejo del modal de cliente
-  const handleClienteCreado = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`${API_URL}/api/clientes`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
-        body: JSON.stringify(nuevoCliente),
-      });
-
-      if (!res.ok) throw new Error("Error al crear cliente");
-
-      const data = await res.json();
-      setClientes([...clientes, data]);
-      setNewObra((prev) => ({ ...prev, cliente: data._id }));
-      setIsClienteModalOpen(false);
-    } catch (error) {
-      console.error("Error creando cliente:", error);
-    }
   };
 
   // 📌 Manejar cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewObra((prev) => ({ ...prev, [name]: value }));
+    setObraData((prev) => ({
+      ...prev,
+      [name]: value,
+      importeTotal:
+        name === "importeConFactura" || name === "importeSinFactura"
+          ? Number(prev.importeConFactura || 0) + Number(prev.importeSinFactura || 0)
+          : prev.importeTotal,
+    }));
   };
 
   // 📌 Guardar nueva obra
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      ...obraData,
+      importeConFactura: Number(obraData.importeConFactura) || 0,
+      importeSinFactura: Number(obraData.importeSinFactura) || 0,
+      importeTotal: Number(obraData.importeConFactura) + Number(obraData.importeSinFactura),
+    };
+
     try {
       const res = await fetch(`${API_URL}/api/obras`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
-        body: JSON.stringify(newObra),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error("Error al crear obra");
@@ -142,59 +137,67 @@ const Obras = () => {
     <div className="page-background">
       <div className="page-contenedor">
         <h1>Obras</h1>
-        <button onClick={openModal}>Agregar Obra</button>
 
-        {obras.length === 0 ? (
+        {/* 🔍 Barra de búsqueda */}
+        <input
+          type="text"
+          placeholder="Buscar por nombre o cliente..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="search-bar"
+        />
+
+        {/* ➕ Botón para agregar obra */}
+        <button onClick={openModal} className="add-button">Agregar Obra</button>
+
+        {/* 📋 Lista de obras */}
+        {filteredObras.length === 0 ? (
           <p>No hay obras registradas.</p>
         ) : (
           <div className="obras-list">
-            {obras.map((obra) => (
-              <div
-                key={obra._id}
-                className="obra-card"
-                onClick={() => setIsExpanded((prev) => ({ ...prev, [obra._id]: !prev[obra._id] }))}
-              >
-                <h2>{obra.nombre}</h2>
-                <p><strong>Cliente:</strong> {obra.cliente.nombre}</p>
-                <p><strong>Estado:</strong> {obra.estado}</p>
-                {isExpanded[obra._id] && (
-                  <div className="obra-detalles">
-                    <p><strong>Dirección:</strong> {obra.direccion}</p>
-                    <p><strong>Contacto:</strong> {obra.contacto}</p>
-                    <p><strong>Fecha de entrega:</strong> {obra.fechaEntrega}</p>
-                    <p><strong>Importe:</strong> ${obra.importeTotal}</p>
-                  </div>
-                )}
+            {filteredObras.map((obra) => (
+              <div key={obra._id} className="obra-card">
+                <h2>{obra.codigoObra} - {obra.nombre}</h2>
+                <p><strong>Cliente:</strong> {obra.cliente?.nombre || "Sin cliente"}</p>
+                <p><strong>Dirección:</strong> {obra.direccion}</p>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Modal para agregar obra */}
+      {/* 🏗️ Modal para agregar obra */}
       <ModalBase isOpen={isModalOpen} onClose={closeModal} title="Agregar Nueva Obra">
         <form onSubmit={handleSubmit}>
           <label>Nombre de la Obra:</label>
-          <input type="text" name="nombre" value={newObra.nombre} onChange={handleInputChange} required />
+          <input type="text" name="nombre" value={obraData.nombre} onChange={handleInputChange} required />
 
           <label>Cliente:</label>
-          <select name="cliente" value={newObra.cliente} onChange={handleInputChange} required>
-            <option value="">Seleccionar Cliente</option>
-            {clientes.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.nombre} {c.apellido}
-              </option>
-            ))}
-          </select>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <select name="cliente" value={obraData.cliente} onChange={handleInputChange} required>
+              <option value="">Seleccionar Cliente</option>
+              {clientes.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.nombre} {c.apellido}
+                </option>
+              ))}
+            </select>
+            <button type="button" onClick={() => setIsClienteModalOpen(true)}>+</button>
+          </div>
 
           <label>Dirección:</label>
-          <input type="text" name="direccion" value={newObra.direccion} onChange={handleInputChange} required />
+          <input type="text" name="direccion" value={obraData.direccion} onChange={handleInputChange} required />
 
-          <label>Contacto:</label>
-          <input type="text" name="contacto" value={newObra.contacto} onChange={handleInputChange} required />
+          <label>Fecha de Entrega:</label>
+          <input type="date" name="fechaEntrega" value={obraData.fechaEntrega} onChange={handleInputChange} />
+
+          <label>Importe con Factura:</label>
+          <input type="number" name="importeConFactura" value={obraData.importeConFactura} onChange={handleInputChange} />
+
+          <label>Importe sin Factura:</label>
+          <input type="number" name="importeSinFactura" value={obraData.importeSinFactura} onChange={handleInputChange} />
 
           <button type="submit">Guardar</button>
-          <button type="button" onClick={closeModal}>Cancelar</button>
         </form>
       </ModalBase>
     </div>
