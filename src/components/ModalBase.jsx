@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/ModalBase"; // Agrega estilos para la transparencia y animaciones
+import "../styles/ModalBase.css"; // Agrega estilos para la transparencia y animaciones
 
 const ModalBase = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;

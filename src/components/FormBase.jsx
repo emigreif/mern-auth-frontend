@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/FormBase";
+import "../styles/FormBase.css";
 
 const FormBase = ({ fields, onSubmit, onCancel }) => {
   return (
