@@ -46,7 +46,6 @@ const ProtectedRoutes = () => (
     <div className="main-content with-sidebar">
       <Routes>
         <Route path="/obras" element={<Obras />} />
-        <Route path="/obras/:id" element={<ObraDetail />} />
         <Route path="/presupuestos" element={<Presupuestos />} />
         <Route path="/contabilidad" element={<Contabilidad />} />
         <Route path="/proveedores" element={<ProveedoresList />} />
