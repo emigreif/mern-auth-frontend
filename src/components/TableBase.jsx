@@ -1,42 +1,26 @@
 import React from "react";
-import "./TableBase.css";
+import "../styles/TableBase.css";
 
-const TableBase = ({ columns, data, actions }) => {
+const TableBase = ({ headers, data }) => {
   return (
-    <div className="table-container">
-      <table className="table-base">
-        <thead>
-          <tr>
-            {columns.map((col, index) => (
-              <th key={index}>{col}</th>
+    <table className="table-base">
+      <thead>
+        <tr>
+          {headers.map((header, index) => (
+            <th key={index}>{header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row, rowIndex) => (
+          <tr key={rowIndex}>
+            {Object.values(row).map((cell, cellIndex) => (
+              <td key={cellIndex}>{cell}</td>
             ))}
-            {actions && <th>Acciones</th>}
           </tr>
-        </thead>
-        <tbody>
-          {data.length === 0 ? (
-            <tr><td colSpan={columns.length + (actions ? 1 : 0)}>No hay datos</td></tr>
-          ) : (
-            data.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {columns.map((col, colIndex) => (
-                  <td key={colIndex}>{row[col]}</td>
-                ))}
-                {actions && (
-                  <td>
-                    {actions.map((action, actionIndex) => (
-                      <button key={actionIndex} onClick={() => action.onClick(row)}>
-                        {action.label}
-                      </button>
-                    ))}
-                  </td>
-                )}
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 };
 

@@ -4,17 +4,21 @@ body {
   padding: 0;
   background-color: #f5f5f5;
 }
+
 .page-contenedor {
   width: 90%;
   max-width: 900px;
   background-color: #fff;
-  border: 2px solid #fff; /* Borde blanco sutil, puedes cambiarlo a #ddd si prefieres */
+  border: 2px solid #fff;
+  /* Borde blanco sutil, puedes cambiarlo a #ddd si prefieres */
   border-radius: 8px;
   padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
+
 .page-background {
-  background-color: #00a46e; /* Ajusta al tono de verde que desees */
+  background-color: #00a46e;
+  /* Ajusta al tono de verde que desees */
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -22,16 +26,19 @@ body {
   padding-top: 2rem;
 }
 
-  h1 {
-    color: #007b55; /* Un verde un poco más oscuro, ajusta si quieres */
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-  h2 {
-    color: #555;
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
-  }
+h1 {
+  color: #007b55;
+  /* Un verde un poco más oscuro, ajusta si quieres */
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  color: #555;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
 button {
   background-color: #00a46e;
   color: white;
@@ -46,7 +53,8 @@ button {
 button:hover {
   background-color: #008e60;
 }
-.nonButtonButton{
+
+.nonButtonButton {
   margin-top: 1rem;
   padding: 0.7rem 1.2rem;
   background-color: #00a46e;
@@ -59,13 +67,15 @@ button:hover {
 .nonButtonButton:hover {
   background-color: #008e60;
 }
-.hidebutton{
-  background-color:white;
+
+.hidebutton {
+  background-color: white;
   color: gray;
   border-radius: 4px;
   text-decoration: none;
 }
-.h1blanco{
+
+.h1blanco {
   color: white;
   font-size: 2.5rem;
   margin-bottom: 1rem;
@@ -77,7 +87,7 @@ button:hover {
   margin-top: 1.5rem;
 }
 
-/* Encabezados de sección */  
+/* Encabezados de sección */
 .page-contenedor p,
 .page-contenedor ul {
   color: #444;
@@ -85,9 +95,10 @@ button:hover {
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
 }
+
 form {
   max-width: 300px;
- 
+
 
 }
 
@@ -105,4 +116,3 @@ form input {
   border-radius: 4px;
   width: 100%;
 }
-

@@ -4,8 +4,7 @@ import About from "./pages/About.jsx";
 import Planner from "./pages/Planner.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import ObrasList from "./pages/ObrasList.jsx";
-import ObraDetail from "./pages/ObraDetail.jsx";
+import Obras from "./pages/Obras.jsx";
 import Presupuestos from "./pages/Presupuestos.jsx";
 import Contabilidad from "./pages/Contabilidad.jsx";
 import Clientes from "./pages/clientes.jsx";
@@ -46,7 +45,7 @@ const ProtectedRoutes = () => (
     <Sidebar />
     <div className="main-content with-sidebar">
       <Routes>
-        <Route path="/obras" element={<ObrasList />} />
+        <Route path="/obras" element={<Obras />} />
         <Route path="/obras/:id" element={<ObraDetail />} />
         <Route path="/presupuestos" element={<Presupuestos />} />
         <Route path="/contabilidad" element={<Contabilidad />} />
