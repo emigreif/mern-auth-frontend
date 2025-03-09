@@ -25,7 +25,8 @@ const Login = () => {
     <div className="auth-container">
       {/* Lado izquierdo: Formulario */}
       <div className="auth-left">
-        <form onSubmit={handleSubmit}>
+        <div className="borde">
+          <form onSubmit={handleSubmit}>
           <h2>Sign In</h2>
           <input
             type="email"
@@ -46,6 +47,7 @@ const Login = () => {
             <Link to="/forgot-password" className="hidebutton">recuperar contraseña</Link>
           </div>
         </form>
+      </div>
       </div>
 
       {/* Lado derecho: Mensaje de bienvenida */}

@@ -97,8 +97,7 @@ button:hover {
 }
 
 form {
-  max-width: 300px;
-
+padding: 10px;
 
 }
 
@@ -110,9 +109,10 @@ form h2 {
 
 form input {
   margin-bottom: 1rem;
-  padding: 0.8rem;
+  padding: 1rem;
+
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 100%;
+  width: 90%;
 }

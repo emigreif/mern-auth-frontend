@@ -1,23 +1,22 @@
-import { useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
-import FormBase from "../components/FormBase.jsx";
-import "../styles/auth.css";
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
+import '../styles/auth.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    repeatPassword: "",
-    firstName: "",
-    lastName: "",
-    razonSocial: "",
-    cuit: "",
-    plan: "",
-    cantidadUsuarios: "",
-    direccion: "",
-    localidad: "",
-    codigoPostal: "",
+    email: '',
+    password: '',
+    repeatPassword: '',
+    firstName: '',
+    lastName: '',
+    razonSocial: '',
+    cuit: '',
+    plan: '',
+    cantidadUsuarios: '',
+    direccion: '',
+    localidad: '',
+    codigoPostal: ''
   });
 
   const { register } = useAuth();
@@ -30,14 +29,14 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await register(formData);
-    navigate("/obras");
+    navigate('/Obras');
   };
 
   return (
     <div className="page-background">
       <div className="page-contenedor">
-        <h2>Registrarse</h2>
-        <FormBase onSubmit={handleSubmit}>
+        <form  onSubmit={handleSubmit}>
+          <h2>Registrarse</h2>
           <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
           <input type="text" name="firstName" placeholder="Nombre" value={formData.firstName} onChange={handleChange} required />
           <input type="text" name="lastName" placeholder="Apellido" value={formData.lastName} onChange={handleChange} required />
@@ -51,7 +50,7 @@ const Register = () => {
           <input type="password" name="password" placeholder="Contraseña" value={formData.password} onChange={handleChange} required />
           <input type="password" name="repeatPassword" placeholder="Repetir Contraseña" value={formData.repeatPassword} onChange={handleChange} required />
           <button type="submit">Crear cuenta</button>
-        </FormBase>
+        </form>
       </div>
     </div>
   );

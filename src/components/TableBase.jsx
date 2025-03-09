@@ -1,26 +1,32 @@
 import React from "react";
 import "../styles/TableBase.css";
 
-const TableBase = ({ headers, data }) => {
+const TableBase = ({ headers = [], data = [] }) => {
   return (
-    <table className="table-base">
-      <thead>
-        <tr>
-          {headers.map((header, index) => (
-            <th key={index}>{header}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {Object.values(row).map((cell, cellIndex) => (
-              <td key={cellIndex}>{cell}</td>
+    <div className="table-container">
+      {data.length > 0 ? (
+        <table className="table-base">
+          <thead>
+            <tr>
+              {headers.map((header, index) => (
+                <th key={index}>{header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.map((cell, cellIndex) => (
+                  <td key={cellIndex}>{cell}</td>
+                ))}
+              </tr>
             ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+          </tbody>
+        </table>
+      ) : (
+        <p className="table-empty">⚠️ No hay datos disponibles</p>
+      )}
+    </div>
   );
 };
 
