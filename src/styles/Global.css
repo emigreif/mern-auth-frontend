@@ -73,6 +73,7 @@ button {
 /* Estructura principal */
 .app-container {
   display: flex;
+  background-color: #00a46e;
   flex-direction: column;
   min-height: 100vh;
 }

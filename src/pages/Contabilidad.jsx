@@ -48,7 +48,7 @@ const Contabilidad = () => {
   };
 
   return (
-    <div className="page-background">
+   
       <div className="page-contenedor">
         <h1>Contabilidad</h1>
 
@@ -99,7 +99,7 @@ const Contabilidad = () => {
           </button>
         </form>
       </div>
-    </div>
+   
   );
 };
 

@@ -63,7 +63,7 @@ const Proveedores = () => {
   };
 
   return (
-    <div className="page-background">
+    
       <div className="page-contenedor">
         <h1>Proveedores</h1>
 
@@ -135,8 +135,7 @@ const Proveedores = () => {
           </form>
         </ModalBase>
       </div>
-    </div>
-  );
+    
 };
 
 export default Proveedores;

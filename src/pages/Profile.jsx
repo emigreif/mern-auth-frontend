@@ -50,7 +50,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="page-background">
+    
       <div className="page-contenedor">
         <h1>Mi Perfil</h1>
         <form onSubmit={handleUpdateProfile}>
@@ -101,8 +101,7 @@ const Profile = () => {
           </button>
         </form>
       </div>
-    </div>
-  );
+   
 };
 
 export default Profile;

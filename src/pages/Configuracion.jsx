@@ -48,7 +48,7 @@ const Configuracion = () => {
   };
 
   return (
-    <div className="page-background"><div className="page-contenedor">
+    <div className="page-contenedor">
       <h1>Configuración</h1>
       <form onSubmit={handleSave}>
         <div className="form-group">
@@ -73,7 +73,7 @@ const Configuracion = () => {
         <button type="submit" className="btn">Guardar Configuración</button>
       </form>
     </div>
-    </div>
+    
   );
 };
 

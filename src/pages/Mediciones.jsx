@@ -57,7 +57,7 @@ const Mediciones = () => {
   };
 
   return (
-    <div className="page-background">
+   
       <div className="page-contenedor">
         <h1>Mediciones</h1>
 
@@ -138,7 +138,7 @@ const Mediciones = () => {
           </form>
         </ModalBase>
       </div>
-    </div>
+    
   );
 };
 

@@ -65,7 +65,7 @@ const Clientes = () => {
   };
 
   return (
-    <div className="page-background">
+    
       <div className="page-contenedor">
         <h1>Clientes</h1>
         <button className="btn" onClick={() => setIsModalOpen(true)}>
@@ -167,7 +167,7 @@ const Clientes = () => {
           </form>
         </ModalBase>
       </div>
-    </div>
+    
   );
 };
 

@@ -53,7 +53,7 @@ const Compras = () => {
   };
 
   return (
-    <div className="page-background">
+    
       <div className="page-contenedor">
         <h1>Compras</h1>
         <button className="btn" onClick={() => setIsModalOpen(true)}>
@@ -130,7 +130,7 @@ const Compras = () => {
           </form>
         </ModalBase>
       </div>
-    </div>
+    
   );
 };
 

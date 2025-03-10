@@ -51,7 +51,7 @@ const Reportes = () => {
   };
 
   return (
-    <div className="page-background">
+    
       <div className="page-contenedor">
         <h1>Reportes</h1>
         <button className="btn" onClick={() => setIsModalOpen(true)}>
@@ -110,7 +110,7 @@ const Reportes = () => {
           </form>
         </ModalBase>
       </div>
-    </div>
+   
   );
 };
 

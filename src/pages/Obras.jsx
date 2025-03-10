@@ -61,7 +61,7 @@ const Obras = () => {
   };
 
   return (
-    <div className="page-background">
+    
       <div className="page-contenedor">
         <h1>Obras</h1>
 
@@ -189,7 +189,7 @@ const Obras = () => {
           </form>
         </ModalBase>
       </div>
-    </div>
+    
   );
 };
 

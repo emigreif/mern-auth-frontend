@@ -55,7 +55,7 @@ const Nomina = () => {
   };
 
   return (
-    <div className="page-background">
+    
       <div className="page-contenedor">
         <h1>Nómina</h1>
         <button className="btn" onClick={() => setIsModalOpen(true)}>
@@ -148,7 +148,7 @@ const Nomina = () => {
           </form>
         </ModalBase>
       </div>
-    </div>
+   
   );
 };
 

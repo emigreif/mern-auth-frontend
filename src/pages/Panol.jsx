@@ -53,7 +53,7 @@ const Panol = () => {
   };
 
   return (
-    <div className="page-background">
+   
       <div className="page-contenedor">
         <h1>Pañol</h1>
         <button className="btn" onClick={() => setIsModalOpen(true)}>
@@ -113,7 +113,7 @@ const Panol = () => {
           </form>
         </ModalBase>
       </div>
-    </div>
+    
   );
 };
 
