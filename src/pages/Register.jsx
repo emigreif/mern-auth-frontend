@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import "../styles/Auth.css"; // Tu hoja de estilos para la pantalla de auth
 
 const Register = () => {
   const { register } = useAuth();
