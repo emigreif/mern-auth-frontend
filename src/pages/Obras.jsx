@@ -196,8 +196,10 @@ const Obras = () => {
 
           <label>Importe sin Factura:</label>
           <input type="number" name="importeSinFactura" value={obraData.importeSinFactura} onChange={handleInputChange} />
+          
 
           <button type="submit">Guardar</button>
+          
         </form>
       </ModalBase>
     </div>

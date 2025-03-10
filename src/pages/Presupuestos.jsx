@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import ModalBase from "../components/ModalBase.jsx";
-import TableBase from "../components/TableBase.jsx";
-import FormBase from "../components/FormBase.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import ModalBase from "../components/ModalBase.jsx";
 
 const Presupuestos = () => {
   const [presupuestos, setPresupuestos] = useState([]);
@@ -94,34 +92,44 @@ const Presupuestos = () => {
         <h1>Presupuestos</h1>
         <button onClick={() => setIsModalOpen(true)}>Agregar Presupuesto</button>
 
-        <TableBase
-          headers={["ID Obra", "Nombre de la Obra", "Cliente", "Estado"]}
-          data={presupuestos.map((p) => ({
-            ID: p.idObra || p._id,
-            Nombre: p.nombreObra,
-            Cliente: p.cliente,
-            Estado: p.estado,
-          }))}
-        />
+        <div className="presupuestos-list">
+          {presupuestos.length === 0 ? (
+            <p>No hay presupuestos registrados.</p>
+          ) : (
+            presupuestos.map((p) => (
+              <div key={p._id} className="presupuesto-card">
+                <h2>{p.nombreObra}</h2>
+                <p><strong>Cliente:</strong> {p.cliente}</p>
+                <p><strong>Estado:</strong> {p.estado}</p>
 
-        <ModalBase isOpen={isModalOpen} onClose={closeModal}>
-          <h2>Agregar Nuevo Presupuesto</h2>
-          <FormBase onSubmit={handleSubmit}>
-            <label>Nombre de la Obra:</label>
-            <input type="text" name="nombreObra" value={newPresupuesto.nombreObra} onChange={handleInputChange} required />
-
-            <label>Cliente:</label>
-            <select name="cliente" value={newPresupuesto.cliente} onChange={handleInputChange} required>
-              <option value="">Seleccionar Cliente</option>
-              {clientes.map((c) => (
-                <option key={c._id} value={c._id}>{c.nombre} {c.apellido}</option>
-              ))}
-            </select>
-
-            <button type="submit">Guardar Presupuesto</button>
-          </FormBase>
-        </ModalBase>
+                <div className="action-buttons">
+                  <button className="edit-button">✏️ Editar</button>
+                  <button className="delete-button">❌ Eliminar</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
+
+      {/* Modal para agregar presupuesto */}
+      <ModalBase isOpen={isModalOpen} onClose={closeModal}>
+        <h2>Agregar Nuevo Presupuesto</h2>
+        <form onSubmit={handleSubmit}>
+          <label>Nombre de la Obra:</label>
+          <input type="text" name="nombreObra" value={newPresupuesto.nombreObra} onChange={handleInputChange} required />
+
+          <label>Cliente:</label>
+          <select name="cliente" value={newPresupuesto.cliente} onChange={handleInputChange} required>
+            <option value="">Seleccionar Cliente</option>
+            {clientes.map((c) => (
+              <option key={c._id} value={c._id}>{c.nombre} {c.apellido}</option>
+            ))}
+          </select>
+
+          <button type="submit">Guardar Presupuesto</button>
+        </form>
+      </ModalBase>
     </div>
   );
 };
