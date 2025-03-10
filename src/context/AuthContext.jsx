@@ -1,102 +1,107 @@
-import { createContext, useState, useEffect, useContext } from "react";
+// src/context/AuthContext.jsx
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-
+// Creamos el contexto
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";  // URL del backend
+// Exportamos el hook para usar el contexto
+export const useAuth = () => useContext(AuthContext);
 
+// Exportamos el Provider que envuelve toda la app
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);   // Datos del usuario
+  const [loading, setLoading] = useState(true); // Para mostrar "Cargando..." mientras verifica login
+
+  // Ajusta la URL de tu backend en .env
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // 1. Al montar, intentamos obtener el perfil del usuario
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await fetch(`${API_URL}/api/user/profile`, {
-          credentials: "include",
+          credentials: "include", // Envia cookies (si tu backend las usa)
         });
-
-        if (!response.ok) {
-          throw new Error("No autenticado");
-        }
+        if (!response.ok) throw new Error("No autenticado");
 
         const data = await response.json();
-        setUser(data);
+        setUser(data); // Asumimos que data es { _id, email, perfiles, etc. }
       } catch (error) {
-        console.error("Error obteniendo perfil de usuario:", error);
-        setUser(null);
+        setUser(null); // Si falla, no hay usuario logueado
       } finally {
         setLoading(false);
       }
     };
 
     fetchUser();
-  }, [API_URL]); // Se ejecuta si cambia la URL del backend
+  }, [API_URL]);
 
+  // 2. Función de login
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: "include", // Envia cookies
         body: JSON.stringify({ email, password }),
       });
+      if (!res.ok) throw new Error("Credenciales inválidas");
 
-      if (!response.ok) {
-        throw new Error("Credenciales incorrectas");
-      }
-
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
+      const data = await res.json();
+      // data puede ser { token, user } o similar
       setUser(data.user);
-      return true; // Para manejar la redirección en Login.jsx
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
-      return false;
+      throw error; // para manejarlo en el componente
     }
   };
 
-const logout = async () => {
-  try {
-    await fetch(`${API_URL}/api/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-    // Limpiar localStorage
-    localStorage.removeItem("token");
-    setUser(null);
-  } catch (error) {
-    console.error("Error cerrando sesión:", error);
-  }
-};
+  // 3. Función de logout
+  const logout = async () => {
+    try {
+      await fetch(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      setUser(null);
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
+  // 4. Función de registro
   const register = async (formData) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(formData),
       });
+      if (!res.ok) throw new Error("Error al registrar usuario");
 
-      if (!response.ok) {
-        throw new Error("Error al registrar usuario");
-      }
-
-      const data = await response.json();
+      const data = await res.json();
+      // data.user: el usuario recién creado
       setUser(data.user);
-      return true;
     } catch (error) {
-      console.error("Error en la petición:", error);
-      return false;
+      console.error("Error al registrar usuario:", error);
+      throw error;
     }
   };
 
+  // Valor expuesto en el Context
+  const value = {
+    user,
+    setUser,
+    loading,
+    login,
+    logout,
+    register,
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser, register, login, logout, loading }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);
-export default AuthContext;

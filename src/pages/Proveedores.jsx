@@ -1,51 +1,61 @@
-// src/pages/Panol.jsx
+// src/pages/Proveedores.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "../components/ModalBase.jsx";
 
-const Panol = () => {
+const Proveedores = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  const [materiales, setMateriales] = useState([]);
+
+  const [proveedores, setProveedores] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [nuevoMaterial, setNuevoMaterial] = useState({
+  const [nuevoProveedor, setNuevoProveedor] = useState({
     nombre: "",
-    cantidad: 0,
-    unidad: "",
+    direccion: "",
+    emails: "",
+    telefono: "",
   });
 
+  // Cargar lista de proveedores
   useEffect(() => {
-    const fetchPanol = async () => {
+    const fetchProveedores = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/panol`, {
+        const res = await fetch(`${API_URL}/api/proveedores`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error("Error al obtener pañol");
+        if (!res.ok) throw new Error("Error al obtener proveedores");
         const data = await res.json();
-        // data podría ser un array de materiales o un objeto con arrays
-        setMateriales(data.materiales || data);
+        setProveedores(data);
       } catch (error) {
         console.error(error);
       }
     };
-    fetchPanol();
+    fetchProveedores();
   }, [API_URL]);
 
+  // Manejar inputs
   const handleInputChange = (e) => {
-    setNuevoMaterial({ ...nuevoMaterial, [e.target.name]: e.target.value });
+    setNuevoProveedor({ ...nuevoProveedor, [e.target.name]: e.target.value });
   };
 
-  const handleCreateMaterial = async (e) => {
+  // Crear proveedor
+  const handleCreateProveedor = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_URL}/api/panol`, {
+      // emails en el backend es un array, aquí lo parseamos
+      const body = {
+        ...nuevoProveedor,
+        emails: nuevoProveedor.emails.split(",").map((mail) => mail.trim()),
+      };
+
+      const res = await fetch(`${API_URL}/api/proveedores`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nuevoMaterial),
+        body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error("Error al agregar material");
+      if (!res.ok) throw new Error("Error al crear proveedor");
       const data = await res.json();
-      setMateriales([...materiales, data]);
+      setProveedores([...proveedores, data]);
       setIsModalOpen(false);
     } catch (error) {
       console.error(error);
@@ -55,17 +65,24 @@ const Panol = () => {
   return (
     <div className="page-background">
       <div className="page-contenedor">
-        <h1>Pañol</h1>
+        <h1>Proveedores</h1>
+
         <button className="btn" onClick={() => setIsModalOpen(true)}>
-          Agregar Material
+          Agregar Proveedor
         </button>
 
         <div className="list">
-          {materiales.map((m, i) => (
-            <div key={i} className="list-item">
-              <h3>{m.nombre}</h3>
+          {proveedores.map((p) => (
+            <div key={p._id} className="list-item">
+              <h3>{p.nombre}</h3>
               <p>
-                <strong>Cantidad:</strong> {m.cantidad} {m.unidad}
+                <strong>Dirección:</strong> {p.direccion}
+              </p>
+              <p>
+                <strong>Emails:</strong> {p.emails?.join(", ")}
+              </p>
+              <p>
+                <strong>Teléfono:</strong> {p.telefono}
               </p>
             </div>
           ))}
@@ -74,9 +91,9 @@ const Panol = () => {
         <ModalBase
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="Agregar Material"
+          title="Agregar Proveedor"
         >
-          <form onSubmit={handleCreateMaterial}>
+          <form onSubmit={handleCreateProveedor}>
             <div className="form-group">
               <label>Nombre</label>
               <input
@@ -87,16 +104,21 @@ const Panol = () => {
               />
             </div>
             <div className="form-group">
-              <label>Cantidad</label>
+              <label>Dirección</label>
               <input
-                type="number"
-                name="cantidad"
+                type="text"
+                name="direccion"
                 onChange={handleInputChange}
+                required
               />
             </div>
             <div className="form-group">
-              <label>Unidad</label>
-              <input type="text" name="unidad" onChange={handleInputChange} />
+              <label>Emails (separados por coma)</label>
+              <input type="text" name="emails" onChange={handleInputChange} />
+            </div>
+            <div className="form-group">
+              <label>Teléfono</label>
+              <input type="text" name="telefono" onChange={handleInputChange} />
             </div>
             <div className="form-actions">
               <button type="submit" className="btn">
@@ -117,4 +139,4 @@ const Panol = () => {
   );
 };
 
-export default Panol;
+export default Proveedores;

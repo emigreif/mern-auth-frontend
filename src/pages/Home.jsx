@@ -1,3 +1,5 @@
+// src/pages/Home.jsx
+import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/Home.css";
 
@@ -12,14 +14,12 @@ const Home = () => {
             Organiza tus tareas y proyectos de forma sencilla y eficiente.
             ¡Bienvenido/a a tu nuevo espacio de productividad!
           </p>
-
-          <Link to="/login" className="nonButtonButton">continuar
-
+          <Link to="/login" className="nonButtonButton">
+            Ingresar
           </Link>
-
         </div>
       </div>
-      <div className="home-right"></div>
+      <div className="home-right">{/* Opcional: imagen, logo, etc. */}</div>
     </div>
   );
 };

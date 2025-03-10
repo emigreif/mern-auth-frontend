@@ -1,15 +1,23 @@
+// src/components/ModalBase.jsx
 import React from "react";
-import "../styles/ModalBase.css"; // Agrega estilos para la transparencia y animaciones
 
 const ModalBase = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
+  const handleOverlayClick = () => {
+    onClose();
+  };
+
+  const handleContentClick = (e) => {
+    e.stopPropagation(); // Evita que el click en contenido cierre el modal
+  };
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="modal-content" onClick={handleContentClick}>
         <button className="modal-close" onClick={onClose}>✖</button>
-        <h2>{title}</h2>
-        <div className="modal-body">{children}</div>
+        {title && <h2>{title}</h2>}
+        <div>{children}</div>
       </div>
     </div>
   );

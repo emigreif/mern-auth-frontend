@@ -1,174 +1,153 @@
+// src/pages/Nomina.jsx
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/ModalBase.jsx";
 
 const Nomina = () => {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [empleados, setEmpleados] = useState([]);
-  const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingEmployee, setEditingEmployee] = useState(null);
-  const { user } = useAuth();
-  const API_URL = import.meta.env.VITE_API_URL || "https://mern-auth-backend.onrender.com";
 
-  const [employeeData, setEmployeeData] = useState({
+  const [nuevoEmpleado, setNuevoEmpleado] = useState({
     nombre: "",
     apellido: "",
     dni: "",
     email: "",
-    telefono: "",
-    direccion: "",
     puesto: "",
-    salario: "",
-    fechaIngreso: "",
-    activo: true,
+    salario: 0,
   });
 
-  // 📌 Cargar empleados desde el backend
   useEffect(() => {
     const fetchEmpleados = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/empleados`, {
-          method: "GET",
+        const res = await fetch(`${API_URL}/api/employee`, {
           credentials: "include",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         if (!res.ok) throw new Error("Error al obtener empleados");
         const data = await res.json();
         setEmpleados(data);
       } catch (error) {
-        console.error("Error fetching empleados:", error);
+        console.error(error);
       }
     };
+    fetchEmpleados();
+  }, [API_URL]);
 
-    if (user) fetchEmpleados();
-  }, [API_URL, user]);
-
-  // 📌 Filtrar empleados por nombre o puesto
-  const filteredEmpleados = empleados.filter(
-    (emp) =>
-      emp.nombre.toLowerCase().includes(search.toLowerCase()) ||
-      emp.apellido.toLowerCase().includes(search.toLowerCase()) ||
-      emp.puesto.toLowerCase().includes(search.toLowerCase())
-  );
-
-  // 📌 Manejo del modal
-  const openModal = (empleado = null) => {
-    setEditingEmployee(empleado);
-    setEmployeeData(
-      empleado || {
-        nombre: "",
-        apellido: "",
-        dni: "",
-        email: "",
-        telefono: "",
-        direccion: "",
-        puesto: "",
-        salario: "",
-        fechaIngreso: "",
-        activo: true,
-      }
-    );
-    setIsModalOpen(true);
-  };
-  const closeModal = () => setIsModalOpen(false);
-
-  // 📌 Manejar cambios en los inputs
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEmployeeData((prev) => ({ ...prev, [name]: value }));
+    setNuevoEmpleado({ ...nuevoEmpleado, [e.target.name]: e.target.value });
   };
 
-  // 📌 Guardar o Editar Empleado
-  const handleSubmit = async (e) => {
+  const handleCreateEmpleado = async (e) => {
     e.preventDefault();
-    const method = editingEmployee ? "PUT" : "POST";
-    const url = editingEmployee ? `${API_URL}/api/empleados/${editingEmployee._id}` : `${API_URL}/api/empleados`;
-
     try {
-      const res = await fetch(url, {
-        method,
+      const res = await fetch(`${API_URL}/api/employee`, {
+        method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
-        body: JSON.stringify(employeeData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevoEmpleado),
       });
-
-      if (!res.ok) throw new Error("Error al guardar empleado");
-
+      if (!res.ok) throw new Error("Error al crear empleado");
       const data = await res.json();
-      setEmpleados(editingEmployee ? empleados.map((e) => (e._id === data._id ? data : e)) : [...empleados, data]);
-      closeModal();
+      setEmpleados([...empleados, data]);
+      setIsModalOpen(false);
     } catch (error) {
-      console.error("Error saving employee:", error);
-    }
-  };
-
-  // 📌 Eliminar Empleado
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Estás seguro de eliminar este empleado?")) return;
-
-    try {
-      await fetch(`${API_URL}/api/empleados/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-
-      setEmpleados(empleados.filter((e) => e._id !== id));
-    } catch (error) {
-      console.error("Error deleting employee:", error);
+      console.error(error);
     }
   };
 
   return (
     <div className="page-background">
       <div className="page-contenedor">
-        <h1>Nómina del Personal</h1>
+        <h1>Nómina</h1>
+        <button className="btn" onClick={() => setIsModalOpen(true)}>
+          Agregar Empleado
+        </button>
 
-        {/* 🔍 Barra de búsqueda */}
-        <input type="text" placeholder="Buscar empleado..." value={search} onChange={(e) => setSearch(e.target.value)} className="search-bar" />
+        <div className="list">
+          {empleados.map((emp) => (
+            <div key={emp._id} className="list-item">
+              <h2>
+                {emp.nombre} {emp.apellido}
+              </h2>
+              <p>
+                <strong>DNI:</strong> {emp.dni}
+              </p>
+              <p>
+                <strong>Email:</strong> {emp.email}
+              </p>
+              <p>
+                <strong>Puesto:</strong> {emp.puesto}
+              </p>
+              <p>
+                <strong>Salario:</strong> {emp.salario}
+              </p>
+            </div>
+          ))}
+        </div>
 
-        {/* ➕ Botón para agregar empleado */}
-        <button onClick={() => openModal()} className="add-button">Agregar Empleado</button>
-
-        {/* 📋 Lista de empleados */}
-        {filteredEmpleados.length === 0 ? (
-          <p>No hay empleados registrados.</p>
-        ) : (
-          <div className="empleados-list">
-            {filteredEmpleados.map((emp) => (
-              <div key={emp._id} className="empleado-card">
-                <h2>{emp.nombre} {emp.apellido}</h2>
-                <p><strong>Puesto:</strong> {emp.puesto}</p>
-                <p><strong>Salario:</strong> ${emp.salario}</p>
-                <p><strong>Estado:</strong> {emp.activo ? "Activo" : "Inactivo"}</p>
-                <div className="action-buttons">
-                  <button onClick={() => openModal(emp)}>✏️ Editar</button>
-                  <button onClick={() => handleDelete(emp._id)}>❌ Eliminar</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <ModalBase
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Agregar Empleado"
+        >
+          <form onSubmit={handleCreateEmpleado}>
+            <div className="form-group">
+              <label>Nombre</label>
+              <input
+                type="text"
+                name="nombre"
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Apellido</label>
+              <input
+                type="text"
+                name="apellido"
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>DNI</label>
+              <input
+                type="text"
+                name="dni"
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" name="email" onChange={handleInputChange} />
+            </div>
+            <div className="form-group">
+              <label>Puesto</label>
+              <input type="text" name="puesto" onChange={handleInputChange} />
+            </div>
+            <div className="form-group">
+              <label>Salario</label>
+              <input
+                type="number"
+                name="salario"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-actions">
+              <button type="submit" className="btn">
+                Guardar
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </ModalBase>
       </div>
-
-      {/* 🏗️ Modal para agregar/editar empleado */}
-      <ModalBase isOpen={isModalOpen} onClose={closeModal} title={editingEmployee ? "Editar Empleado" : "Agregar Empleado"}>
-        <form onSubmit={handleSubmit}>
-          <label>Nombre:</label>
-          <input type="text" name="nombre" value={employeeData.nombre} onChange={handleInputChange} required />
-          
-          <label>Apellido:</label>
-          <input type="text" name="apellido" value={employeeData.apellido} onChange={handleInputChange} required />
-
-          <label>Puesto:</label>
-          <input type="text" name="puesto" value={employeeData.puesto} onChange={handleInputChange} required />
-
-          <label>Salario:</label>
-          <input type="number" name="salario" value={employeeData.salario} onChange={handleInputChange} required />
-
-          <button type="submit">Guardar</button>
-        </form>
-      </ModalBase>
     </div>
   );
 };

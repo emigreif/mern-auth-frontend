@@ -1,5 +1,6 @@
 // frontend/src/pages/About.jsx
 import React from "react";
+import "../styles/auth.css"
 
 const About = () => {
   return (

@@ -1,77 +1,115 @@
+// src/pages/Reportes.jsx
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/ModalBase.jsx";
-import "../styles/Reportes.css";
 
 const Reportes = () => {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [reportes, setReportes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [nuevoReporte, setNuevoReporte] = useState({ categoria: "", descripcion: "", fecha: "" });
-  const { user } = useAuth();
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  const [nuevoReporte, setNuevoReporte] = useState({
+    categoria: "",
+    descripcion: "",
+  });
 
   useEffect(() => {
-    if (user) {
-      fetch(`${API_URL}/api/reportes`, {
-        method: "GET",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-        .then((res) => res.json())
-        .then((data) => setReportes(data))
-        .catch((error) => console.error("Error fetching reportes:", error));
-    }
-  }, [API_URL, user]);
+    const fetchReportes = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/reportes`, {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Error al obtener reportes");
+        const data = await res.json();
+        setReportes(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchReportes();
+  }, [API_URL]);
 
   const handleInputChange = (e) => {
     setNuevoReporte({ ...nuevoReporte, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleCreateReporte = async (e) => {
     e.preventDefault();
-    setReportes([...reportes, nuevoReporte]);
-    setIsModalOpen(false);
+    try {
+      const res = await fetch(`${API_URL}/api/reportes`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevoReporte),
+      });
+      if (!res.ok) throw new Error("Error al crear reporte");
+      const data = await res.json();
+      setReportes([...reportes, data]);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <div className="page-background">
       <div className="page-contenedor">
         <h1>Reportes</h1>
-        <button onClick={() => setIsModalOpen(true)}>Agregar Reporte</button>
+        <button className="btn" onClick={() => setIsModalOpen(true)}>
+          Agregar Reporte
+        </button>
 
-        <div className="reportes-list">
-          {reportes.length === 0 ? (
-            <p>No hay reportes registrados.</p>
-          ) : (
-            reportes.map((r) => (
-              <div key={r._id} className="reporte-card">
-                <h2>{r.categoria}</h2>
-                <p><strong>Descripción:</strong> {r.descripcion}</p>
-                <p><strong>Fecha:</strong> {r.fecha}</p>
-
-                <div className="action-buttons">
-                  <button className="edit-button">✏️ Editar</button>
-                  <button className="delete-button">❌ Eliminar</button>
-                </div>
-              </div>
-            ))
-          )}
+        <div className="list">
+          {reportes.map((r) => (
+            <div key={r._id} className="list-item">
+              <h2>{r.categoria}</h2>
+              <p>
+                <strong>Descripción:</strong> {r.descripcion}
+              </p>
+              <p>
+                <strong>Fecha:</strong> {r.fecha ? r.fecha.slice(0, 10) : ""}
+              </p>
+            </div>
+          ))}
         </div>
+
+        <ModalBase
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Agregar Reporte"
+        >
+          <form onSubmit={handleCreateReporte}>
+            <div className="form-group">
+              <label>Categoría</label>
+              <input
+                type="text"
+                name="categoria"
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Descripción</label>
+              <textarea
+                name="descripcion"
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="form-actions">
+              <button type="submit" className="btn">
+                Guardar
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </ModalBase>
       </div>
-
-      {/* Modal para agregar reporte */}
-      <ModalBase isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2>Agregar Reporte</h2>
-        <form onSubmit={handleSubmit}>
-          <label>Categoría:</label>
-          <input type="text" name="categoria" value={nuevoReporte.categoria} onChange={handleInputChange} required />
-
-          <label>Descripción:</label>
-          <textarea name="descripcion" value={nuevoReporte.descripcion} onChange={handleInputChange} required />
-
-          <button type="submit">Guardar</button>
-        </form>
-      </ModalBase>
     </div>
   );
 };

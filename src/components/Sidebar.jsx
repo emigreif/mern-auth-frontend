@@ -1,52 +1,80 @@
-// frontend/src/components/Sidebar.jsx
+// src/components/Sidebar.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaBuilding, FaTruck, FaClipboardList, FaCalendarAlt, FaChartBar, FaCog, FaSignOutAlt, FaShoppingCart, FaFileInvoiceDollar, FaUser, FaCalculator, FaRulerCombined  } from "react-icons/fa";
-import { useAuth } from "../context/AuthContext";
-import "../styles/Sidebar.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBuilding,
+  faFileInvoiceDollar,
+  faUser,
+  faShoppingCart,
+  faTruck,
+  faClipboardList,
+  faCalendarAlt,
+  faCalculator,
+  faChartBar,
+  faRulerCombined,
+  faCog,
+  faUsers,
+  faSignOutAlt
+} from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Sidebar = () => {
-  const { user, logout } = useAuth();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const { logout } = useAuth();
+  const [expanded, setExpanded] = useState(true);
 
-  // Manejar clic en el botón
+  // Maneja la expansión/colapso
   const toggleSidebar = () => {
-    setIsExpanded(!isExpanded);
+    setExpanded(!expanded);
   };
 
-  const onLogout = () => {
-    logout();
+  // Función para cerrar sesión
+  const handleLogout = async () => {
+    await logout();
   };
+
+  // Array con todos los enlaces de la sidebar
+  const menuItems = [
+    { name: "Obras", route: "/obras", icon: faBuilding },
+    { name: "Presupuestos", route: "/presupuestos", icon: faFileInvoiceDollar },
+    { name: "Clientes", route: "/clientes", icon: faUser },
+    { name: "Compras", route: "/compras", icon: faShoppingCart },
+    { name: "Proveedores", route: "/proveedores", icon: faTruck },
+    { name: "Pañol", route: "/panol", icon: faClipboardList },
+    { name: "Calendario", route: "/calendario", icon: faCalendarAlt },
+    { name: "Contabilidad", route: "/contabilidad", icon: faCalculator },
+    { name: "Reportes", route: "/reportes", icon: faChartBar },
+    { name: "Mediciones", route: "/mediciones", icon: faRulerCombined },
+    { name: "Configuración", route: "/configuracion", icon: faCog },
+    { name: "Nómina", route: "/nomina", icon: faUsers },
+    { name: "Mi Perfil", route: "/profile", icon: faUser },
+  ];
 
   return (
-    <div className={`sidebar ${isExpanded ? "expanded" : "collapsed"}`}>
+    <div className={`sidebar ${expanded ? "expanded" : "collapsed"}`}>
+      {/* Encabezado de la sidebar con el botón de colapsar */}
       <div className="sidebar-header">
         <button className="menu-btn" onClick={toggleSidebar}>
-          {isExpanded ? "<" : ">"}
+          {expanded ? "<" : ">"}
         </button>
       </div>
 
+      {/* Menú principal */}
       <nav className="sidebar-menu">
-        <Link to="/obras" className="sidebar-item"> <FaBuilding className="icon" /><span className="text">Obras</span>  </Link>
-        <Link to="/presupuestos" className="sidebar-item"> <FaFileInvoiceDollar className="icon" /><span className="text">Presupuestos</span>  </Link>
-        <Link to="/clientes" className="sidebar-item"> <FaUser className="icon" /><span className="text">Clientes</span>  </Link>
-
-        <Link to="/compras" className="sidebar-item"> <FaShoppingCart className="icon" /><span className="text">Compras</span>  </Link>
-        <Link to="/proveedores" className="sidebar-item"> <FaTruck className="icon" /><span className="text">Proveedores</span>  </Link>
-        <Link to="/panol" className="sidebar-item"> <FaClipboardList className="icon" /><span className="text">Pañol</span>  </Link>
-        <Link to="/calendario" className="sidebar-item"> <FaCalendarAlt className="icon" /><span className="text">Calendario</span>  </Link>
-        <Link to="/contabilidad" className="sidebar-item"> <FaCalculator className="icon" /><span className="text">Contabilidad</span>  </Link>
-        <Link to="/reportes" className="sidebar-item"> <FaChartBar className="icon" /><span className="text">Reportes</span>  </Link>
-        <Link to="/mediciones" className="sidebar-item"> <FaRulerCombined className="icon" /><span className="text">Mediciones</span>  </Link>
-        <Link to="/configuracion" className="sidebar-item"> <FaCog className="icon" /><span className="text">Configuración</span>  </Link>
-        <Link to="/nomina" className="sidebar-item"> <FaCog className="icon" /><span className="text"></span> </Link>
-        <Link to="/profile" className="sidebar-item"> <FaUser className="icon" /><span className="text">Mi Perfil</span>  </Link>
-
-
+        {menuItems.map((item) => (
+          <Link to={item.route} key={item.name} className="sidebar-item">
+            <FontAwesomeIcon icon={item.icon} className="icon" />
+            <span className="text">{item.name}</span>
+          </Link>
+        ))}
       </nav>
-      <button className="sidebar-item logout" onClick={onLogout}>
-        <FaSignOutAlt className="icon" /><span className="text">Cerrar Sesión</span>
-      </button>    </div>
+
+      {/* Botón de logout al final */}
+      <button className="sidebar-item logout" onClick={handleLogout}>
+        <FontAwesomeIcon icon={faSignOutAlt} className="icon" />
+        <span className="text">Cerrar Sesión</span>
+      </button>
+    </div>
   );
 };
 

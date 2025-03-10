@@ -1,51 +1,55 @@
-// src/pages/Compras.jsx
+// src/pages/Mediciones.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "../components/ModalBase.jsx";
 
-const Compras = () => {
+const Mediciones = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  const [compras, setCompras] = useState([]);
+
+  const [mediciones, setMediciones] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [nuevaCompra, setNuevaCompra] = useState({
-    proveedor: "",
-    obra: "",
-    tipo: "aluminio", // Ejemplo
-    cantidad: 0,
+  const [nuevaMedicion, setNuevaMedicion] = useState({
+    ubicacion: "",
+    anchoRelevado: 0,
+    altoRelevado: 0,
+    observaciones: "",
   });
 
+  // GET /api/mediciones
   useEffect(() => {
-    const fetchCompras = async () => {
+    const fetchMediciones = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/compras`, {
+        const res = await fetch(`${API_URL}/api/mediciones`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error("Error al obtener compras");
+        if (!res.ok) throw new Error("Error al obtener mediciones");
         const data = await res.json();
-        setCompras(data);
+        setMediciones(data);
       } catch (error) {
         console.error(error);
       }
     };
-    fetchCompras();
+    fetchMediciones();
   }, [API_URL]);
 
+  // Manejar inputs
   const handleInputChange = (e) => {
-    setNuevaCompra({ ...nuevaCompra, [e.target.name]: e.target.value });
+    setNuevaMedicion({ ...nuevaMedicion, [e.target.name]: e.target.value });
   };
 
-  const handleCreateCompra = async (e) => {
+  // POST /api/mediciones
+  const handleCreateMedicion = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_URL}/api/compras`, {
+      const res = await fetch(`${API_URL}/api/mediciones`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nuevaCompra),
+        body: JSON.stringify(nuevaMedicion),
       });
-      if (!res.ok) throw new Error("Error al crear compra");
+      if (!res.ok) throw new Error("Error al crear medición");
       const data = await res.json();
-      setCompras([...compras, data]);
+      setMediciones([...mediciones, data]);
       setIsModalOpen(false);
     } catch (error) {
       console.error(error);
@@ -55,26 +59,28 @@ const Compras = () => {
   return (
     <div className="page-background">
       <div className="page-contenedor">
-        <h1>Compras</h1>
+        <h1>Mediciones</h1>
+
         <button className="btn" onClick={() => setIsModalOpen(true)}>
-          Agregar Compra
+          Agregar Medición
         </button>
 
         <div className="list">
-          {compras.map((c) => (
-            <div key={c._id} className="list-item">
-              <h3>
-                {c.tipo} - Proveedor: {c.proveedor}
-              </h3>
+          {mediciones.map((m) => (
+            <div key={m._id} className="list-item">
+              <h2>Ubicación: {m.ubicacion}</h2>
               <p>
-                <strong>Obra:</strong> {c.obra}
+                <strong>Ancho:</strong> {m.anchoRelevado}
               </p>
               <p>
-                <strong>Cantidad:</strong> {c.cantidad}
+                <strong>Alto:</strong> {m.altoRelevado}
+              </p>
+              <p>
+                <strong>Observaciones:</strong> {m.observaciones}
               </p>
               <p>
                 <strong>Fecha:</strong>{" "}
-                {new Date(c.fechaCompra).toLocaleDateString()}
+                {new Date(m.createdAt).toLocaleDateString()}
               </p>
             </div>
           ))}
@@ -83,37 +89,39 @@ const Compras = () => {
         <ModalBase
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="Agregar Compra"
+          title="Agregar Medición"
         >
-          <form onSubmit={handleCreateCompra}>
+          <form onSubmit={handleCreateMedicion}>
             <div className="form-group">
-              <label>Tipo</label>
-              <select name="tipo" onChange={handleInputChange}>
-                <option value="aluminio">Aluminio</option>
-                <option value="vidrios">Vidrios</option>
-                <option value="accesorios">Accesorios</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Proveedor</label>
+              <label>Ubicación</label>
               <input
                 type="text"
-                name="proveedor"
+                name="ubicacion"
                 onChange={handleInputChange}
                 required
               />
             </div>
             <div className="form-group">
-              <label>Obra</label>
-              <input type="text" name="obra" onChange={handleInputChange} />
-            </div>
-            <div className="form-group">
-              <label>Cantidad</label>
+              <label>Ancho Relevado</label>
               <input
                 type="number"
-                name="cantidad"
+                name="anchoRelevado"
                 onChange={handleInputChange}
+                required
               />
+            </div>
+            <div className="form-group">
+              <label>Alto Relevado</label>
+              <input
+                type="number"
+                name="altoRelevado"
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Observaciones</label>
+              <textarea name="observaciones" onChange={handleInputChange} />
             </div>
             <div className="form-actions">
               <button type="submit" className="btn">
@@ -134,4 +142,4 @@ const Compras = () => {
   );
 };
 
-export default Compras;
+export default Mediciones;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+/* import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -114,7 +114,7 @@ const CalendarioProduccion = () => {
       <div className="page-contenedor">
         <h1>Calendario de Producción</h1>
 
-        {/* Filtros */}
+        {/* Filtros 
         <label>Filtrar por Obra:</label>
         <select
           value={obraSeleccionada}
@@ -123,7 +123,7 @@ const CalendarioProduccion = () => {
           <option value="">Todas</option>
           {obras.map((obra) => (
             <option key={obra._id} value={obra._id}>
-              {/* Muestra la info de obra que necesites */}
+              {/* Muestra la info de obra que necesites 
               {obra.nombre}
             </option>
           ))}
@@ -142,14 +142,14 @@ const CalendarioProduccion = () => {
           <option value="montaje">Montaje</option>
         </select>
 
-        {/* Calendario */}
+        {/* Calendario 
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           events={eventos} // Debe ser un array con objetos { title, date, ... }
         />
 
-        {/* Botón para abrir el modal y agregar evento */}
+        {/* Botón para abrir el modal y agregar evento 
         <button
           onClick={() => setModalOpen(true)}
           style={{
@@ -170,7 +170,7 @@ const CalendarioProduccion = () => {
           +
         </button>
 
-        {/* Modal para agregar evento */}
+        {/* Modal para agregar evento 
         {modalOpen && (
           <div
             style={{
@@ -210,7 +210,7 @@ const CalendarioProduccion = () => {
               <option value="Producción">Nueva Producción</option>
             </select>
 
-            {/* Seleccionar Obra para el evento */}
+            {/* Seleccionar Obra para el evento 
             <label>Seleccionar Obra:</label>
             <select
               value={nuevoEvento.obraId}
@@ -237,3 +237,45 @@ const CalendarioProduccion = () => {
 };
 
 export default CalendarioProduccion;
+ */
+// src/pages/Calendario.jsx
+import React, { useState, useEffect } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import { useAuth } from "../context/AuthContext.jsx";
+
+const Calendario = () => {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const [eventos, setEventos] = useState([]);
+
+  useEffect(() => {
+    const fetchEventos = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/calendario`, {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Error al obtener calendario");
+        const data = await res.json();
+        setEventos(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchEventos();
+  }, [API_URL]);
+
+  return (
+    <div className="page-background">
+      <div className="page-contenedor">
+        <h1>Calendario</h1>
+        <FullCalendar
+          plugins={[dayGridPlugin]}
+          initialView="dayGridMonth"
+          events={eventos} // data con { title, start, color, etc. }
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Calendario;
