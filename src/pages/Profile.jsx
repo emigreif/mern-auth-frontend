@@ -101,7 +101,8 @@ const Profile = () => {
           </button>
         </form>
       </div>
-   
+    
+  );
 };
 
 export default Profile;

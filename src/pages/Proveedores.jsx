@@ -136,6 +136,7 @@ const Proveedores = () => {
         </ModalBase>
       </div>
     
+  );
 };
 
 export default Proveedores;
