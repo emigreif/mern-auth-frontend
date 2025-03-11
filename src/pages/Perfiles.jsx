@@ -1,9 +1,10 @@
+// src/pages/Perfiles.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
 export default function Perfiles() {
-  const { user } = useAuth(); // asumiendo tu AuthContext => user con info
+  const { user, token } = useAuth();
   const navigate = useNavigate();
 
   const [perfiles, setPerfiles] = useState([]);
@@ -21,25 +22,23 @@ export default function Perfiles() {
       contabilidad: false,
       reportes: false,
       nomina: false,
-      admin: false
+      admin: false,
     },
   });
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
-    // Verificar si el perfil actual es admin => sino => navigate("/obras")
-    // (O la lógica que uses para chequear si tu "perfilActivo" es admin)
-    // Ej: if (!user?.currentPerfil?.permisos?.admin) navigate("/obras");
+    if (!token) return;
     fetchPerfiles();
-  }, []);
+  }, [token]);
 
   const fetchPerfiles = async () => {
     try {
       const res = await fetch(`${API_URL}/api/perfiles`, {
         headers: {
-  "Authorization": `Bearer ${token}`
-}
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (!res.ok) throw new Error("Error al obtener perfiles");
       const data = await res.json();
@@ -68,9 +67,9 @@ export default function Perfiles() {
       const res = await fetch(`${API_URL}/api/perfiles`, {
         method: "POST",
         headers: {
-  "Authorization": `Bearer ${token}`
-},
-        headers: { "Content-Type": "application/json" },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(perfilForm),
       });
       if (!res.ok) {
@@ -90,7 +89,7 @@ export default function Perfiles() {
           contabilidad: false,
           reportes: false,
           nomina: false,
-          admin: false
+          admin: false,
         },
       });
     } catch (error) {
@@ -113,9 +112,9 @@ export default function Perfiles() {
       const res = await fetch(`${API_URL}/api/perfiles`, {
         method: "PUT",
         headers: {
-  "Authorization": `Bearer ${token}`
-},
-        headers: { "Content-Type": "application/json" },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ id: editing, ...perfilForm }),
       });
       if (!res.ok) throw new Error("Error al editar perfil");
@@ -133,7 +132,7 @@ export default function Perfiles() {
           contabilidad: false,
           reportes: false,
           nomina: false,
-          admin: false
+          admin: false,
         },
       });
     } catch (error) {
@@ -147,8 +146,8 @@ export default function Perfiles() {
       const res = await fetch(`${API_URL}/api/perfiles/${id}`, {
         method: "DELETE",
         headers: {
-  "Authorization": `Bearer ${token}`
-}
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (!res.ok) throw new Error("Error al eliminar perfil");
       await fetchPerfiles();
@@ -167,9 +166,14 @@ export default function Perfiles() {
         <div style={{ flex: 1 }}>
           <h2>Perfiles Existentes</h2>
           {perfiles.map((p) => (
-            <div key={p._id} style={{ border: "1px solid #ccc", marginBottom: "1rem", padding: "0.5rem" }}>
+            <div
+              key={p._id}
+              style={{ border: "1px solid #ccc", marginBottom: "1rem", padding: "0.5rem" }}
+            >
               <strong>{p.nombre}</strong> (pass: {p.password})
-              {p.permisos.admin && <span style={{ color: "red", marginLeft: "1rem" }}>[ADMIN]</span>}
+              {p.permisos.admin && (
+                <span style={{ color: "red", marginLeft: "1rem" }}>[ADMIN]</span>
+              )}
               <div>
                 <button onClick={() => handleEditClick(p)}>Editar</button>
                 <button onClick={() => handleDelete(p._id)}>Eliminar</button>
@@ -212,7 +216,6 @@ export default function Perfiles() {
                 Admin
               </label>
             </div>
-            {/* Repite para obras, clientes, etc. */}
             <label>
               <input
                 type="checkbox"
@@ -222,28 +225,31 @@ export default function Perfiles() {
               />
               Obras
             </label>
-            {/* ... demás permisos ... */}
+            {/* ... Repite para los demás permisos ... */}
 
             <button type="submit">{editing ? "Actualizar" : "Crear"}</button>
             {editing && (
-              <button type="button" onClick={() => {
-                setEditing(null);
-                setPerfilForm({
-                  nombre: "",
-                  password: "",
-                  permisos: {
-                    dashboard: false,
-                    obras: false,
-                    clientes: false,
-                    presupuestos: false,
-                    proveedores: false,
-                    contabilidad: false,
-                    reportes: false,
-                    nomina: false,
-                    admin: false
-                  },
-                });
-              }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditing(null);
+                  setPerfilForm({
+                    nombre: "",
+                    password: "",
+                    permisos: {
+                      dashboard: false,
+                      obras: false,
+                      clientes: false,
+                      presupuestos: false,
+                      proveedores: false,
+                      contabilidad: false,
+                      reportes: false,
+                      nomina: false,
+                      admin: false,
+                    },
+                  });
+                }}
+              >
                 Cancelar
               </button>
             )}

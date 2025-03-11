@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
 
 export default function Login() {
-  const { login, token } = useAuth(); // Para primer login (usuario) y acceder al token
+  const { login, loginPerfil, token } = useAuth();
   const navigate = useNavigate();
 
   // Campos para primer login (usuario)
@@ -22,16 +22,35 @@ export default function Login() {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // 1. Primer login
+  // 1. Primer login (usuario)
   const handleGeneralLogin = async (e) => {
     e.preventDefault();
     try {
-      await login(email, pass); // AuthContext => guarda user + token
-      // En lugar de redirigir a /obras, pasamos a la fase "perfil"
+      // Inicia sesión con email/contraseña (solo guarda el token, NO setea user)
+      await login(email, pass);
+
+      // (NUEVO) Llamar a /api/perfiles para que se cree el admin si no hay ninguno
+      // Requiere que ya tengas "token" en el AuthContext
+      // OJO: el token se setea en login, pero se hace setToken() de forma asíncrona
+      // Para asegurar que "token" ya esté disponible, usa un pequeño truco:
+      const currentToken = localStorage.getItem("token");
+      if (!currentToken) {
+        throw new Error("No se pudo obtener token tras login.");
+      }
+
+      // Ahora hacemos la llamada
+      await fetch(`${API_URL}/api/perfiles`, {
+        headers: {
+          Authorization: `Bearer ${currentToken}`
+        }
+      });
+      // Esto disparará la lógica en el backend que crea el perfil admin si no existe
+
+      // Pasar a la fase "perfil"
       setPhase("perfil");
       setErrorMsg("");
     } catch (error) {
-      setErrorMsg("Usuario/Contraseña incorrectos.");
+      setErrorMsg(error.message || "Error en el primer login");
     }
   };
 
@@ -39,19 +58,8 @@ export default function Login() {
   const handlePerfilLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_URL}/api/perfiles/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` // Enviamos el token
-        },
-        body: JSON.stringify({ perfilName, perfilPass }),
-      });
-      if (!res.ok) {
-        throw new Error("Perfil/Contraseña de perfil inválidos");
-      }
-
-      // Si OK => vamos a /obras
+      await loginPerfil(perfilName, perfilPass);
+      // Tras validar el perfil, se setea user en AuthContext => redirigimos a /obras
       navigate("/obras");
     } catch (error) {
       setErrorMsg(error.message);

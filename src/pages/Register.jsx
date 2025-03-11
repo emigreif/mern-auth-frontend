@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import "../styles/Auth.css"
+import "../styles/Auth.css";
 
 const Register = () => {
   const { register } = useAuth();
@@ -39,7 +39,6 @@ const Register = () => {
     }
 
     try {
-      // Llama al register del AuthContext
       await register(formData);
       // Redirige a una ruta protegida (por ejemplo, /obras)
       navigate("/obras");
@@ -50,13 +49,13 @@ const Register = () => {
 
   return (
     <div className="auth-container">
-      {/* Sección de bienvenida pasa al lado IZQUIERDO */}
+      {/* Sección de bienvenida pasa al lado DERECHO */}
       <div className="auth-right">
         <h1>Bienvenido a PLANNER</h1>
         <p>La herramienta pensada para tu empresa.</p>
       </div>
 
-      {/* Formulario pasa al lado DERECHO */}
+      {/* Formulario pasa al lado IZQUIERDO */}
       <div className="auth-left">
         <form onSubmit={handleSubmit}>
           <h2>Registrarse</h2>

@@ -1,11 +1,13 @@
 // src/pages/Compras.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "../components/ModalBase.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Compras = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const [compras, setCompras] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { token } = useAuth();
 
   const [nuevaCompra, setNuevaCompra] = useState({
     proveedor: "",
@@ -15,12 +17,16 @@ const Compras = () => {
   });
 
   useEffect(() => {
+    if (!token) return;
+    // Ejemplo: si deseas listar SOLO "aluminio"
+    // fetch(`${API_URL}/api/compras/aluminio`, { ... })
+    // O si quieres un "select" para el tipo, etc.
     const fetchCompras = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/compras`, {
+        const res = await fetch(`${API_URL}/api/compras/aluminio`, {
           headers: {
-  "Authorization": `Bearer ${token}`
-},
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (!res.ok) throw new Error("Error al obtener compras");
         const data = await res.json();
@@ -30,7 +36,7 @@ const Compras = () => {
       }
     };
     fetchCompras();
-  }, [API_URL]);
+  }, [API_URL, token]);
 
   const handleInputChange = (e) => {
     setNuevaCompra({ ...nuevaCompra, [e.target.name]: e.target.value });
@@ -39,12 +45,13 @@ const Compras = () => {
   const handleCreateCompra = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_URL}/api/compras`, {
+      // Por ejemplo, si nuevaCompra.tipo es "aluminio", harás:
+      const res = await fetch(`${API_URL}/api/compras/${nuevaCompra.tipo}`, {
         method: "POST",
         headers: {
-  "Authorization": `Bearer ${token}`
-},
-        headers: { "Content-Type": "application/json" },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(nuevaCompra),
       });
       if (!res.ok) throw new Error("Error al crear compra");
@@ -57,84 +64,77 @@ const Compras = () => {
   };
 
   return (
-    
-      <div className="page-contenedor">
-        <h1>Compras</h1>
-        <button className="btn" onClick={() => setIsModalOpen(true)}>
-          Agregar Compra
-        </button>
+    <div className="page-contenedor">
+      <h1>Compras</h1>
+      <button className="btn" onClick={() => setIsModalOpen(true)}>
+        Agregar Compra
+      </button>
 
-        <div className="list">
-          {compras.map((c) => (
-            <div key={c._id} className="list-item">
-              <h3>
-                {c.tipo} - Proveedor: {c.proveedor}
-              </h3>
-              <p>
-                <strong>Obra:</strong> {c.obra}
-              </p>
-              <p>
-                <strong>Cantidad:</strong> {c.cantidad}
-              </p>
-              <p>
-                <strong>Fecha:</strong>{" "}
-                {new Date(c.fechaCompra).toLocaleDateString()}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <ModalBase
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title="Agregar Compra"
-        >
-          <form onSubmit={handleCreateCompra}>
-            <div className="form-group">
-              <label>Tipo</label>
-              <select name="tipo" onChange={handleInputChange}>
-                <option value="aluminio">Aluminio</option>
-                <option value="vidrios">Vidrios</option>
-                <option value="accesorios">Accesorios</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Proveedor</label>
-              <input
-                type="text"
-                name="proveedor"
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Obra</label>
-              <input type="text" name="obra" onChange={handleInputChange} />
-            </div>
-            <div className="form-group">
-              <label>Cantidad</label>
-              <input
-                type="number"
-                name="cantidad"
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-actions">
-              <button type="submit" className="btn">
-                Guardar
-              </button>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </ModalBase>
+      <div className="list">
+        {compras.map((c) => (
+          <div key={c._id} className="list-item">
+            <h3>
+              {c.tipoCompra} - Proveedor: {c.proveedor}
+            </h3>
+            <p>
+              <strong>Obra:</strong> {c.obra}
+            </p>
+            <p>
+              <strong>Cantidad:</strong> {c.cantidad}
+            </p>
+            <p>
+              <strong>Fecha:</strong> {new Date(c.fechaCompra).toLocaleDateString()}
+            </p>
+          </div>
+        ))}
       </div>
-    
+
+      <ModalBase
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Agregar Compra"
+      >
+        <form onSubmit={handleCreateCompra}>
+          <div className="form-group">
+            <label>Tipo</label>
+            <select name="tipo" onChange={handleInputChange}>
+              <option value="aluminio">Aluminio</option>
+              <option value="vidrios">Vidrios</option>
+              <option value="accesorios">Accesorios</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Proveedor</label>
+            <input
+              type="text"
+              name="proveedor"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Obra</label>
+            <input type="text" name="obra" onChange={handleInputChange} />
+          </div>
+          <div className="form-group">
+            <label>Cantidad</label>
+            <input type="number" name="cantidad" onChange={handleInputChange} />
+          </div>
+          <div className="form-actions">
+            <button type="submit" className="btn">
+              Guardar
+            </button>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </ModalBase>
+    </div>
   );
 };
 

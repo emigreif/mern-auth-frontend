@@ -1,9 +1,11 @@
 // src/pages/Proveedores.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "../components/ModalBase.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Proveedores = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const { token } = useAuth();
 
   const [proveedores, setProveedores] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,12 +19,13 @@ const Proveedores = () => {
 
   // Cargar lista de proveedores
   useEffect(() => {
+    if (!token) return;
     const fetchProveedores = async () => {
       try {
         const res = await fetch(`${API_URL}/api/proveedores`, {
           headers: {
-  "Authorization": `Bearer ${token}`
-},
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (!res.ok) throw new Error("Error al obtener proveedores");
         const data = await res.json();
@@ -32,9 +35,8 @@ const Proveedores = () => {
       }
     };
     fetchProveedores();
-  }, [API_URL]);
+  }, [API_URL, token]);
 
-  // Manejar inputs
   const handleInputChange = (e) => {
     setNuevoProveedor({ ...nuevoProveedor, [e.target.name]: e.target.value });
   };
@@ -52,9 +54,9 @@ const Proveedores = () => {
       const res = await fetch(`${API_URL}/api/proveedores`, {
         method: "POST",
         headers: {
-  "Authorization": `Bearer ${token}`
-},
-        headers: { "Content-Type": "application/json" },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error("Error al crear proveedor");
@@ -67,79 +69,77 @@ const Proveedores = () => {
   };
 
   return (
-    
-      <div className="page-contenedor">
-        <h1>Proveedores</h1>
+    <div className="page-contenedor">
+      <h1>Proveedores</h1>
 
-        <button className="btn" onClick={() => setIsModalOpen(true)}>
-          Agregar Proveedor
-        </button>
+      <button className="btn" onClick={() => setIsModalOpen(true)}>
+        Agregar Proveedor
+      </button>
 
-        <div className="list">
-          {proveedores.map((p) => (
-            <div key={p._id} className="list-item">
-              <h3>{p.nombre}</h3>
-              <p>
-                <strong>Dirección:</strong> {p.direccion}
-              </p>
-              <p>
-                <strong>Emails:</strong> {p.emails?.join(", ")}
-              </p>
-              <p>
-                <strong>Teléfono:</strong> {p.telefono}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <ModalBase
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title="Agregar Proveedor"
-        >
-          <form onSubmit={handleCreateProveedor}>
-            <div className="form-group">
-              <label>Nombre</label>
-              <input
-                type="text"
-                name="nombre"
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Dirección</label>
-              <input
-                type="text"
-                name="direccion"
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Emails (separados por coma)</label>
-              <input type="text" name="emails" onChange={handleInputChange} />
-            </div>
-            <div className="form-group">
-              <label>Teléfono</label>
-              <input type="text" name="telefono" onChange={handleInputChange} />
-            </div>
-            <div className="form-actions">
-              <button type="submit" className="btn">
-                Guardar
-              </button>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </ModalBase>
+      <div className="list">
+        {proveedores.map((p) => (
+          <div key={p._id} className="list-item">
+            <h3>{p.nombre}</h3>
+            <p>
+              <strong>Dirección:</strong> {p.direccion}
+            </p>
+            <p>
+              <strong>Emails:</strong> {p.emails?.join(", ")}
+            </p>
+            <p>
+              <strong>Teléfono:</strong> {p.telefono}
+            </p>
+          </div>
+        ))}
       </div>
-    
+
+      <ModalBase
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Agregar Proveedor"
+      >
+        <form onSubmit={handleCreateProveedor}>
+          <div className="form-group">
+            <label>Nombre</label>
+            <input
+              type="text"
+              name="nombre"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Dirección</label>
+            <input
+              type="text"
+              name="direccion"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Emails (separados por coma)</label>
+            <input type="text" name="emails" onChange={handleInputChange} />
+          </div>
+          <div className="form-group">
+            <label>Teléfono</label>
+            <input type="text" name="telefono" onChange={handleInputChange} />
+          </div>
+          <div className="form-actions">
+            <button type="submit" className="btn">
+              Guardar
+            </button>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </ModalBase>
+    </div>
   );
 };
 

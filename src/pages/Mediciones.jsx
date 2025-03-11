@@ -1,12 +1,13 @@
 // src/pages/Mediciones.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "../components/ModalBase.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Mediciones = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
   const [mediciones, setMediciones] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { token } = useAuth();
 
   const [nuevaMedicion, setNuevaMedicion] = useState({
     ubicacion: "",
@@ -15,14 +16,14 @@ const Mediciones = () => {
     observaciones: "",
   });
 
-  // GET /api/mediciones
   useEffect(() => {
+    if (!token) return;
     const fetchMediciones = async () => {
       try {
         const res = await fetch(`${API_URL}/api/mediciones`, {
           headers: {
-  "Authorization": `Bearer ${token}`
-},
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (!res.ok) throw new Error("Error al obtener mediciones");
         const data = await res.json();
@@ -32,23 +33,21 @@ const Mediciones = () => {
       }
     };
     fetchMediciones();
-  }, [API_URL]);
+  }, [API_URL, token]);
 
-  // Manejar inputs
   const handleInputChange = (e) => {
     setNuevaMedicion({ ...nuevaMedicion, [e.target.name]: e.target.value });
   };
 
-  // POST /api/mediciones
   const handleCreateMedicion = async (e) => {
     e.preventDefault();
     try {
       const res = await fetch(`${API_URL}/api/mediciones`, {
         method: "POST",
         headers: {
-  "Authorization": `Bearer ${token}`
-},
-        headers: { "Content-Type": "application/json" },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(nuevaMedicion),
       });
       if (!res.ok) throw new Error("Error al crear medición");
@@ -61,88 +60,86 @@ const Mediciones = () => {
   };
 
   return (
-   
-      <div className="page-contenedor">
-        <h1>Mediciones</h1>
+    <div className="page-contenedor">
+      <h1>Mediciones</h1>
 
-        <button className="btn" onClick={() => setIsModalOpen(true)}>
-          Agregar Medición
-        </button>
+      <button className="btn" onClick={() => setIsModalOpen(true)}>
+        Agregar Medición
+      </button>
 
-        <div className="list">
-          {mediciones.map((m) => (
-            <div key={m._id} className="list-item">
-              <h2>Ubicación: {m.ubicacion}</h2>
-              <p>
-                <strong>Ancho:</strong> {m.anchoRelevado}
-              </p>
-              <p>
-                <strong>Alto:</strong> {m.altoRelevado}
-              </p>
-              <p>
-                <strong>Observaciones:</strong> {m.observaciones}
-              </p>
-              <p>
-                <strong>Fecha:</strong>{" "}
-                {new Date(m.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <ModalBase
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title="Agregar Medición"
-        >
-          <form onSubmit={handleCreateMedicion}>
-            <div className="form-group">
-              <label>Ubicación</label>
-              <input
-                type="text"
-                name="ubicacion"
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Ancho Relevado</label>
-              <input
-                type="number"
-                name="anchoRelevado"
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Alto Relevado</label>
-              <input
-                type="number"
-                name="altoRelevado"
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Observaciones</label>
-              <textarea name="observaciones" onChange={handleInputChange} />
-            </div>
-            <div className="form-actions">
-              <button type="submit" className="btn">
-                Guardar
-              </button>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </ModalBase>
+      <div className="list">
+        {mediciones.map((m) => (
+          <div key={m._id} className="list-item">
+            <h2>Ubicación: {m.ubicacion}</h2>
+            <p>
+              <strong>Ancho:</strong> {m.anchoRelevado}
+            </p>
+            <p>
+              <strong>Alto:</strong> {m.altoRelevado}
+            </p>
+            <p>
+              <strong>Observaciones:</strong> {m.observaciones}
+            </p>
+            <p>
+              <strong>Fecha:</strong>{" "}
+              {new Date(m.createdAt).toLocaleDateString()}
+            </p>
+          </div>
+        ))}
       </div>
-    
+
+      <ModalBase
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Agregar Medición"
+      >
+        <form onSubmit={handleCreateMedicion}>
+          <div className="form-group">
+            <label>Ubicación</label>
+            <input
+              type="text"
+              name="ubicacion"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Ancho Relevado</label>
+            <input
+              type="number"
+              name="anchoRelevado"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Alto Relevado</label>
+            <input
+              type="number"
+              name="altoRelevado"
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Observaciones</label>
+            <textarea name="observaciones" onChange={handleInputChange} />
+          </div>
+          <div className="form-actions">
+            <button type="submit" className="btn">
+              Guardar
+            </button>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </ModalBase>
+    </div>
   );
 };
 

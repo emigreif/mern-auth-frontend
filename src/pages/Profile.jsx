@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const Profile = () => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [formData, setFormData] = useState({
@@ -36,14 +36,17 @@ const Profile = () => {
       const res = await fetch(`${API_URL}/api/user/profile`, {
         method: "PUT",
         headers: {
-  "Authorization": `Bearer ${token}`
-},
-        headers: { "Content-Type": "application/json" },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error("Error al actualizar perfil");
       const updatedUser = await res.json();
-      setUser(updatedUser); // Asume que el backend retorna el usuario actualizado
+      // Asume que el backend retorna { message, user } o user directamente
+      if (updatedUser.user) {
+        setUser(updatedUser.user);
+      }
       alert("Perfil actualizado");
     } catch (error) {
       console.error(error);
@@ -52,58 +55,56 @@ const Profile = () => {
   };
 
   return (
-    
-      <div className="page-contenedor">
-        <h1>Mi Perfil</h1>
-        <form onSubmit={handleUpdateProfile}>
-          <div className="form-group">
-            <label>Nombre</label>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>Apellido</label>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>Email (no editable)</label>
-            <input type="email" name="email" value={formData.email} disabled />
-          </div>
-          <div className="form-group">
-            <label>Contraseña Actual</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Sólo si cambias la contraseña"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>Nueva Contraseña</label>
-            <input
-              type="password"
-              name="newPassword"
-              placeholder="Sólo si cambias la contraseña"
-              value={formData.newPassword}
-              onChange={handleChange}
-            />
-          </div>
-          <button type="submit" className="btn">
-            Actualizar
-          </button>
-        </form>
-      </div>
-    
+    <div className="page-contenedor">
+      <h1>Mi Perfil</h1>
+      <form onSubmit={handleUpdateProfile}>
+        <div className="form-group">
+          <label>Nombre</label>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Apellido</label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Email (no editable)</label>
+          <input type="email" name="email" value={formData.email} disabled />
+        </div>
+        <div className="form-group">
+          <label>Contraseña Actual</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Sólo si cambias la contraseña"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Nueva Contraseña</label>
+          <input
+            type="password"
+            name="newPassword"
+            placeholder="Sólo si cambias la contraseña"
+            value={formData.newPassword}
+            onChange={handleChange}
+          />
+        </div>
+        <button type="submit" className="btn">
+          Actualizar
+        </button>
+      </form>
+    </div>
   );
 };
 
