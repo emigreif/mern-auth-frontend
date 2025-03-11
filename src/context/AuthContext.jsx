@@ -4,85 +4,112 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 // Creamos el contexto
 const AuthContext = createContext();
 
-// Exportamos el hook para usar el contexto
+// Hook para usar el contexto
 export const useAuth = () => useContext(AuthContext);
 
-// Exportamos el Provider que envuelve toda la app
+// Provider
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);   // Datos del usuario
-  const [loading, setLoading] = useState(true); // Para mostrar "Cargando..." mientras verifica login
+  const [user, setUser] = useState(null);    // Datos del usuario
+  const [token, setToken] = useState(null);  // Guardamos el JWT
+  const [loading, setLoading] = useState(true);
 
-  // Ajusta la URL de tu backend en .env
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // 1. Al montar, intentamos obtener el perfil del usuario
+  // Al montar, cargamos el token de localStorage (si existe) y luego obtenemos el perfil
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/user/profile`, {
-          credentials: "include", // Envia cookies (si tu backend las usa)
-        });
-        if (!response.ok) throw new Error("No autenticado");
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+      fetchUser(storedToken); // Intentar obtener perfil con ese token
+    } else {
+      setLoading(false); // No hay token => no hay user
+    }
+  }, []);
 
-        const data = await response.json();
-        setUser(data); // Asumimos que data es { _id, email, perfiles, etc. }
-      } catch (error) {
-        setUser(null); // Si falla, no hay usuario logueado
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Función para obtener el perfil usando el token
+  const fetchUser = async (jwtToken) => {
+    try {
+      const response = await fetch(`${API_URL}/api/user/profile`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+      if (!response.ok) throw new Error("No autenticado");
 
-    fetchUser();
-  }, [API_URL]);
+      const data = await response.json();
+      setUser(data);
+    } catch (error) {
+      console.error("Error obteniendo perfil de usuario:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // 2. Función de login
+  // 1. Función de login (primer login, usuario/contraseña)
   const login = async (email, password) => {
     try {
       const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // Envia cookies
         body: JSON.stringify({ email, password }),
       });
       if (!res.ok) throw new Error("Credenciales inválidas");
 
-      const data = await res.json();
-      // data puede ser { token, user } o similar
-      setUser(data.user);
+      const data = await res.json(); 
+      // data: { token, user } segun tu backend
+      if (!data.token) throw new Error("No se recibió token del servidor");
+
+      setToken(data.token);
+      localStorage.setItem("token", data.token);
+
+      setUser(data.user); // Guardamos el user
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
-      throw error; // para manejarlo en el componente
+      throw error;
     }
   };
 
-  // 3. Función de logout
+  // 2. Función de logout
   const logout = async () => {
     try {
+      // Si tu backend maneja logout con cookies, hazlo:
       await fetch(`${API_URL}/api/auth/logout`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`, // opcional si tu logout lo requiere
+        },
       });
-      setUser(null);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
+    } finally {
+      // Borramos localStorage
+      localStorage.removeItem("token");
+      setToken(null);
+      setUser(null);
     }
   };
 
-  // 4. Función de registro
+  // 3. Función de registro
   const register = async (formData) => {
     try {
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error("Error al registrar usuario");
 
       const data = await res.json();
-      // data.user: el usuario recién creado
-      setUser(data.user);
+      // Si tu backend retorna { token, user } tras registro:
+      if (data.token) {
+        setToken(data.token);
+        localStorage.setItem("token", data.token);
+      }
+      if (data.user) {
+        setUser(data.user);
+      }
     } catch (error) {
       console.error("Error al registrar usuario:", error);
       throw error;
@@ -93,6 +120,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     setUser,
+    token,           // Para usar en 2do login (perfil)
     loading,
     login,
     logout,
