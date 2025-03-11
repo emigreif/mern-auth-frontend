@@ -15,7 +15,8 @@ import {
   faRulerCombined,
   faCog,
   faUsers,
-  faSignOutAlt
+  faSignOutAlt,
+  faUserCog // <-- Se agrega para Perfiles
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -47,6 +48,10 @@ const Sidebar = () => {
     { name: "Mediciones", route: "/mediciones", icon: faRulerCombined },
     { name: "Configuración", route: "/configuracion", icon: faCog },
     { name: "Nómina", route: "/nomina", icon: faUsers },
+
+    // Nuevo enlace para la pantalla de Perfiles
+    { name: "Perfiles", route: "/perfiles", icon: faUserCog },
+
     { name: "Mi Perfil", route: "/profile", icon: faUser },
   ];
 

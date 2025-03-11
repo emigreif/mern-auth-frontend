@@ -23,6 +23,7 @@ import Nomina from "./pages/Nomina.jsx";
 import Compras from "./pages/Compras.jsx";
 import Configuracion from "./pages/Configuracion.jsx";
 import Reportes from "./pages/Reportes.jsx";
+import Perfiles from "./pages/Perfiles.jsx";
 import Profile from "./pages/Profile.jsx";
 
 // Componentes globales
@@ -71,6 +72,7 @@ const ProtectedRoutes = () => (
         <Route path="/compras" element={<Compras />} />
         <Route path="/configuracion" element={<Configuracion />} />
         <Route path="/reportes" element={<Reportes />} />
+        <Route path="/perfiles" element={<Perfiles />} />
         <Route path="/profile" element={<Profile />} />
 
         {/* Cualquier otra ruta no definida → redirige a /obras */}
