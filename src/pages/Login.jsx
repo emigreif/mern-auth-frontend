@@ -1,65 +1,113 @@
-// src/pages/Login.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import { Link, useNavigate } from "react-router-dom";
-import "../styles/auth.css"
+import { useNavigate } from "react-router-dom";
+import "../styles/Auth.css";
 
-
-const Login = () => {
+export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // Primer login
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [pass, setPass] = useState("");
+
+  // Segundo login (perfil)
+  const [perfilName, setPerfilName] = useState("");
+  const [perfilPass, setPerfilPass] = useState("");
+
+  const [phase, setPhase] = useState("login"); // "login" | "perfil"
   const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = async (e) => {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  const handleGeneralLogin = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate("/obras"); // o la ruta protegida que quieras
+      await login(email, pass); // AuthContext => user
+      setPhase("perfil");
+      setErrorMsg("");
     } catch (error) {
-      setErrorMsg("Error al iniciar sesión. Verifica tus credenciales.");
+      setErrorMsg("Usuario/Contraseña incorrectos.");
+    }
+  };
+
+  const handlePerfilLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_URL}/api/perfiles/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ perfilName, perfilPass }),
+      });
+      if (!res.ok) throw new Error("Perfil/Contraseña de perfil inválidos");
+      navigate("/obras"); // o la ruta principal
+    } catch (error) {
+      setErrorMsg(error.message);
     }
   };
 
   return (
     <div className="auth-container">
+      {/* Lado izquierdo (blanco) */}
       <div className="auth-left">
-        <form onSubmit={handleSubmit}>
-          <h2>Iniciar Sesión</h2>
-          {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-
-          <input
-            type="email"
-            placeholder="Correo electrónico"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          <button className="signup-btn" type="submit">Ingresar</button>
-         <div className="forgot">
-          <Link  to="/forgot-password">¿Olvidaste tu contraseña?</Link>
+        {phase === "login" ? (
+          <form onSubmit={handleGeneralLogin}>
+            <h2>Iniciar Sesión</h2>
+            {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              required
+            />
+            <button type="submit">Ingresar</button>
+          </form>
+        ) : (
+          <div style={{ marginTop: "2rem" }}>
+            <h3>Bienvenido a PLANNER</h3>
+            <p>La herramienta para potenciar tu empresa.</p>
           </div>
-        </form>
+        )}
       </div>
 
+      {/* Lado derecho (verde) */}
       <div className="auth-right">
-        <h1>Bienvenido a PLANNER</h1>
-        <p>La herramienta pensada para tu empresa.</p>
-        <p>¿Aún no tienes cuenta? </p>
-      <div className="regis">   <Link to="/register" className="nonButtonButton">Regístrate </Link></div>
+        {phase === "login" ? (
+          <>
+            <h1>¡Hola!</h1>
+            <p>Ingresa tus credenciales de usuario.</p>
+          </>
+        ) : (
+          <form onSubmit={handlePerfilLogin}>
+            <h2>Seleccionar Perfil</h2>
+            {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+            <input
+              type="text"
+              placeholder="Nombre de Perfil"
+              value={perfilName}
+              onChange={(e) => setPerfilName(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Contraseña de Perfil"
+              value={perfilPass}
+              onChange={(e) => setPerfilPass(e.target.value)}
+              required
+            />
+            <button type="submit">Acceder al Perfil</button>
+          </form>
+        )}
       </div>
     </div>
   );
-};
-
-export default Login;
+}
