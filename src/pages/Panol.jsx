@@ -17,7 +17,9 @@ const Panol = () => {
     const fetchPanol = async () => {
       try {
         const res = await fetch(`${API_URL}/api/panol`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener pañol");
         const data = await res.json();
@@ -39,7 +41,9 @@ const Panol = () => {
     try {
       const res = await fetch(`${API_URL}/api/panol`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoMaterial),
       });

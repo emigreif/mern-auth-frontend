@@ -37,7 +37,9 @@ export default function Perfiles() {
   const fetchPerfiles = async () => {
     try {
       const res = await fetch(`${API_URL}/api/perfiles`, {
-        credentials: "include"
+        headers: {
+  "Authorization": `Bearer ${token}`
+}
       });
       if (!res.ok) throw new Error("Error al obtener perfiles");
       const data = await res.json();
@@ -65,7 +67,9 @@ export default function Perfiles() {
     try {
       const res = await fetch(`${API_URL}/api/perfiles`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(perfilForm),
       });
@@ -108,7 +112,9 @@ export default function Perfiles() {
     try {
       const res = await fetch(`${API_URL}/api/perfiles`, {
         method: "PUT",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: editing, ...perfilForm }),
       });
@@ -140,7 +146,9 @@ export default function Perfiles() {
     try {
       const res = await fetch(`${API_URL}/api/perfiles/${id}`, {
         method: "DELETE",
-        credentials: "include"
+        headers: {
+  "Authorization": `Bearer ${token}`
+}
       });
       if (!res.ok) throw new Error("Error al eliminar perfil");
       await fetchPerfiles();

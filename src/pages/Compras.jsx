@@ -18,7 +18,9 @@ const Compras = () => {
     const fetchCompras = async () => {
       try {
         const res = await fetch(`${API_URL}/api/compras`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener compras");
         const data = await res.json();
@@ -39,7 +41,9 @@ const Compras = () => {
     try {
       const res = await fetch(`${API_URL}/api/compras`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaCompra),
       });

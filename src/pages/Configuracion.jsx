@@ -13,7 +13,9 @@ const Configuracion = () => {
     const fetchConfig = async () => {
       try {
         const res = await fetch(`${API_URL}/api/configuracion`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener configuración");
         const data = await res.json();
@@ -36,7 +38,9 @@ const Configuracion = () => {
       // PUT /api/configuracion/:id, si tu backend lo maneja así
       const res = await fetch(`${API_URL}/api/configuracion/${config._id}`, {
         method: "PUT",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(config),
       });

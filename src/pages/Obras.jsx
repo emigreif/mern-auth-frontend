@@ -24,7 +24,9 @@ const Obras = () => {
     const fetchObras = async () => {
       try {
         const res = await fetch(`${API_URL}/api/obras`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener obras");
         const data = await res.json();
@@ -47,7 +49,9 @@ const Obras = () => {
     try {
       const res = await fetch(`${API_URL}/api/obras`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newObra),
       });

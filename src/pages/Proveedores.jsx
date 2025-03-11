@@ -20,7 +20,9 @@ const Proveedores = () => {
     const fetchProveedores = async () => {
       try {
         const res = await fetch(`${API_URL}/api/proveedores`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener proveedores");
         const data = await res.json();
@@ -49,7 +51,9 @@ const Proveedores = () => {
 
       const res = await fetch(`${API_URL}/api/proveedores`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });

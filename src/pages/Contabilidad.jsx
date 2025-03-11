@@ -14,7 +14,9 @@ const Contabilidad = () => {
     const fetchMovimientos = async () => {
       try {
         const res = await fetch(`${API_URL}/api/contabilidad`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener movimientos");
         const data = await res.json();
@@ -35,7 +37,9 @@ const Contabilidad = () => {
     try {
       const res = await fetch(`${API_URL}/api/contabilidad`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoMovimiento),
       });

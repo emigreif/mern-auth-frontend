@@ -35,7 +35,9 @@ const Profile = () => {
     try {
       const res = await fetch(`${API_URL}/api/user/profile`, {
         method: "PUT",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });

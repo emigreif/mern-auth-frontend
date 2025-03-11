@@ -20,7 +20,9 @@ const Mediciones = () => {
     const fetchMediciones = async () => {
       try {
         const res = await fetch(`${API_URL}/api/mediciones`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener mediciones");
         const data = await res.json();
@@ -43,7 +45,9 @@ const Mediciones = () => {
     try {
       const res = await fetch(`${API_URL}/api/mediciones`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaMedicion),
       });

@@ -20,7 +20,9 @@ const Nomina = () => {
     const fetchEmpleados = async () => {
       try {
         const res = await fetch(`${API_URL}/api/employee`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener empleados");
         const data = await res.json();
@@ -41,7 +43,9 @@ const Nomina = () => {
     try {
       const res = await fetch(`${API_URL}/api/employee`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoEmpleado),
       });

@@ -20,7 +20,9 @@ const Clientes = () => {
     const fetchClientes = async () => {
       try {
         const res = await fetch(`${API_URL}/api/clientes`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener clientes");
         const data = await res.json();
@@ -51,7 +53,9 @@ const Clientes = () => {
     try {
       const res = await fetch(`${API_URL}/api/clientes`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoCliente),
       });

@@ -13,7 +13,9 @@ const Calendario = () => {
     const fetchEventos = async () => {
       try {
         const res = await fetch(`${API_URL}/api/calendario`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener calendario");
         const data = await res.json();

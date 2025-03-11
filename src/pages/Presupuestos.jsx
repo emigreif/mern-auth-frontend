@@ -19,7 +19,9 @@ const Presupuestos = () => {
     const fetchPresupuestos = async () => {
       try {
         const res = await fetch(`${API_URL}/api/presupuestos`, {
-          credentials: "include",
+          headers: {
+  "Authorization": `Bearer ${token}`
+},
         });
         if (!res.ok) throw new Error("Error al obtener presupuestos");
         const data = await res.json();
@@ -40,7 +42,9 @@ const Presupuestos = () => {
     try {
       const res = await fetch(`${API_URL}/api/presupuestos`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPresupuesto),
       });

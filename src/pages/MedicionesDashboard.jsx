@@ -14,7 +14,9 @@ const MedicionesDashboard = () => {
     if (user) {
       fetch(`${API_URL}/api/mediciones`, {
         method: "GET",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
         .then((res) => res.json())
@@ -32,7 +34,9 @@ const MedicionesDashboard = () => {
     try {
       const res = await fetch(`${API_URL}/api/mediciones`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+  "Authorization": `Bearer ${token}`
+},
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
         body: JSON.stringify(nuevaMedicion),
       });
