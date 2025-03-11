@@ -20,9 +20,9 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
-      fetchUser(storedToken); // Intentar obtener perfil con ese token
+      fetchUser(storedToken);
     } else {
-      setLoading(false); // No hay token => no hay user
+      setLoading(false);
     }
   }, []);
 
@@ -32,11 +32,10 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch(`${API_URL}/api/user/profile`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
+          Authorization: `Bearer ${jwtToken}`
         },
       });
       if (!response.ok) throw new Error("No autenticado");
-
       const data = await response.json();
       setUser(data);
     } catch (error) {
@@ -58,13 +57,13 @@ export const AuthProvider = ({ children }) => {
       if (!res.ok) throw new Error("Credenciales inválidas");
 
       const data = await res.json(); 
-      // data: { token, user } segun tu backend
+      // data: { token, user }
       if (!data.token) throw new Error("No se recibió token del servidor");
 
       setToken(data.token);
       localStorage.setItem("token", data.token);
 
-      setUser(data.user); // Guardamos el user
+      setUser(data.user);
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       throw error;
@@ -74,11 +73,11 @@ export const AuthProvider = ({ children }) => {
   // 2. Función de logout
   const logout = async () => {
     try {
-      // Si tu backend maneja logout con cookies, hazlo:
+      // Opcional: llamar al backend /api/auth/logout
       await fetch(`${API_URL}/api/auth/logout`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // opcional si tu logout lo requiere
+          Authorization: `Bearer ${token}`,
         },
       });
     } catch (error) {
@@ -102,25 +101,19 @@ export const AuthProvider = ({ children }) => {
       if (!res.ok) throw new Error("Error al registrar usuario");
 
       const data = await res.json();
-      // Si tu backend retorna { token, user } tras registro:
-      if (data.token) {
-        setToken(data.token);
-        localStorage.setItem("token", data.token);
-      }
-      if (data.user) {
-        setUser(data.user);
-      }
+      // Si tu backend retorna { token, user } tras registro, podrías setearlos
+      // Aquí solo devuelvo data.message
+      return data;
     } catch (error) {
       console.error("Error al registrar usuario:", error);
       throw error;
     }
   };
 
-  // Valor expuesto en el Context
   const value = {
     user,
     setUser,
-    token,           // Para usar en 2do login (perfil)
+    token,
     loading,
     login,
     logout,

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
 
 export default function Login() {
-  const { login, token } = useAuth(); // Para primer login y para acceder al token
+  const { login, token } = useAuth(); // Para primer login (usuario) y acceder al token
   const navigate = useNavigate();
 
   // Campos para primer login (usuario)
@@ -27,7 +27,8 @@ export default function Login() {
     e.preventDefault();
     try {
       await login(email, pass); // AuthContext => guarda user + token
-      setPhase("perfil");       // Pasar a la fase de perfil
+      // En lugar de redirigir a /obras, pasamos a la fase "perfil"
+      setPhase("perfil");
       setErrorMsg("");
     } catch (error) {
       setErrorMsg("Usuario/Contraseña incorrectos.");
@@ -40,16 +41,16 @@ export default function Login() {
     try {
       const res = await fetch(`${API_URL}/api/perfiles/login`, {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // Enviamos el token
+          Authorization: `Bearer ${token}` // Enviamos el token
         },
         body: JSON.stringify({ perfilName, perfilPass }),
       });
       if (!res.ok) {
         throw new Error("Perfil/Contraseña de perfil inválidos");
       }
+
       // Si OK => vamos a /obras
       navigate("/obras");
     } catch (error) {
@@ -63,7 +64,7 @@ export default function Login() {
       <div className="auth-left">
         {phase === "login" ? (
           <form onSubmit={handleGeneralLogin}>
-            <h2>Iniciar Sesión</h2>
+            <h2>Iniciar Sesión (Usuario)</h2>
             {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
             <input
               type="email"
@@ -83,8 +84,8 @@ export default function Login() {
           </form>
         ) : (
           <div style={{ marginTop: "2rem" }}>
-            <h3>Bienvenido a PLANNER</h3>
-            <p>La herramienta para potenciar tu empresa.</p>
+            <h3>Listo para tu perfil</h3>
+            <p>Pasa al formulario de la derecha para seleccionar tu perfil.</p>
           </div>
         )}
       </div>
