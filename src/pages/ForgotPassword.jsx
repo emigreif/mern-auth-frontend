@@ -1,6 +1,6 @@
 // src/pages/ForgotPassword.jsx
 import React, { useState } from "react";
-import "../styles/auth.css"
+import "../styles/Auth.css"
 
 const ForgotPassword = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
