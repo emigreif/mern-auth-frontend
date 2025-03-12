@@ -36,6 +36,71 @@ button {
   cursor: pointer;
   font-family: inherit;
 }
+.obra-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.obra-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1rem;
+}
+
+.obra-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.obra-card-info {
+  margin-top: 0.5rem;
+  color: #555;
+}
+
+.obra-card-estados {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.estado-tag {
+  padding: 0.3rem 0.6rem;
+  border-bottom: 3px solid;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.estado-tag.pendiente {
+  color: #888;
+  border-color: #888;
+}
+.estado-tag.proximo {
+  color: orange;
+  border-color: orange;
+}
+.estado-tag.cumplido {
+  color: green;
+  border-color: green;
+}
+
+.obra-card-footer {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.obra-saldo {
+  font-weight: bold;
+  color: #333;
+}
+
+.obra-card-actions button {
+  margin-left: 0.5rem;
+}
 
 .page-contenedor {
   width: 90%;
