@@ -14,7 +14,7 @@ const Home = () => {
             Organiza tus tareas y proyectos de forma sencilla y eficiente.
             ¡Bienvenido/a a tu nuevo espacio de productividad!
           </p>
-          <Link to="/login" className="nonButtonButton">
+          <Link to="/login" className="signup-btn">
             Ingresar
           </Link>
         </div>

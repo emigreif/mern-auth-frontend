@@ -88,12 +88,12 @@ export default function Login() {
               onChange={(e) => setPass(e.target.value)}
               required
             />
-            <button type="submit">Ingresar</button>
+            <button className="signup-btn" type="submit">Ingresar</button>
           </form>
         ) : (
-          <div style={{ marginTop: "2rem" }}>
-            <h3>Listo para tu perfil</h3>
-            <p>Pasa al formulario de la derecha para seleccionar tu perfil.</p>
+          <div >
+            <h3>Ingresa a tu perfil </h3>
+            <p>ingresa tus credenciales para acceder a tu perfil</p>
           </div>
         )}
       </div>
@@ -102,12 +102,12 @@ export default function Login() {
       <div className="auth-right">
         {phase === "login" ? (
           <>
-            <h1>¡Hola!</h1>
-            <p>Ingresa tus credenciales de usuario.</p>
+            <h1>Bienvenido a Planer</h1>
+            <p> la herramienta pensada para maximizar tu empresa</p>
           </>
         ) : (
-          <form onSubmit={handlePerfilLogin}>
-            <h2>Seleccionar Perfil</h2>
+          <form className="form-group" onSubmit={handlePerfilLogin}>
+            
             {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
             <input
               type="text"
@@ -115,6 +115,13 @@ export default function Login() {
               value={perfilName}
               onChange={(e) => setPerfilName(e.target.value)}
               required
+              style={{
+                width: '100%',
+                margin: '1rem',
+                borderRadius: '4px',
+                border: 'none'
+              }}
+              
             />
             <input
               type="password"
@@ -122,8 +129,15 @@ export default function Login() {
               value={perfilPass}
               onChange={(e) => setPerfilPass(e.target.value)}
               required
+              
+              style={{
+                width: '100%',
+                margin: '1rem',
+                borderRadius: '4px',
+                border: 'none'
+              }}
             />
-            <button type="submit">Acceder al Perfil</button>
+            <button className="signup-btn" type="submit">Acceder al Perfil</button>
           </form>
         )}
       </div>

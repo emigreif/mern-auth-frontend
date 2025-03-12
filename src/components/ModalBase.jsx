@@ -1,5 +1,6 @@
 // src/components/ModalBase.jsx
 import React from "react";
+import "../styles/ModalBase.css";
 
 const ModalBase = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;

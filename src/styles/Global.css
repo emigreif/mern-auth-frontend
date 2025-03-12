@@ -36,6 +36,7 @@ button {
   cursor: pointer;
   font-family: inherit;
 }
+
 .obra-list {
   display: flex;
   flex-direction: column;
@@ -45,7 +46,7 @@ button {
 .obra-card {
   background: #fff;
   border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem;
 }
 
@@ -73,14 +74,17 @@ button {
   font-weight: bold;
   font-size: 0.9rem;
 }
+
 .estado-tag.pendiente {
   color: #888;
   border-color: #888;
 }
+
 .estado-tag.proximo {
   color: orange;
   border-color: orange;
 }
+
 .estado-tag.cumplido {
   color: green;
   border-color: green;
@@ -425,11 +429,14 @@ button {
   padding: 0.6rem 1.2rem;
   border-radius: 4px;
   font-weight: 500;
+  font-size: large;
+  
   transition: background-color 0.3s ease;
 }
 
 .signup-btn:hover {
-  background-color: #008e60;
+
+  background-color: #00a46e;;
 }
 
 .logout-btn {

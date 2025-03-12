@@ -1,0 +1,80 @@
+/* ModalBase.css */
+
+/* Fondo oscuro */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  /* Contenedor del contenido */
+  .modal-content {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 6px;
+    position: relative;
+    max-width: 800px; /* un ancho mayor */
+    width: 90%;
+    max-height: 90vh; /* para no ocupar toda la pantalla en alto */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Botón de cerrar */
+  .modal-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  /* Aquí forzamos el scroll interno si el contenido supera 90vh */
+  .modal-body {
+    margin-top: 1.5rem;
+    overflow-y: auto;
+    /* Ajusta la altura interna. Con max-height se hace scroll si excede. */
+    max-height: calc(90vh - 60px); 
+    /* 60px para compensar paddings y título */
+    padding-right: 0.5rem; /* para mostrar la scrollbar */
+  }
+  
+  /* Ejemplo de estilos para form-grid */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* dos columnas */
+    gap: 1rem;
+  }
+  
+  .form-grid .col-span-2 {
+    grid-column: span 2;
+  }
+  
+  /* Ajusta inputs largos, etc. */
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group input[type="date"],
+  .form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Botones */
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  
