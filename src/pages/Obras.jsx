@@ -1,6 +1,9 @@
+// src/pages/Obras.jsx
+
 import React, { useState, useEffect } from "react";
-import ModalBase from "../components/ModalBase.jsx";
+import ModalBase from "../components/ModalBase.jsx"; 
 import { useAuth } from "../context/AuthContext.jsx";
+import * as XLSX from "xlsx"; // Para parsear Excel
 
 
 export default function Obras() {
@@ -18,46 +21,33 @@ export default function Obras() {
   const [isMainModalOpen, setIsMainModalOpen] = useState(false);
   const [editingObra, setEditingObra] = useState(null);
 
-  // Sub-modal para materiales (perfiles, vidrios, accesorios)
-  const [isMaterialesModalOpen, setIsMaterialesModalOpen] = useState(false);
-
   // Sub-modal para crear cliente
   const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
 
-  // Form principal con TODOS los campos del modelo (excepto arrays que van a sub-modal)
-  const [obraForm, setObraForm] = useState({
-    // Autoincremental, no editable
-    codigoObra: "",
+  // Sub-modal para materiales
+  const [isMaterialesModalOpen, setIsMaterialesModalOpen] = useState(false);
 
-    // Datos principales
+  // Form principal con TODOS los campos (excepto user)
+  const [obraForm, setObraForm] = useState({
+    codigoObra: "",
     nombre: "",
-    cliente: "", // guardaremos el _id del cliente
+    cliente: "",
     direccion: "",
     contacto: "",
     mapa: "",
     fechaEntrega: "",
-    
-    // Importes
     importeConFactura: 0,
     importeSinFactura: 0,
     importeTotal: 0,
     indiceActualizacionSaldo: 0,
-
-    // Fechas de proceso
     fechaInicioCortePerfiles: "",
     fechaInicioArmado: "",
     fechaEnvidriado: "",
     fechaInicioMontaje: "",
     fechaMedicion: "",
-
-    // Flags
     ordenProduccionAprobada: false,
     finalObra: false,
-
-    // Estado general
     estadoGeneral: "Presupuestada", // "Presupuestada" | "En Proceso" | "Finalizada"
-
-    // Estado detallado
     estado: {
       perfiles: "pendiente",
       vidrios: "pendiente",
@@ -66,20 +56,18 @@ export default function Obras() {
       medicion: "pendiente",
       aprobada: "pendiente",
     },
-
-    // Saldo y observaciones
     saldo: "Con saldo a cobrar", // "Con saldo a cobrar" | "Pagada"
     observaciones: "",
   });
 
-  // Subcampos de materiales
+  // Arrays de materiales (ejemplo: accesoriosPresupuesto)
+  // Podrías tener también vidriosPresupuesto, perfilesPresupuesto, etc.
   const [materialesForm, setMaterialesForm] = useState({
-    perfilesPresupuesto: [],
-    vidriosPresupuesto: [],
     accesoriosPresupuesto: [],
+    // ... si deseas otros arrays, agrégalos aquí
   });
 
-  // Form para crear nuevo cliente
+  // Form para crear un nuevo cliente
   const [clienteForm, setClienteForm] = useState({
     nombre: "",
     apellido: "",
@@ -90,7 +78,7 @@ export default function Obras() {
     notas: "",
   });
 
-  // 1. Cargar obras y clientes al montar (si hay token)
+  // 1. Cargar obras/clientes si hay token
   useEffect(() => {
     if (token) {
       fetchObras();
@@ -100,7 +88,6 @@ export default function Obras() {
 
   const fetchObras = async () => {
     try {
-      // Pedimos /api/obras? populada con "cliente" para ver {cliente: { _id, nombre, ... }}
       const res = await fetch(`${API_URL}/api/obras`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -125,62 +112,41 @@ export default function Obras() {
     }
   };
 
-  // 2. useEffect para calcular importeTotal en tiempo real
+  // 2. Cálculo automático de importeTotal
   useEffect(() => {
     const cf = parseFloat(obraForm.importeConFactura) || 0;
     const sf = parseFloat(obraForm.importeSinFactura) || 0;
-    setObraForm((prev) => ({
-      ...prev,
-      importeTotal: cf + sf,
-    }));
+    setObraForm((prev) => ({ ...prev, importeTotal: cf + sf }));
   }, [obraForm.importeConFactura, obraForm.importeSinFactura]);
 
-  // 3. useEffect para calcular fechas derivadas en tiempo real (ejemplo)
+  // 3. Ejemplo: cálculo de fechas derivadas según fechaEntrega
   useEffect(() => {
     if (!obraForm.fechaEntrega) return;
     const entregaDate = new Date(obraForm.fechaEntrega);
 
-    // Ejemplo: restar 10 días => fechaInicioArmado
-    const armadoDate = new Date(entregaDate);
-    armadoDate.setDate(armadoDate.getDate() - 10);
-    const armadoStr = armadoDate.toISOString().slice(0, 10);
+    // Resta 10 días => fechaInicioArmado
+    const armado = new Date(entregaDate);
+    armado.setDate(armado.getDate() - 10);
+    const armadoStr = armado.toISOString().slice(0, 10);
 
-    // Ejemplo: restar 5 días => fechaInicioCortePerfiles
-    const corteDate = new Date(entregaDate);
-    corteDate.setDate(corteDate.getDate() - 5);
-    const corteStr = corteDate.toISOString().slice(0, 10);
-
-    // Ejemplo: sumarle 2 días => fechaEnvidriado
-    const envidDate = new Date(entregaDate);
-    envidDate.setDate(envidDate.getDate() + 2);
-    const envidStr = envidDate.toISOString().slice(0, 10);
-
-    // Ejemplo: sumarle 4 días => fechaInicioMontaje
-    const montDate = new Date(entregaDate);
-    montDate.setDate(montDate.getDate() + 4);
-    const montStr = montDate.toISOString().slice(0, 10);
-
-    // Ejemplo: restar 15 días => fechaMedicion
-    const medDate = new Date(entregaDate);
-    medDate.setDate(medDate.getDate() - 15);
-    const medStr = medDate.toISOString().slice(0, 10);
+    // Resta 5 días => fechaInicioCortePerfiles
+    const corte = new Date(entregaDate);
+    corte.setDate(corte.getDate() - 5);
+    const corteStr = corte.toISOString().slice(0, 10);
 
     setObraForm((prev) => ({
       ...prev,
       fechaInicioArmado: armadoStr,
       fechaInicioCortePerfiles: corteStr,
-      fechaEnvidriado: envidStr,
-      fechaInicioMontaje: montStr,
-      fechaMedicion: medStr,
     }));
   }, [obraForm.fechaEntrega]);
 
-  // Filtro de obras
+  // Filtro
   const filteredObras = obras.filter((o) =>
     o.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // 4. Crear nueva Obra
+  // 4. Crear nueva obra
   const handleOpenCreate = () => {
     setEditingObra(null);
     setObraForm({
@@ -195,13 +161,11 @@ export default function Obras() {
       importeSinFactura: 0,
       importeTotal: 0,
       indiceActualizacionSaldo: 0,
-
       fechaInicioCortePerfiles: "",
       fechaInicioArmado: "",
       fechaEnvidriado: "",
       fechaInicioMontaje: "",
       fechaMedicion: "",
-
       ordenProduccionAprobada: false,
       finalObra: false,
       estadoGeneral: "Presupuestada",
@@ -217,32 +181,26 @@ export default function Obras() {
       observaciones: "",
     });
     setMaterialesForm({
-      perfilesPresupuesto: [],
-      vidriosPresupuesto: [],
       accesoriosPresupuesto: [],
     });
     setIsMainModalOpen(true);
   };
 
-  // 5. Editar Obra
+  // 5. Editar
   const handleOpenEdit = (obra) => {
     setEditingObra(obra);
-
     setObraForm({
       codigoObra: obra.codigoObra || "",
       nombre: obra.nombre || "",
-      cliente: obra.cliente?._id || "", // si se populó en backend
+      cliente: obra.cliente?._id || "",
       direccion: obra.direccion || "",
       contacto: obra.contacto || "",
       mapa: obra.mapa || "",
-      fechaEntrega: obra.fechaEntrega
-        ? obra.fechaEntrega.slice(0, 10)
-        : "",
+      fechaEntrega: obra.fechaEntrega ? obra.fechaEntrega.slice(0, 10) : "",
       importeConFactura: obra.importeConFactura || 0,
       importeSinFactura: obra.importeSinFactura || 0,
       importeTotal: obra.importeTotal || 0,
       indiceActualizacionSaldo: obra.indiceActualizacionSaldo || 0,
-
       fechaInicioCortePerfiles: obra.fechaInicioCortePerfiles
         ? obra.fechaInicioCortePerfiles.slice(0, 10)
         : "",
@@ -258,7 +216,6 @@ export default function Obras() {
       fechaMedicion: obra.fechaMedicion
         ? obra.fechaMedicion.slice(0, 10)
         : "",
-
       ordenProduccionAprobada: obra.ordenProduccionAprobada || false,
       finalObra: obra.finalObra || false,
       estadoGeneral: obra.estadoGeneral || "Presupuestada",
@@ -273,21 +230,16 @@ export default function Obras() {
       saldo: obra.saldo || "Con saldo a cobrar",
       observaciones: obra.observaciones || "",
     });
-
     setMaterialesForm({
-      perfilesPresupuesto: obra.perfilesPresupuesto || [],
-      vidriosPresupuesto: obra.vidriosPresupuesto || [],
       accesoriosPresupuesto: obra.accesoriosPresupuesto || [],
     });
-
     setIsMainModalOpen(true);
   };
 
-  // 6. Guardar (POST/PUT)
+  // 6. Guardar
   const handleSaveObra = async (e) => {
     e.preventDefault();
     try {
-      // Combinar form principal y materiales
       const payload = { ...obraForm, ...materialesForm };
 
       if (editingObra) {
@@ -324,15 +276,15 @@ export default function Obras() {
   };
 
   // 7. Eliminar
-  const handleDelete = async (obraId) => {
+  const handleDelete = async (id) => {
     if (!confirm("¿Seguro que deseas eliminar esta obra?")) return;
     try {
-      const res = await fetch(`${API_URL}/api/obras/${obraId}`, {
+      const res = await fetch(`${API_URL}/api/obras/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al eliminar obra");
-      setObras(obras.filter((o) => o._id !== obraId));
+      setObras(obras.filter((o) => o._id !== id));
     } catch (error) {
       console.error(error);
     }
@@ -341,12 +293,11 @@ export default function Obras() {
   // Manejo de form principal
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    // Si es checkbox (ordenProduccionAprobada, finalObra, etc.)
     if (type === "checkbox") {
       setObraForm({ ...obraForm, [name]: checked });
     } else if (name.startsWith("estado.")) {
-      // Por ejemplo "estado.perfiles"
-      const campo = name.split(".")[1]; // "perfiles"
+      // p.e. "estado.accesorios"
+      const campo = name.split(".")[1];
       setObraForm((prev) => ({
         ...prev,
         estado: { ...prev.estado, [campo]: value },
@@ -356,42 +307,12 @@ export default function Obras() {
     }
   };
 
-  // 8. Sub-modal de materiales
-  const handleOpenMaterialesModal = () => {
+  // 8. Manejo de sub-modal para materiales
+  const handleOpenMateriales = () => {
     setIsMaterialesModalOpen(true);
   };
-  const handleCloseMaterialesModal = () => {
+  const handleCloseMateriales = () => {
     setIsMaterialesModalOpen(false);
-  };
-
-  const handleAddMaterial = (type) => {
-    const newItem = { codigo: "", descripcion: "", cantidad: 1, precio: 0 };
-    setMaterialesForm((prev) => ({
-      ...prev,
-      [type]: [...prev[type], newItem],
-    }));
-  };
-
-  const handleMaterialChange = (type, index, field, value) => {
-    const arr = [...materialesForm[type]];
-    arr[index][field] = value;
-    setMaterialesForm((prev) => ({
-      ...prev,
-      [type]: arr,
-    }));
-  };
-
-  const handleRemoveMaterial = (type, index) => {
-    const arr = [...materialesForm[type]];
-    arr.splice(index, 1);
-    setMaterialesForm((prev) => ({
-      ...prev,
-      [type]: arr,
-    }));
-  };
-
-  const handleImportExcel = (type) => {
-    alert(`Importar Excel para ${type} (no implementado)`);
   };
 
   // 9. Sub-modal para crear cliente
@@ -407,15 +328,13 @@ export default function Obras() {
     });
     setIsClienteModalOpen(true);
   };
-
   const handleCloseClienteModal = () => {
     setIsClienteModalOpen(false);
   };
-
   const handleClienteFormChange = (e) => {
     const { name, value } = e.target;
     if (name.startsWith("direccion.")) {
-      const field = name.split(".")[1]; // "calle" o "ciudad"
+      const field = name.split(".")[1];
       setClienteForm((prev) => ({
         ...prev,
         direccion: { ...prev.direccion, [field]: value },
@@ -424,7 +343,6 @@ export default function Obras() {
       setClienteForm({ ...clienteForm, [name]: value });
     }
   };
-
   const handleSaveCliente = async (e) => {
     e.preventDefault();
     try {
@@ -438,7 +356,6 @@ export default function Obras() {
       });
       if (!res.ok) throw new Error("Error al crear cliente");
       const newClient = await res.json();
-      // Agregar a la lista
       setClientes((prev) => [...prev, newClient]);
       // Seleccionar en la obraForm
       setObraForm((prev) => ({ ...prev, cliente: newClient._id }));
@@ -452,7 +369,6 @@ export default function Obras() {
     <div className="page-contenedor">
       <h1>Obras</h1>
 
-      {/* Filtro */}
       <div style={{ marginBottom: "1rem" }}>
         <input
           type="text"
@@ -472,19 +388,12 @@ export default function Obras() {
                 {obra.codigoObra} - {obra.nombre}
               </h2>
               <span>
-                Entrega:{" "}
-                {obra.fechaEntrega
-                  ? obra.fechaEntrega.slice(0, 10)
-                  : "N/D"}
+                Entrega: {obra.fechaEntrega ? obra.fechaEntrega.slice(0, 10) : "N/D"}
               </span>
             </div>
             <div className="obra-card-info">
-              <p>
-                <strong>Dirección:</strong> {obra.direccion}
-              </p>
-              <p>
-                <strong>Contacto:</strong> {obra.contacto}
-              </p>
+              <p><strong>Dirección:</strong> {obra.direccion}</p>
+              <p><strong>Contacto:</strong> {obra.contacto}</p>
               <p>
                 <strong>Cliente:</strong>{" "}
                 {obra.cliente && obra.cliente.nombre
@@ -512,7 +421,6 @@ export default function Obras() {
         title={editingObra ? "Editar Obra" : "Nueva Obra"}
       >
         <form onSubmit={handleSaveObra}>
-          {/* codigoObra => no editable */}
           {obraForm.codigoObra && (
             <div className="form-group">
               <label>Código Obra</label>
@@ -520,7 +428,6 @@ export default function Obras() {
             </div>
           )}
 
-          {/* Nombre */}
           <div className="form-group">
             <label>Nombre</label>
             <input
@@ -532,7 +439,7 @@ export default function Obras() {
             />
           </div>
 
-          {/* Cliente (select + botón "Nuevo") */}
+          {/* Cliente */}
           <div className="form-group">
             <label>Cliente</label>
             <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -554,7 +461,6 @@ export default function Obras() {
             </div>
           </div>
 
-          {/* Dirección, Contacto, Mapa */}
           <div className="form-group">
             <label>Dirección</label>
             <input
@@ -565,6 +471,7 @@ export default function Obras() {
               required
             />
           </div>
+
           <div className="form-group">
             <label>Contacto</label>
             <input
@@ -574,6 +481,7 @@ export default function Obras() {
               onChange={handleInputChange}
             />
           </div>
+
           <div className="form-group">
             <label>Mapa (URL)</label>
             <input
@@ -584,7 +492,6 @@ export default function Obras() {
             />
           </div>
 
-          {/* FechaEntrega */}
           <div className="form-group">
             <label>Fecha de Entrega</label>
             <input
@@ -615,11 +522,11 @@ export default function Obras() {
             />
           </div>
           <div className="form-group">
-            <label>Importe Total (auto)</label>
+            <label>Importe Total</label>
             <input type="number" value={obraForm.importeTotal} disabled />
           </div>
           <div className="form-group">
-            <label>Indice Actualización</label>
+            <label>Índice Actualización</label>
             <input
               type="number"
               name="indiceActualizacionSaldo"
@@ -628,7 +535,7 @@ export default function Obras() {
             />
           </div>
 
-          {/* Fechas de proceso (auto o manual) */}
+          {/* Fechas proceso */}
           <div className="form-group">
             <label>Fecha Inicio Corte Perfiles</label>
             <input
@@ -699,7 +606,7 @@ export default function Obras() {
             </label>
           </div>
 
-          {/* Estado General */}
+          {/* Estado general */}
           <div className="form-group">
             <label>Estado General</label>
             <select
@@ -787,20 +694,14 @@ export default function Obras() {
             </select>
           </div>
 
-          {/* Saldo */}
           <div className="form-group">
             <label>Saldo</label>
-            <select
-              name="saldo"
-              value={obraForm.saldo}
-              onChange={handleInputChange}
-            >
+            <select name="saldo" value={obraForm.saldo} onChange={handleInputChange}>
               <option value="Con saldo a cobrar">Con saldo a cobrar</option>
               <option value="Pagada">Pagada</option>
             </select>
           </div>
 
-          {/* Observaciones */}
           <div className="form-group">
             <label>Observaciones</label>
             <textarea
@@ -811,8 +712,8 @@ export default function Obras() {
           </div>
 
           {/* Botón para abrir sub-modal de materiales */}
-          <button type="button" onClick={handleOpenMaterialesModal}>
-            Editar Materiales Presupuestados
+          <button type="button" onClick={handleOpenMateriales}>
+            Editar Materiales (Accesorios)
           </button>
 
           <div className="form-actions">
@@ -824,244 +725,16 @@ export default function Obras() {
         </form>
       </ModalBase>
 
-      {/* Sub-modal para materiales */}
-      <ModalBase
+      {/* Sub-modal para materiales: Importar Excel + vista previa */}
+      <MaterialesModal
         isOpen={isMaterialesModalOpen}
-        onClose={handleCloseMaterialesModal}
-        title="Materiales Presupuestados"
-      >
-        {/* Perfiles */}
-        <div className="material-section">
-          <h3>Perfiles</h3>
-          <button onClick={() => handleAddMaterial("perfilesPresupuesto")}>
-            + Agregar Perfil
-          </button>
-          <button onClick={() => handleImportExcel("perfilesPresupuesto")}>
-            Importar Excel
-          </button>
-          <ul>
-            {materialesForm.perfilesPresupuesto.map((item, idx) => (
-              <li key={idx} className="material-item">
-                <input
-                  type="text"
-                  placeholder="Código"
-                  value={item.codigo}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "perfilesPresupuesto",
-                      idx,
-                      "codigo",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Descripción"
-                  value={item.descripcion}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "perfilesPresupuesto",
-                      idx,
-                      "descripcion",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Cantidad"
-                  value={item.cantidad}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "perfilesPresupuesto",
-                      idx,
-                      "cantidad",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Precio"
-                  value={item.precio || 0}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "perfilesPresupuesto",
-                      idx,
-                      "precio",
-                      e.target.value
-                    )
-                  }
-                />
-                <button
-                  onClick={() =>
-                    handleRemoveMaterial("perfilesPresupuesto", idx)
-                  }
-                >
-                  X
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Vidrios */}
-        <div className="material-section">
-          <h3>Vidrios</h3>
-          <button onClick={() => handleAddMaterial("vidriosPresupuesto")}>
-            + Agregar Vidrio
-          </button>
-          <button onClick={() => handleImportExcel("vidriosPresupuesto")}>
-            Importar Excel
-          </button>
-          <ul>
-            {materialesForm.vidriosPresupuesto.map((item, idx) => (
-              <li key={idx} className="material-item">
-                <input
-                  type="text"
-                  placeholder="Código"
-                  value={item.codigo || ""}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "vidriosPresupuesto",
-                      idx,
-                      "codigo",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Descripción"
-                  value={item.descripcion || ""}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "vidriosPresupuesto",
-                      idx,
-                      "descripcion",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Cantidad"
-                  value={item.cantidad || 1}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "vidriosPresupuesto",
-                      idx,
-                      "cantidad",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Precio"
-                  value={item.precio || 0}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "vidriosPresupuesto",
-                      idx,
-                      "precio",
-                      e.target.value
-                    )
-                  }
-                />
-                <button
-                  onClick={() =>
-                    handleRemoveMaterial("vidriosPresupuesto", idx)
-                  }
-                >
-                  X
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Accesorios */}
-        <div className="material-section">
-          <h3>Accesorios</h3>
-          <button onClick={() => handleAddMaterial("accesoriosPresupuesto")}>
-            + Agregar Accesorio
-          </button>
-          <button onClick={() => handleImportExcel("accesoriosPresupuesto")}>
-            Importar Excel
-          </button>
-          <ul>
-            {materialesForm.accesoriosPresupuesto.map((item, idx) => (
-              <li key={idx} className="material-item">
-                <input
-                  type="text"
-                  placeholder="Código"
-                  value={item.codigo || ""}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "accesoriosPresupuesto",
-                      idx,
-                      "codigo",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Descripción"
-                  value={item.descripcion || ""}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "accesoriosPresupuesto",
-                      idx,
-                      "descripcion",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Cantidad"
-                  value={item.cantidad || 1}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "accesoriosPresupuesto",
-                      idx,
-                      "cantidad",
-                      e.target.value
-                    )
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Precio"
-                  value={item.precio || 0}
-                  onChange={(e) =>
-                    handleMaterialChange(
-                      "accesoriosPresupuesto",
-                      idx,
-                      "precio",
-                      e.target.value
-                    )
-                  }
-                />
-                <button
-                  onClick={() =>
-                    handleRemoveMaterial("accesoriosPresupuesto", idx)
-                  }
-                >
-                  X
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div style={{ marginTop: "1rem", textAlign: "right" }}>
-          <button onClick={handleCloseMaterialesModal}>Cerrar</button>
-        </div>
-      </ModalBase>
+        onClose={handleCloseMateriales}
+        title="Accesorios Presupuestados"
+        items={materialesForm.accesoriosPresupuesto}
+        setItems={(newItems) =>
+          setMaterialesForm({ ...materialesForm, accesoriosPresupuesto: newItems })
+        }
+      />
 
       {/* Sub-modal para crear nuevo cliente */}
       <ModalBase
@@ -1151,6 +824,122 @@ export default function Obras() {
           </div>
         </form>
       </ModalBase>
+    </div>
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Sub-componente: MaterialesModal
+   Permite importar Excel y previsualizar datos antes de agregarlos a items
+-------------------------------------------------------------------------- */
+function MaterialesModal({ isOpen, onClose, title, items, setItems }) {
+  const [previewData, setPreviewData] = useState([]);
+
+  // Maneja la importación de Excel
+  const handleImportExcel = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".xlsx,.xls";
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data);
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // Asumiendo fila 0 => headers, fila 1.. => datos
+        const rows = jsonData.slice(1).map((row) => ({
+          codigo: row[0] || "",
+          descripcion: row[1] || "",
+          cantidad: parseFloat(row[2]) || 0,
+          precio: parseFloat(row[3]) || 0,
+        }));
+
+        setPreviewData(rows);
+      } catch (error) {
+        console.error("Error al leer Excel:", error);
+        alert("Error al importar Excel");
+      }
+    };
+    input.click();
+  };
+
+  // Agregar previewData a items
+  const handleAddPreviewToItems = () => {
+    setItems([...items, ...previewData]);
+    setPreviewData([]);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>
+          ✖
+        </button>
+        <h2>{title}</h2>
+        <div className="modal-body" style={{ maxHeight: "70vh", overflowY: "auto" }}>
+          <button onClick={handleImportExcel}>Importar Excel</button>
+
+          {/* Preview */}
+          {previewData.length > 0 && (
+            <div style={{ margin: "1rem 0" }}>
+              <h3>Datos Importados (Preview)</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {previewData.map((item, idx) => (
+                    <tr key={idx}>
+                      <td>{item.codigo}</td>
+                      <td>{item.descripcion}</td>
+                      <td>{item.cantidad}</td>
+                      <td>{item.precio}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button onClick={handleAddPreviewToItems}>
+                Agregar estos {previewData.length} items
+              </button>
+            </div>
+          )}
+
+          {/* Items ya confirmados */}
+          <h3>Items Actuales</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, idx) => (
+                <tr key={idx}>
+                  <td>{item.codigo}</td>
+                  <td>{item.descripcion}</td>
+                  <td>{item.cantidad}</td>
+                  <td>{item.precio}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
