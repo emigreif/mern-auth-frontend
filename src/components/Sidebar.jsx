@@ -36,19 +36,18 @@ const Sidebar = () => {
 
   // Array con todos los enlaces de la sidebar
   const menuItems = [
-    { name: "Obras", route: "/obras", icon: faBuilding },
-    { name: "Presupuestos", route: "/presupuestos", icon: faFileInvoiceDollar },
     { name: "Clientes", route: "/clientes", icon: faUser },
-    { name: "Compras", route: "/compras", icon: faShoppingCart },
+    { name: "Presupuestos", route: "/presupuestos", icon: faFileInvoiceDollar },
+    { name: "Obras", route: "/obras", icon: faBuilding },
     { name: "Proveedores", route: "/proveedores", icon: faTruck },
+    { name: "Compras", route: "/compras", icon: faShoppingCart },
     { name: "Pañol", route: "/panol", icon: faClipboardList },
     { name: "Calendario", route: "/calendario", icon: faCalendarAlt },
     { name: "Contabilidad", route: "/contabilidad", icon: faCalculator },
-    { name: "Reportes", route: "/reportes", icon: faChartBar },
     { name: "Mediciones", route: "/mediciones", icon: faRulerCombined },
-    { name: "Configuración", route: "/configuracion", icon: faCog },
     { name: "Nómina", route: "/nomina", icon: faUsers },
-
+    { name: "Reportes", route: "/reportes", icon: faChartBar },
+    { name: "Configuración", route: "/configuracion", icon: faCog },
     // Nuevo enlace para la pantalla de Perfiles
     { name: "Perfiles", route: "/perfiles", icon: faUserCog },
 

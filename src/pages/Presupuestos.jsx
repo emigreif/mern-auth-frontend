@@ -49,10 +49,13 @@ export default function Presupuestos() {
 
   // Form Cliente
   const [clienteForm, setClienteForm] = useState({
+    tipoCliente: "particular", // valor por defecto
     nombre: "",
     apellido: "",
     email: "",
     telefono: "",
+    direccion: { calle: "", ciudad: "" },
+    notas: "",
   });
 
   // Mensajes
@@ -420,13 +423,14 @@ export default function Presupuestos() {
               </span>
             </div>
             <div className="presupuesto-info">
-              <p>
-                <strong>Cliente:</strong>{" "}
-                {typeof pres.cliente === "object" && pres.cliente
-                  ? `${pres.cliente.nombre} ${pres.cliente.apellido}`
-                  : pres.cliente}
-              </p>
-            </div>
+  <p>
+    <strong>Cliente:</strong>{" "}
+    {pres.cliente 
+      ? `${pres.cliente.nombre} ${pres.cliente.apellido}`
+      : "Sin cliente"}
+  </p>
+</div>
+
             <div className="presupuesto-footer">
               <button onClick={() => handleOpenEdit(pres)}>Editar</button>
               <button onClick={() => handleDelete(pres._id)}>Eliminar</button>
@@ -636,44 +640,54 @@ export default function Presupuestos() {
         onClose={() => setIsClienteModalOpen(false)}
         title="Nuevo Cliente"
       >
-        <form onSubmit={handleSaveCliente}>
-          <div className="form-group">
-            <label>Nombre</label>
-            <input
-              type="text"
-              name="nombre"
-              value={clienteForm.nombre}
-              onChange={handleClienteFormChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Apellido</label>
-            <input
-              type="text"
-              name="apellido"
-              value={clienteForm.apellido}
-              onChange={handleClienteFormChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={clienteForm.email}
-              onChange={handleClienteFormChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>Teléfono</label>
-            <input
-              type="text"
-              name="telefono"
-              value={clienteForm.telefono}
-              onChange={handleClienteFormChange}
-            />
-          </div>
+      <form onSubmit={handleSaveCliente}>
+      <div className="form-group">
+  <label>Tipo de Cliente</label>
+  <select
+    name="tipoCliente"
+    value={clienteForm.tipoCliente}
+    onChange={handleClienteFormChange}
+  >
+    <option value="particular">Particular</option>
+    <option value="empresa">Empresa</option>
+  </select>
+</div><div className="form-group">
+    <label>Nombre</label>
+    <input
+      type="text"
+      name="nombre"
+      value={clienteForm.nombre}
+      onChange={handleClienteFormChange}
+      required
+    />
+  </div>
+  <div className="form-group">
+    <label>Apellido</label>
+    <input
+      type="text"
+      name="apellido"
+      value={clienteForm.apellido}
+      onChange={handleClienteFormChange}
+    />
+  </div>
+  <div className="form-group">
+    <label>Email</label>
+    <input
+      type="email"
+      name="email"
+      value={clienteForm.email}
+      onChange={handleClienteFormChange}
+    />
+  </div>
+  <div className="form-group">
+    <label>Teléfono</label>
+    <input
+      type="text"
+      name="telefono"
+      value={clienteForm.telefono}
+      onChange={handleClienteFormChange}
+    />
+  </div>
 
           {errorMsg && <p style={{ color: "red", marginTop: "1rem" }}>{errorMsg}</p>}
           {successMsg && <p style={{ color: "green", marginTop: "1rem" }}>{successMsg}</p>}

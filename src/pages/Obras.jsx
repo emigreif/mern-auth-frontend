@@ -1,30 +1,20 @@
 // src/pages/Obras.jsx
 
 import React, { useState, useEffect } from "react";
-import ModalBase from "../components/ModalBase.jsx"; 
+import ModalBase from "../components/ModalBase.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import * as XLSX from "xlsx"; // Para parsear Excel
-
 
 export default function Obras() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Lista de obras y clientes
   const [obras, setObras] = useState([]);
   const [clientes, setClientes] = useState([]);
-
-  // Filtro
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Modal principal (crear/editar obra)
   const [isMainModalOpen, setIsMainModalOpen] = useState(false);
   const [editingObra, setEditingObra] = useState(null);
-
-  // Sub-modal para crear cliente
   const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
-
-  // Sub-modal para materiales
   const [isMaterialesModalOpen, setIsMaterialesModalOpen] = useState(false);
 
   // Form principal con TODOS los campos (excepto user)
@@ -60,18 +50,15 @@ export default function Obras() {
     observaciones: "",
   });
 
-  // Arrays de materiales (ejemplo: accesoriosPresupuesto)
-  // Podrías tener también vidriosPresupuesto, perfilesPresupuesto, etc.
   const [materialesForm, setMaterialesForm] = useState({
     accesoriosPresupuesto: [],
-    // ... si deseas otros arrays, agrégalos aquí
   });
 
   // Form para crear un nuevo cliente
   const [clienteForm, setClienteForm] = useState({
+    tipoCliente: "particular", // valor por defecto
     nombre: "",
     apellido: "",
-    empresa: "",
     email: "",
     telefono: "",
     direccion: { calle: "", ciudad: "" },
@@ -213,9 +200,7 @@ export default function Obras() {
       fechaInicioMontaje: obra.fechaInicioMontaje
         ? obra.fechaInicioMontaje.slice(0, 10)
         : "",
-      fechaMedicion: obra.fechaMedicion
-        ? obra.fechaMedicion.slice(0, 10)
-        : "",
+      fechaMedicion: obra.fechaMedicion ? obra.fechaMedicion.slice(0, 10) : "",
       ordenProduccionAprobada: obra.ordenProduccionAprobada || false,
       finalObra: obra.finalObra || false,
       estadoGeneral: obra.estadoGeneral || "Presupuestada",
@@ -388,17 +373,22 @@ export default function Obras() {
                 {obra.codigoObra} - {obra.nombre}
               </h2>
               <span>
-                Entrega: {obra.fechaEntrega ? obra.fechaEntrega.slice(0, 10) : "N/D"}
+                Entrega:{" "}
+                {obra.fechaEntrega ? obra.fechaEntrega.slice(0, 10) : "N/D"}
               </span>
             </div>
             <div className="obra-card-info">
-              <p><strong>Dirección:</strong> {obra.direccion}</p>
-              <p><strong>Contacto:</strong> {obra.contacto}</p>
+              <p>
+                <strong>Dirección:</strong> {obra.direccion}
+              </p>
+              <p>
+                <strong>Contacto:</strong> {obra.contacto}
+              </p>
               <p>
                 <strong>Cliente:</strong>{" "}
-                {obra.cliente && obra.cliente.nombre
+                {obra.cliente
                   ? `${obra.cliente.nombre} ${obra.cliente.apellido}`
-                  : "N/D"}
+                  : "Sin cliente"}
               </p>
             </div>
             <div className="obra-card-footer">
@@ -439,7 +429,6 @@ export default function Obras() {
             />
           </div>
 
-          {/* Cliente */}
           <div className="form-group">
             <label>Cliente</label>
             <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -696,7 +685,11 @@ export default function Obras() {
 
           <div className="form-group">
             <label>Saldo</label>
-            <select name="saldo" value={obraForm.saldo} onChange={handleInputChange}>
+            <select
+              name="saldo"
+              value={obraForm.saldo}
+              onChange={handleInputChange}
+            >
               <option value="Con saldo a cobrar">Con saldo a cobrar</option>
               <option value="Pagada">Pagada</option>
             </select>
@@ -732,7 +725,10 @@ export default function Obras() {
         title="Accesorios Presupuestados"
         items={materialesForm.accesoriosPresupuesto}
         setItems={(newItems) =>
-          setMaterialesForm({ ...materialesForm, accesoriosPresupuesto: newItems })
+          setMaterialesForm({
+            ...materialesForm,
+            accesoriosPresupuesto: newItems,
+          })
         }
       />
 
@@ -743,6 +739,17 @@ export default function Obras() {
         title="Nuevo Cliente"
       >
         <form onSubmit={handleSaveCliente}>
+          <div className="form-group">
+            <label>Tipo de Cliente</label>
+            <select
+              name="tipoCliente"
+              value={clienteForm.tipoCliente}
+              onChange={handleClienteFormChange}
+            >
+              <option value="particular">Particular</option>
+              <option value="empresa">Empresa</option>
+            </select>
+          </div>
           <div className="form-group">
             <label>Nombre</label>
             <input
@@ -883,7 +890,10 @@ function MaterialesModal({ isOpen, onClose, title, items, setItems }) {
           ✖
         </button>
         <h2>{title}</h2>
-        <div className="modal-body" style={{ maxHeight: "70vh", overflowY: "auto" }}>
+        <div
+          className="modal-body"
+          style={{ maxHeight: "70vh", overflowY: "auto" }}
+        >
           <button onClick={handleImportExcel}>Importar Excel</button>
 
           {/* Preview */}

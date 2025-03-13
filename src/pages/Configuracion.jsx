@@ -2,85 +2,160 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const Configuracion = () => {
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  const [config, setConfig] = useState({
-    impuestos: [],
-    costoHora: 0,
-    indicesSaldo: 1.05,
-  });
+export default function Configuracion() {
   const { token } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  const [config, setConfig] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
-    if (!token) return;
-    const fetchConfig = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/configuracion`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!res.ok) throw new Error("Error al obtener configuración");
-        const data = await res.json();
-        if (data.length) setConfig(data[0]);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchConfig();
-  }, [API_URL, token]);
+    if (token) {
+      fetchConfig();
+    }
+  }, [token]);
 
-  const handleChange = (e) => {
-    setConfig({ ...config, [e.target.name]: e.target.value });
+  const fetchConfig = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/configuracion`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Error al obtener configuración");
+      const data = await res.json();
+      setConfig(data);
+    } catch (error) {
+      setErrorMsg(error.message);
+    }
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     try {
-      // PUT /api/configuracion/:id si tu backend lo maneja así,
-      // aquí asumo /api/configuracion (unique doc)
+      setErrorMsg("");
+      setSuccessMsg("");
       const res = await fetch(`${API_URL}/api/configuracion`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(config),
+        body: JSON.stringify({
+          impuestos: config.impuestos,
+          indicesActualizacion: config.indicesActualizacion,
+        }),
       });
       if (!res.ok) throw new Error("Error al actualizar configuración");
-      alert("Configuración guardada");
+      const data = await res.json();
+      setConfig(data);
+      setSuccessMsg("Configuración actualizada con éxito");
     } catch (error) {
-      console.error(error);
+      setErrorMsg(error.message);
     }
   };
+
+  // Funciones para manejar los arrays
+  const handleImpuestoChange = (index, field, value) => {
+    const newImpuestos = [...config.impuestos];
+    newImpuestos[index] = { ...newImpuestos[index], [field]: value };
+    setConfig({ ...config, impuestos: newImpuestos });
+  };
+
+  const addImpuesto = () => {
+    setConfig({
+      ...config,
+      impuestos: [...config.impuestos, { codigo: "", descripcion: "", porcentaje: 0 }],
+    });
+  };
+
+  const removeImpuesto = (index) => {
+    const newImpuestos = [...config.impuestos];
+    newImpuestos.splice(index, 1);
+    setConfig({ ...config, impuestos: newImpuestos });
+  };
+
+  const handleIndiceChange = (index, field, value) => {
+    const newIndices = [...config.indicesActualizacion];
+    newIndices[index] = { ...newIndices[index], [field]: value };
+    setConfig({ ...config, indicesActualizacion: newIndices });
+  };
+
+  const addIndice = () => {
+    setConfig({
+      ...config,
+      indicesActualizacion: [...config.indicesActualizacion, { codigo: "", descripcion: "", valorActual: 0 }],
+    });
+  };
+
+  const removeIndice = (index) => {
+    const newIndices = [...config.indicesActualizacion];
+    newIndices.splice(index, 1);
+    setConfig({ ...config, indicesActualizacion: newIndices });
+  };
+
+  if (!config) return <div>Cargando configuración...</div>;
 
   return (
     <div className="page-contenedor">
       <h1>Configuración</h1>
-      <form onSubmit={handleSave}>
-        <div className="form-group">
-          <label>Costo Hora</label>
+      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+      {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
+
+      <h2>Impuestos</h2>
+      {config.impuestos.map((imp, i) => (
+        <div key={i} style={{ border: "1px solid #ccc", padding: "0.5rem", marginBottom: "0.5rem" }}>
+          <label>Código:</label>
+          <input
+            type="text"
+            value={imp.codigo}
+            onChange={(e) => handleImpuestoChange(i, "codigo", e.target.value)}
+          />
+          <label>Descripción:</label>
+          <input
+            type="text"
+            value={imp.descripcion || ""}
+            onChange={(e) => handleImpuestoChange(i, "descripcion", e.target.value)}
+          />
+          <label>Porcentaje:</label>
           <input
             type="number"
-            name="costoHora"
-            value={config.costoHora}
-            onChange={handleChange}
+            value={imp.porcentaje}
+            onChange={(e) => handleImpuestoChange(i, "porcentaje", parseFloat(e.target.value))}
           />
+          <button onClick={() => removeImpuesto(i)}>Eliminar</button>
         </div>
-        <div className="form-group">
-          <label>Índice Saldo</label>
+      ))}
+      <button onClick={addImpuesto}>+ Agregar Impuesto</button>
+
+      <h2 style={{ marginTop: "2rem" }}>Índices de Actualización</h2>
+      {config.indicesActualizacion.map((ind, i) => (
+        <div key={i} style={{ border: "1px solid #ccc", padding: "0.5rem", marginBottom: "0.5rem" }}>
+          <label>Código:</label>
+          <input
+            type="text"
+            value={ind.codigo}
+            onChange={(e) => handleIndiceChange(i, "codigo", e.target.value)}
+          />
+          <label>Descripción:</label>
+          <input
+            type="text"
+            value={ind.descripcion || ""}
+            onChange={(e) => handleIndiceChange(i, "descripcion", e.target.value)}
+          />
+          <label>Valor Actual:</label>
           <input
             type="number"
-            step="0.01"
-            name="indicesSaldo"
-            value={config.indicesSaldo}
-            onChange={handleChange}
+            value={ind.valorActual}
+            onChange={(e) => handleIndiceChange(i, "valorActual", parseFloat(e.target.value))}
           />
+          <button onClick={() => removeIndice(i)}>Eliminar</button>
         </div>
-        <button type="submit" className="btn">Guardar Configuración</button>
-      </form>
+      ))}
+      <button onClick={addIndice}>+ Agregar Índice</button>
+
+      <br />
+      <button onClick={handleSave} style={{ marginTop: "1rem" }}>
+        Guardar Configuración
+      </button>
     </div>
   );
-};
-
-export default Configuracion;
+}
