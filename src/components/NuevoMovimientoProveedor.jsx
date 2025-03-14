@@ -3,22 +3,37 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
 /**
- * Muestra un modal para crear un nuevo movimiento contable
- * (factura o pago) asociado a un proveedor.
+ * Modal para crear un nuevo movimiento contable (factura/pago)
+ * con tipos: CHEQUE_EMITIDO, EFECTIVO_EMITIDO, TRANSFERENCIA_EMITIDA, etc.
  */
 export default function NuevoMovimientoProveedor({ proveedorId, onSuccess, onClose }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [form, setForm] = useState({
-    tipo: "FACTURA_RECIBIDA", // Ej. default
+    tipo: "FACTURA_RECIBIDA", // Default
     monto: 0,
+    esConFactura: false,
     fecha: "",
+    fechaAcreditacion: "",
     descripcion: "",
     subIndiceFactura: "",
-    partidasObra: []
+    partidasObra: [],
+    datosCheque: {
+      numeroCheque: "",
+      banco: "",
+      fechaVencimiento: "",
+      endosadoA: "",
+      estadoCheque: "pendiente"
+    },
+    datosTransferencia: {
+      numeroComprobante: "",
+      bancoOrigen: "",
+      bancoDestino: ""
+    }
   });
-  const [obras, setObras] = useState([]); // Para mostrar en select
+
+  const [obras, setObras] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
@@ -41,7 +56,28 @@ export default function NuevoMovimientoProveedor({ proveedorId, onSuccess, onClo
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.type === "checkbox") {
+      value = e.target.checked;
+    }
+    setForm({ ...form, [e.target.name]: value });
+  };
+
+  // Manejo de subcampos
+  const handleDatosChequeChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      datosCheque: { ...prev.datosCheque, [name]: value }
+    }));
+  };
+
+  const handleDatosTransferenciaChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      datosTransferencia: { ...prev.datosTransferencia, [name]: value }
+    }));
   };
 
   const addPartida = () => {
@@ -68,10 +104,10 @@ export default function NuevoMovimientoProveedor({ proveedorId, onSuccess, onClo
     setErrorMsg("");
     try {
       if (!form.fecha) {
-        setErrorMsg("La fecha es obligatoria");
+        setErrorMsg("La fecha del movimiento es obligatoria");
         return;
       }
-      // Convertir a number
+
       const finalBody = {
         ...form,
         monto: parseFloat(form.monto),
@@ -79,9 +115,15 @@ export default function NuevoMovimientoProveedor({ proveedorId, onSuccess, onClo
         partidasObra: form.partidasObra.map((p) => ({
           obra: p.obra,
           monto: parseFloat(p.monto || 0)
-        }))
+        })),
       };
 
+      // Convertir numeric fields
+      if (form.fechaAcreditacion) {
+        finalBody.fechaAcreditacion = new Date(form.fechaAcreditacion);
+      }
+
+      // Llamamos al endpoint de contabilidad
       const res = await fetch(`${API_URL}/api/contabilidad`, {
         method: "POST",
         headers: {
@@ -91,8 +133,8 @@ export default function NuevoMovimientoProveedor({ proveedorId, onSuccess, onClo
         body: JSON.stringify(finalBody)
       });
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Error al crear movimiento");
+        let errData = await res.json();
+        throw new Error(errData.message || "Error al crear movimiento");
       }
       await res.json();
       if (onSuccess) onSuccess();
@@ -102,65 +144,133 @@ export default function NuevoMovimientoProveedor({ proveedorId, onSuccess, onClo
     }
   };
 
+  // Lógica para mostrar u ocultar campos de cheque/transferencia según `tipo`
+  const esCheque = form.tipo === "CHEQUE_RECIBIDO" || form.tipo === "CHEQUE_EMITIDO";
+  const esTransferencia = form.tipo === "TRANSFERENCIA_RECIBIDA" || form.tipo === "TRANSFERENCIA_EMITIDA";
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2>Nuevo Movimiento (Proveedor)</h2>
+        <h2>Nuevo Movimiento Contable</h2>
         {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Tipo</label>
             <select name="tipo" value={form.tipo} onChange={handleChange}>
               <option value="FACTURA_RECIBIDA">Factura Recibida</option>
-              <option value="PAGO_EMITIDO">Pago Emitido</option>
-              {/* Agrega más opciones si lo deseas */}
+              <option value="CHEQUE_EMITIDO">Cheque Emitido</option>
+              <option value="EFECTIVO_EMITIDO">Efectivo Emitido</option>
+              <option value="TRANSFERENCIA_EMITIDA">Transferencia Emitida</option>
+              {/* Agrega más si gustas */}
             </select>
           </div>
+
           <div className="form-group">
             <label>Fecha</label>
-            <input
-              type="date"
-              name="fecha"
-              value={form.fecha}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Monto Total</label>
-            <input
-              type="number"
-              name="monto"
-              value={form.monto}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Descripción</label>
-            <input
-              type="text"
-              name="descripcion"
-              value={form.descripcion}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>Sub-Índice Factura</label>
-            <input
-              type="text"
-              name="subIndiceFactura"
-              value={form.subIndiceFactura}
-              onChange={handleChange}
-              placeholder="Ej: A, B, etc."
-            />
+            <input type="date" name="fecha" value={form.fecha} onChange={handleChange} required />
           </div>
 
+          <div className="form-group">
+            <label>Monto</label>
+            <input type="number" name="monto" value={form.monto} onChange={handleChange} required />
+          </div>
+
+          <div className="form-group">
+            <label>¿Con Factura?</label>
+            <input type="checkbox" name="esConFactura" checked={form.esConFactura} onChange={handleChange} />
+          </div>
+
+          <div className="form-group">
+            <label>Descripción</label>
+            <input type="text" name="descripcion" value={form.descripcion} onChange={handleChange} />
+          </div>
+
+          <div className="form-group">
+            <label>Sub-Índice Factura</label>
+            <input type="text" name="subIndiceFactura" value={form.subIndiceFactura} onChange={handleChange} />
+          </div>
+
+          {/* Campos de cheque */}
+          {esCheque && (
+            <div style={{ border: "1px solid #ccc", padding: "0.5rem" }}>
+              <h3>Datos del Cheque</h3>
+              <label>Número Cheque</label>
+              <input
+                type="text"
+                name="numeroCheque"
+                value={form.datosCheque.numeroCheque}
+                onChange={handleDatosChequeChange}
+              />
+              <label>Banco</label>
+              <input
+                type="text"
+                name="banco"
+                value={form.datosCheque.banco}
+                onChange={handleDatosChequeChange}
+              />
+              <label>Fecha Vencimiento</label>
+              <input
+                type="date"
+                name="fechaVencimiento"
+                value={form.datosCheque.fechaVencimiento}
+                onChange={handleDatosChequeChange}
+              />
+              {form.tipo === "CHEQUE_EMITIDO" && (
+                <>
+                  <label>Endosado A</label>
+                  <input
+                    type="text"
+                    name="endosadoA"
+                    value={form.datosCheque.endosadoA}
+                    onChange={handleDatosChequeChange}
+                  />
+                </>
+              )}
+              {/* estadoCheque: "pendiente" por defecto */}
+            </div>
+          )}
+
+          {/* Campos de transferencia */}
+          {esTransferencia && (
+            <div style={{ border: "1px solid #ccc", padding: "0.5rem" }}>
+              <h3>Datos de Transferencia</h3>
+              <label>Número Comprobante</label>
+              <input
+                type="text"
+                name="numeroComprobante"
+                value={form.datosTransferencia.numeroComprobante}
+                onChange={handleDatosTransferenciaChange}
+              />
+              <label>Banco Origen</label>
+              <input
+                type="text"
+                name="bancoOrigen"
+                value={form.datosTransferencia.bancoOrigen}
+                onChange={handleDatosTransferenciaChange}
+              />
+              <label>Banco Destino</label>
+              <input
+                type="text"
+                name="bancoDestino"
+                value={form.datosTransferencia.bancoDestino}
+                onChange={handleDatosTransferenciaChange}
+              />
+              <label>Fecha Acreditación</label>
+              <input
+                type="date"
+                name="fechaAcreditacion"
+                value={form.fechaAcreditacion}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+
+          <hr />
           <h3>Partidas por Obra</h3>
           {form.partidasObra.map((p, i) => (
-            <div key={i} style={{ border: "1px solid #ccc", padding: "0.5rem", marginBottom: "0.5rem" }}>
+            <div key={i} style={{ border: "1px solid #ccc", marginBottom: "0.5rem", padding: "0.5rem" }}>
               <label>Obra</label>
-              {/* Idealmente un <select> con las obras del user */}
               <select
                 value={p.obra}
                 onChange={(e) => handlePartidaChange(i, "obra", e.target.value)}
@@ -170,7 +280,6 @@ export default function NuevoMovimientoProveedor({ proveedorId, onSuccess, onClo
                   <option key={o._id} value={o._id}>{o.nombre}</option>
                 ))}
               </select>
-
               <label>Monto</label>
               <input
                 type="number"
