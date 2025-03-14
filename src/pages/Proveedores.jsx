@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import NuevoMovimientoProveedor from "../components/NuevoMovimientoProveedor.jsx";
+import NuevoProveedor from "../components/NuevoProveedor.jsx";
 
 export default function Proveedores() {
   const { token } = useAuth();
@@ -9,24 +10,29 @@ export default function Proveedores() {
 
   const [proveedores, setProveedores] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
-  const [selectedProveedor, setSelectedProveedor] = useState(null);
-
+  
   // Movimientos
   const [movimientos, setMovimientos] = useState([]);
+  const [selectedProveedor, setSelectedProveedor] = useState(null);
   const [showMovimientos, setShowMovimientos] = useState(false);
 
   // Modal: nuevo movimiento
   const [isNuevoMovOpen, setIsNuevoMovOpen] = useState(false);
 
+  // Modal: nuevo proveedor
+  const [isNuevoProvOpen, setIsNuevoProvOpen] = useState(false);
+
   useEffect(() => {
-    if (token) fetchProveedores();
+    if (token) {
+      fetchProveedores();
+    }
   }, [token]);
 
   const fetchProveedores = async () => {
     setErrorMsg("");
     try {
       const res = await fetch(`${API_URL}/api/proveedores`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al obtener proveedores");
       const data = await res.json();
@@ -42,7 +48,9 @@ export default function Proveedores() {
     try {
       // GET /api/contabilidad?proveedor=xxx
       const url = `${API_URL}/api/contabilidad?proveedor=${prov._id}`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (!res.ok) throw new Error("Error al obtener movimientos");
       const data = await res.json();
       setMovimientos(data);
@@ -57,13 +65,23 @@ export default function Proveedores() {
     setIsNuevoMovOpen(true);
   };
 
+  // Al crear un nuevo movimiento, recargamos lista
   const handleMovCreated = () => {
-    // Recargar proveedores
     fetchProveedores();
-    // Si estamos viendo movimientos, recargar
     if (selectedProveedor) {
       handleOpenMovimientos(selectedProveedor);
     }
+  };
+
+  // Crear nuevo proveedor (abrir modal)
+  const handleOpenNuevoProveedor = () => {
+    setIsNuevoProvOpen(true);
+  };
+
+  // Cuando se crea un proveedor, recargamos
+  const handleProveedorCreated = () => {
+    setIsNuevoProvOpen(false);
+    fetchProveedores();
   };
 
   return (
@@ -71,13 +89,23 @@ export default function Proveedores() {
       <h1>Proveedores</h1>
       {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
-      <div className="proveedores-list">
+      {/* Botón para abrir modal de nuevo proveedor */}
+      <button onClick={handleOpenNuevoProveedor}>+ Agregar Proveedor</button>
+
+      <div className="proveedores-list" style={{ marginTop: "1rem" }}>
         {proveedores.map((prov) => (
           <div key={prov._id} className="proveedor-card">
             <h2>{prov.nombre}</h2>
+            <p><strong>Dirección:</strong> {prov.direccion}</p>
             <p><strong>Saldo:</strong> ${prov.saldo?.toFixed(2)}</p>
-            <button onClick={() => handleOpenMovimientos(prov)}>Ver Movimientos</button>
-            <button onClick={() => handleNuevoMovimiento(prov)}>+ Nuevo Movimiento</button>
+            <p><strong>Rubros:</strong> {prov.rubro?.join(", ")}</p>
+
+            <button onClick={() => handleOpenMovimientos(prov)}>
+              Ver Movimientos
+            </button>
+            <button onClick={() => handleNuevoMovimiento(prov)}>
+              + Nuevo Movimiento
+            </button>
           </div>
         ))}
       </div>
@@ -92,41 +120,12 @@ export default function Proveedores() {
             {movimientos.map((mov) => (
               <div key={mov._id} className="mov-card">
                 <p>
-                  <strong>{mov.tipo}</strong> - {new Date(mov.fecha).toLocaleDateString()} 
-                  - Monto: ${mov.monto}
-                  {mov.subIndiceFactura && ` [${mov.subIndiceFactura}]`}
+                  <strong>{mov.tipo}</strong> -{" "}
+                  {new Date(mov.fecha).toLocaleDateString()} - Monto: $
+                  {mov.monto}
                 </p>
                 <p>{mov.descripcion}</p>
-
-                {/* Cheque Info */}
-                {mov.tipo.includes("CHEQUE") && mov.datosCheque && (
-                  <div style={{ borderLeft: "2px solid #aaa", paddingLeft: "8px" }}>
-                    <p>Cheque N°: {mov.datosCheque.numeroCheque} - Banco: {mov.datosCheque.banco}</p>
-                    <p>Venc: {mov.datosCheque.fechaVencimiento?.slice(0,10)} - Estado: {mov.datosCheque.estadoCheque}</p>
-                    {mov.datosCheque.endosadoA && <p>Endosado a: {mov.datosCheque.endosadoA}</p>}
-                  </div>
-                )}
-
-                {/* Transfer Info */}
-                {mov.tipo.includes("TRANSFERENCIA") && mov.datosTransferencia && (
-                  <div style={{ borderLeft: "2px solid #aaa", paddingLeft: "8px" }}>
-                    <p>Comprobante: {mov.datosTransferencia.numeroComprobante}</p>
-                    <p>Banco Origen: {mov.datosTransferencia.bancoOrigen}</p>
-                    <p>Banco Destino: {mov.datosTransferencia.bancoDestino}</p>
-                    {mov.fechaAcreditacion && <p>Fecha Acreditación: {mov.fechaAcreditacion.slice(0,10)}</p>}
-                  </div>
-                )}
-
-                {/* Partidas Obra */}
-                {mov.partidasObra?.length > 0 && (
-                  <ul>
-                    {mov.partidasObra.map((po, i) => (
-                      <li key={i}>
-                        {po.obra?.nombre || "Obra??"} => ${po.monto}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                {/* Info de cheque / transferencia, etc. */}
               </div>
             ))}
           </div>
@@ -139,6 +138,14 @@ export default function Proveedores() {
           proveedorId={selectedProveedor._id}
           onSuccess={handleMovCreated}
           onClose={() => setIsNuevoMovOpen(false)}
+        />
+      )}
+
+      {/* Modal Nuevo Proveedor */}
+      {isNuevoProvOpen && (
+        <NuevoProveedor
+          onCreated={handleProveedorCreated}
+          onClose={() => setIsNuevoProvOpen(false)}
         />
       )}
     </div>
