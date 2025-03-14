@@ -1,146 +1,128 @@
-// src/pages/Proveedores.jsx
-import React, { useState, useEffect } from "react";
-import ModalBase from "../components/ModalBase.jsx";
+// frontend/src/pages/Proveedores.jsx
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
+import NuevoMovimientoProveedor from "../components/NuevoMovimientoProveedor.jsx"; // Modal para crear mov.
 
-const Proveedores = () => {
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+export default function Proveedores() {
   const { token } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [proveedores, setProveedores] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [selectedProveedor, setSelectedProveedor] = useState(null);
 
-  const [nuevoProveedor, setNuevoProveedor] = useState({
-    nombre: "",
-    direccion: "",
-    emails: "",
-    telefono: "",
-  });
+  // Movimientos del proveedor seleccionado
+  const [movimientos, setMovimientos] = useState([]);
+  const [showMovimientos, setShowMovimientos] = useState(false);
+
+  // Modal de nuevo movimiento
+  const [isNuevoMovOpen, setIsNuevoMovOpen] = useState(false);
 
   // Cargar lista de proveedores
   useEffect(() => {
-    if (!token) return;
-    const fetchProveedores = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/proveedores`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!res.ok) throw new Error("Error al obtener proveedores");
-        const data = await res.json();
-        setProveedores(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchProveedores();
-  }, [API_URL, token]);
+    if (token) fetchProveedores();
+  }, [token]);
 
-  const handleInputChange = (e) => {
-    setNuevoProveedor({ ...nuevoProveedor, [e.target.name]: e.target.value });
+  const fetchProveedores = async () => {
+    setErrorMsg("");
+    try {
+      const res = await fetch(`${API_URL}/api/proveedores`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Error al obtener proveedores");
+      const data = await res.json();
+      setProveedores(data);
+    } catch (error) {
+      setErrorMsg(error.message);
+    }
   };
 
-  // Crear proveedor
-  const handleCreateProveedor = async (e) => {
-    e.preventDefault();
+  // Abrir detalle de movimientos
+  const handleOpenMovimientos = async (prov) => {
+    setSelectedProveedor(prov);
+    setErrorMsg("");
     try {
-      // emails en el backend es un array, aquí lo parseamos
-      const body = {
-        ...nuevoProveedor,
-        emails: nuevoProveedor.emails.split(",").map((mail) => mail.trim()),
-      };
-
-      const res = await fetch(`${API_URL}/api/proveedores`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) throw new Error("Error al crear proveedor");
+      // Llamamos a contabilidad?proveedor=xxx
+      const url = `${API_URL}/api/contabilidad?proveedor=${prov._id}`;
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error("Error al obtener movimientos");
       const data = await res.json();
-      setProveedores([...proveedores, data]);
-      setIsModalOpen(false);
+      setMovimientos(data);
+      setShowMovimientos(true);
     } catch (error) {
-      console.error(error);
+      setErrorMsg(error.message);
+    }
+  };
+
+  // Abrir modal de nuevo movimiento
+  const handleNuevoMovimiento = (prov) => {
+    setSelectedProveedor(prov);
+    setIsNuevoMovOpen(true);
+  };
+
+  // Al guardar un nuevo movimiento, recargamos lista de proveedores y cerramos
+  const handleMovCreated = () => {
+    fetchProveedores();
+    // Si estamos viendo los movimientos de ese proveedor, recargar
+    if (selectedProveedor) {
+      handleOpenMovimientos(selectedProveedor);
     }
   };
 
   return (
     <div className="page-contenedor">
       <h1>Proveedores</h1>
+      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
-      <button className="btn" onClick={() => setIsModalOpen(true)}>
-        Agregar Proveedor
-      </button>
-
-      <div className="list">
-        {proveedores.map((p) => (
-          <div key={p._id} className="list-item">
-            <h3>{p.nombre}</h3>
-            <p>
-              <strong>Dirección:</strong> {p.direccion}
-            </p>
-            <p>
-              <strong>Emails:</strong> {p.emails?.join(", ")}
-            </p>
-            <p>
-              <strong>Teléfono:</strong> {p.telefono}
-            </p>
+      <div className="proveedores-list">
+        {proveedores.map((prov) => (
+          <div key={prov._id} className="proveedor-card">
+            <h2>{prov.nombre}</h2>
+            <p><strong>Saldo:</strong> ${prov.saldo?.toFixed(2)}</p>
+            <button onClick={() => handleOpenMovimientos(prov)}>Ver Movimientos</button>
+            <button onClick={() => handleNuevoMovimiento(prov)}>+ Nuevo Movimiento</button>
           </div>
         ))}
       </div>
 
-      <ModalBase
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Agregar Proveedor"
-      >
-        <form onSubmit={handleCreateProveedor}>
-          <div className="form-group">
-            <label>Nombre</label>
-            <input
-              type="text"
-              name="nombre"
-              onChange={handleInputChange}
-              required
-            />
+      {/* Modal Movimientos */}
+      {showMovimientos && selectedProveedor && (
+        <div className="modal-overlay" onClick={() => setShowMovimientos(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Movimientos de {selectedProveedor.nombre}</h2>
+            <button onClick={() => setShowMovimientos(false)}>Cerrar</button>
+            {movimientos.map((mov) => (
+              <div key={mov._id} className="mov-card">
+                <p>
+                  <strong>{mov.tipo}</strong> - {new Date(mov.fecha).toLocaleDateString()} - 
+                  Monto: ${mov.monto} 
+                  {mov.subIndiceFactura && ` (${mov.subIndiceFactura})`}
+                </p>
+                <p>{mov.descripcion}</p>
+                {/* Partidas de Obra */}
+                {mov.partidasObra?.length > 0 && (
+                  <ul>
+                    {mov.partidasObra.map((po, i) => (
+                      <li key={i}>
+                        {po.obra?.nombre || "Obra??"} => ${po.monto}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
           </div>
-          <div className="form-group">
-            <label>Dirección</label>
-            <input
-              type="text"
-              name="direccion"
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Emails (separados por coma)</label>
-            <input type="text" name="emails" onChange={handleInputChange} />
-          </div>
-          <div className="form-group">
-            <label>Teléfono</label>
-            <input type="text" name="telefono" onChange={handleInputChange} />
-          </div>
-          <div className="form-actions">
-            <button type="submit" className="btn">
-              Guardar
-            </button>
-            <button
-              type="button"
-              className="btn btn--secondary"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </ModalBase>
+        </div>
+      )}
+
+      {/* Modal Nuevo Movimiento */}
+      {isNuevoMovOpen && selectedProveedor && (
+        <NuevoMovimientoProveedor
+          proveedorId={selectedProveedor._id}
+          onSuccess={handleMovCreated}
+          onClose={() => setIsNuevoMovOpen(false)}
+        />
+      )}
     </div>
   );
-};
-
-export default Proveedores;
+}
