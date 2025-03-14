@@ -1,7 +1,7 @@
 // frontend/src/pages/Proveedores.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import NuevoMovimientoProveedor from "../components/NuevoMovimientoProveedor.jsx"; // Modal para crear mov.
+import NuevoMovimientoProveedor from "../components/NuevoMovimientoProveedor.jsx";
 
 export default function Proveedores() {
   const { token } = useAuth();
@@ -11,14 +11,13 @@ export default function Proveedores() {
   const [errorMsg, setErrorMsg] = useState("");
   const [selectedProveedor, setSelectedProveedor] = useState(null);
 
-  // Movimientos del proveedor seleccionado
+  // Movimientos
   const [movimientos, setMovimientos] = useState([]);
   const [showMovimientos, setShowMovimientos] = useState(false);
 
-  // Modal de nuevo movimiento
+  // Modal: nuevo movimiento
   const [isNuevoMovOpen, setIsNuevoMovOpen] = useState(false);
 
-  // Cargar lista de proveedores
   useEffect(() => {
     if (token) fetchProveedores();
   }, [token]);
@@ -37,12 +36,11 @@ export default function Proveedores() {
     }
   };
 
-  // Abrir detalle de movimientos
   const handleOpenMovimientos = async (prov) => {
     setSelectedProveedor(prov);
     setErrorMsg("");
     try {
-      // Llamamos a contabilidad?proveedor=xxx
+      // GET /api/contabilidad?proveedor=xxx
       const url = `${API_URL}/api/contabilidad?proveedor=${prov._id}`;
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error("Error al obtener movimientos");
@@ -54,16 +52,15 @@ export default function Proveedores() {
     }
   };
 
-  // Abrir modal de nuevo movimiento
   const handleNuevoMovimiento = (prov) => {
     setSelectedProveedor(prov);
     setIsNuevoMovOpen(true);
   };
 
-  // Al guardar un nuevo movimiento, recargamos lista de proveedores y cerramos
   const handleMovCreated = () => {
+    // Recargar proveedores
     fetchProveedores();
-    // Si estamos viendo los movimientos de ese proveedor, recargar
+    // Si estamos viendo movimientos, recargar
     if (selectedProveedor) {
       handleOpenMovimientos(selectedProveedor);
     }
@@ -91,15 +88,36 @@ export default function Proveedores() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>Movimientos de {selectedProveedor.nombre}</h2>
             <button onClick={() => setShowMovimientos(false)}>Cerrar</button>
+
             {movimientos.map((mov) => (
               <div key={mov._id} className="mov-card">
                 <p>
-                  <strong>{mov.tipo}</strong> - {new Date(mov.fecha).toLocaleDateString()} - 
-                  Monto: ${mov.monto} 
-                  {mov.subIndiceFactura && ` (${mov.subIndiceFactura})`}
+                  <strong>{mov.tipo}</strong> - {new Date(mov.fecha).toLocaleDateString()} 
+                  - Monto: ${mov.monto}
+                  {mov.subIndiceFactura && ` [${mov.subIndiceFactura}]`}
                 </p>
                 <p>{mov.descripcion}</p>
-                {/* Partidas de Obra */}
+
+                {/* Cheque Info */}
+                {mov.tipo.includes("CHEQUE") && mov.datosCheque && (
+                  <div style={{ borderLeft: "2px solid #aaa", paddingLeft: "8px" }}>
+                    <p>Cheque N°: {mov.datosCheque.numeroCheque} - Banco: {mov.datosCheque.banco}</p>
+                    <p>Venc: {mov.datosCheque.fechaVencimiento?.slice(0,10)} - Estado: {mov.datosCheque.estadoCheque}</p>
+                    {mov.datosCheque.endosadoA && <p>Endosado a: {mov.datosCheque.endosadoA}</p>}
+                  </div>
+                )}
+
+                {/* Transfer Info */}
+                {mov.tipo.includes("TRANSFERENCIA") && mov.datosTransferencia && (
+                  <div style={{ borderLeft: "2px solid #aaa", paddingLeft: "8px" }}>
+                    <p>Comprobante: {mov.datosTransferencia.numeroComprobante}</p>
+                    <p>Banco Origen: {mov.datosTransferencia.bancoOrigen}</p>
+                    <p>Banco Destino: {mov.datosTransferencia.bancoDestino}</p>
+                    {mov.fechaAcreditacion && <p>Fecha Acreditación: {mov.fechaAcreditacion.slice(0,10)}</p>}
+                  </div>
+                )}
+
+                {/* Partidas Obra */}
                 {mov.partidasObra?.length > 0 && (
                   <ul>
                     {mov.partidasObra.map((po, i) => (
