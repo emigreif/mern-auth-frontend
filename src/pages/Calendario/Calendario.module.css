@@ -1,0 +1,49 @@
+/* src/pages/Calendario/Calendario.module.css */
+
+.pageContainer {
+    width: 90%;
+
+    margin: 0;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .header h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .filters {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .spinner {
+    text-align: center;
+    margin: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .noEvents {
+    text-align: center;
+    margin: 2rem;
+    font-size: 1.2rem;
+    color: #888;
+  }
+  
+  /* Calendario FullCalendar ajustado */
+  .calendarWrapper {
+    margin-top: 1rem;
+  }
+  

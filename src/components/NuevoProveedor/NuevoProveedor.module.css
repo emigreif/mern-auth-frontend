@@ -1,0 +1,13 @@
+/* src/components/NuevoProveedor/NuevoProveedor.module.css */
+.formBase {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  

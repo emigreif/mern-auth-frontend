@@ -1,0 +1,18 @@
+/* src/components/ModalCompra/ModalCompra.module.css */
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.8rem;
+  }
+  
+  .formActions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .error {
+    color: red;
+    font-size: 0.85rem;
+  }
+  

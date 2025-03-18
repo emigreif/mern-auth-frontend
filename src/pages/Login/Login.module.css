@@ -1,0 +1,136 @@
+/* src/pages/Login/Login.module.css */
+
+.authContainer {
+    display: flex;
+    height: calc(100vh - 60px); /* Ajusta si tu navbar mide 60px */
+  }
+  
+  /* Lado izquierdo (form 1) */
+  .leftSide {
+    width: 50%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .formBox {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .formBox h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .formGroup {
+    margin-bottom: 1rem;
+  }
+  
+  .formGroup label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .formGroup input {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .submitBtn {
+    width: 100%;
+    background-color: #00aa63;
+    color: #fff;
+    border: none;
+    padding: 0.7rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .submitBtn:hover {
+    background-color: #008f57;
+  }
+  
+  .message {
+    margin-top: 1rem;
+    color: #333;
+  }
+  
+  .message.error {
+    color: red;
+  }
+  
+  /* Lado derecho (form 2) */
+  .rightSide {
+    width: 50%;
+    background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .rightSide h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .rightSide p {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  
+  .profileForm {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    padding: 1rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 1rem;
+  }
+  
+  .profileForm input {
+    width: 100%;
+    padding: 0.6rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+  }
+  
+  .profileBtn {
+    width: 100%;
+    background-color: #008f57;
+    color: #fff;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 0.5rem;
+  }
+  
+  .profileBtn:hover {
+    background-color: #006f44;
+  }
+  

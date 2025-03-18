@@ -1,0 +1,18 @@
+/* src/components/ModalPerfil/ModalPerfil.module.css */
+.modalForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  

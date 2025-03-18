@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
-// Cargamos estilos globales (unificado)
+// Estilos globales
 import "./styles/Global.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(

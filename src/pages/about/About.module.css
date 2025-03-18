@@ -1,0 +1,114 @@
+/* src/pages/About/About.module.css */
+
+/* Hero Section */
+.heroSection {
+  position: relative;
+  background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
+  color: #fff;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.heroSubtitle {
+  font-size: 1.4rem;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+.heroImage {
+  width: 150px;
+  height: auto;
+  margin-top: 1rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+/* Contenedor principal */
+.pageContainer {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Secciones */
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h3 {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  color: #00aa63;
+  font-weight: 600;
+}
+
+.section p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* Ventajas con íconos */
+.benefitsList {
+  margin-left: 1rem;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.benefitIcon {
+  color: #00aa63;
+  margin-top: 3px;
+}
+
+/* CTA (Call To Action) */
+.ctaSection {
+  text-align: center;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.ctaTitle {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 700;
+}
+
+.ctaSubtitle {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.ctaButton {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  background-color: #00aa63;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.ctaButton:hover {
+  background-color: #008f57;
+}

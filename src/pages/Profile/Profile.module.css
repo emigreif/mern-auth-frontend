@@ -1,0 +1,73 @@
+/* src/pages/Profile/Profile.module.css */
+
+.pageContainer {
+    width: 90%;
+    max-width: 700px;
+    margin: 2rem auto;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .header h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .formGroup {
+    margin-bottom: 1rem;
+  }
+  
+  .formGroup label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: #555;
+  }
+  
+  .formGroup input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .saveBtn {
+    background-color: #00aa63;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .saveBtn:hover {
+    background-color: #008f57;
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+  }
+  
+  .success {
+    color: green;
+    margin-bottom: 1rem;
+  }
+  
+  .spinner {
+    text-align: center;
+    margin: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+  }
+  

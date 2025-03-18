@@ -1,0 +1,23 @@
+/* src/components/Navbar/Navbar.module.css */
+.topNav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    height: 60px;
+  }
+  
+  .brand {
+    color: #333;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  
+  .navRight {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  

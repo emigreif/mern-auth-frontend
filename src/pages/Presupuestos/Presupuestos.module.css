@@ -1,0 +1,145 @@
+/* src/pages/Presupuestos/Presupuestos.module.css */
+
+
+.pageContainer {
+    width: 90%;
+
+    margin: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .header h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .newPresupuestoBtn {
+    background-color: #00aa63;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .newPresupuestoBtn:hover {
+    background-color: #008f57;
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+  }
+  
+  .spinner {
+    text-align: center;
+    margin: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .noData {
+    text-align: center;
+    margin: 2rem;
+    font-size: 1.1rem;
+    color: #888;
+  }
+  
+  /* Tarjetas o estilo de lista */
+  .presupuestosList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .presupuestoCard {
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 1rem;
+    position: relative;
+  }
+  
+  .presupuestoHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .presupuestoHeader h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .estado {
+    font-weight: bold;
+    padding: 0.3rem 0.6rem;
+    border-bottom: 3px solid;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+  
+  .estado.pendiente {
+    color: #e18a00;
+    border-color: #e18a00;
+  }
+  
+  .estado.aprobado {
+    color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .estado.perdido {
+    color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .presupuestoInfo {
+    margin-top: 0.5rem;
+    color: #555;
+  }
+  
+  .presupuestoFooter {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  
+  .actionBtn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 0.9rem;
+  }
+  
+  .actionBtn:hover {
+    background-color: #0056b3;
+  }
+  
+  .deleteBtn {
+    background-color: #dc3545;
+  }
+  
+  .deleteBtn:hover {
+    background-color: #b02a37;
+  }
+  

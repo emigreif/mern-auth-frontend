@@ -1,0 +1,10 @@
+/* src/components/MapaObras/MapaObras.module.css */
+.mapContainer {
+    width: 100%;
+    height: 400px;
+  }
+  
+  .info {
+    margin: 1rem 0;
+  }
+  
