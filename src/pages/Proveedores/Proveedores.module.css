@@ -1,20 +1,21 @@
-/* Contenedor general */
+
 .pageContainer {
-  max-width: 1100px;
-  margin: auto;
-  padding: 20px;
-  background: var(--color-blanco);
+  width: 90%;
+
+  margin: 0;
+  background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Encabezado */
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 1rem;
 }
+
 
 /* Filtros */
 .filters {

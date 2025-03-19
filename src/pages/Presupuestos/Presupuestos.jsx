@@ -2,33 +2,31 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import styles from "./Presupuestos.module.css";
-
-// Se asume que hay un modal para crear/editar presupuesto
 import ModalPresupuesto from "../../components/ModalPresupuesto/ModalPresupuesto.jsx";
+import ModalObra from "../../components/ModalObra/ModalObra.jsx";
 
-/**
- * Página "Presupuestos"
- * - Lista de presupuestos (GET /api/presupuestos)
- * - Crear/editar (POST/PUT /api/presupuestos)
- * - Eliminar (DELETE /api/presupuestos/:id)
- * - Muestra spinner, error, no data
- */
 export default function Presupuestos() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Lista de presupuestos
+  // Estados principales
   const [presupuestos, setPresupuestos] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Modales
+  const [isPresupuestoModalOpen, setIsPresupuestoModalOpen] = useState(false);
+  const [isObraModalOpen, setIsObraModalOpen] = useState(false);
+  const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
+
   const [editingPresupuesto, setEditingPresupuesto] = useState(null);
+  const [obraForm, setObraForm] = useState({});
 
   useEffect(() => {
     if (token) {
       fetchPresupuestos();
+      fetchClientes();
     }
   }, [token]);
 
@@ -37,14 +35,10 @@ export default function Presupuestos() {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/presupuestos`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) {
-        const dataErr = await res.json();
-        throw new Error(dataErr.message || "Error al obtener presupuestos");
-      }
-      const data = await res.json();
-      setPresupuestos(data);
+      if (!res.ok) throw new Error("Error al obtener presupuestos");
+      setPresupuestos(await res.json());
     } catch (error) {
       setErrorMsg(error.message);
     } finally {
@@ -52,18 +46,30 @@ export default function Presupuestos() {
     }
   };
 
+  const fetchClientes = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/clientes`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Error al obtener clientes");
+      setClientes(await res.json());
+    } catch (error) {
+      console.error("Error al cargar clientes:", error);
+    }
+  };
+
   const handleOpenCreate = () => {
     setEditingPresupuesto(null);
-    setIsModalOpen(true);
+    setIsPresupuestoModalOpen(true);
   };
 
   const handleOpenEdit = (pres) => {
     setEditingPresupuesto(pres);
-    setIsModalOpen(true);
+    setIsPresupuestoModalOpen(true);
   };
 
   const handleCloseModal = (reload = false) => {
-    setIsModalOpen(false);
+    setIsPresupuestoModalOpen(false);
     setEditingPresupuesto(null);
     if (reload) {
       fetchPresupuestos();
@@ -71,33 +77,32 @@ export default function Presupuestos() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("¿Seguro que deseas eliminar este presupuesto?")) return;
-    setErrorMsg("");
+    if (!window.confirm("¿Seguro que deseas eliminar este presupuesto?")) return;
     try {
       const res = await fetch(`${API_URL}/api/presupuestos/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) {
-        const dataErr = await res.json();
-        throw new Error(dataErr.message || "Error al eliminar presupuesto");
-      }
+      if (!res.ok) throw new Error("Error al eliminar presupuesto");
       fetchPresupuestos();
     } catch (error) {
       setErrorMsg(error.message);
     }
   };
 
-  // Para asignar color a la etiqueta de estado
-  const getEstadoClass = (estado) => {
-    switch (estado) {
-      case "aprobado":
-        return styles.aprobado;
-      case "perdido":
-        return styles.perdido;
-      default:
-        return styles.pendiente;
-    }
+  const handleCreateCliente = async () => {
+    setIsClienteModalOpen(false);
+    fetchClientes();
+  };
+
+  const handlePasarAObra = (pres) => {
+    setObraForm({
+      nombre: pres.nombreObra || "",
+      cliente: pres.cliente?._id || "",
+      direccion: pres.direccion || "",
+      fechaEntrega: pres.fechaEntrega || "", // ✅ Ahora se carga correctamente
+    });
+    setIsObraModalOpen(true);
   };
 
   return (
@@ -125,60 +130,55 @@ export default function Presupuestos() {
                   {pres.idPresupuesto ? `#${pres.idPresupuesto} - ` : ""}
                   {pres.nombreObra}
                 </h2>
-                <span className={`${styles.estado} ${getEstadoClass(pres.estado)}`}>
+                <span className={`${styles.estado} ${styles[pres.estado]}`}>
                   {pres.estado}
                 </span>
               </div>
 
               <div className={styles.presupuestoInfo}>
-                <p>
-                  <strong>Cliente:</strong>{" "}
-                  {pres.cliente
-                    ? `${pres.cliente.nombre} ${pres.cliente.apellido}`
-                    : "Sin cliente"}
-                </p>
-                <p>
-                  <strong>Dirección:</strong> {pres.direccion}
-                </p>
-                <p>
-                  <strong>Fecha Entrega:</strong>{" "}
-                  {pres.fechaEntrega
-                    ? new Date(pres.fechaEntrega).toLocaleDateString()
-                    : "N/D"}
-                </p>
-                <p>
-                  <strong>Total Presupuestado:</strong>{" "}
-                  {pres.totalPresupuestado || 0}
-                </p>
+                <p><strong>Cliente:</strong> {pres.cliente?.nombre || "Sin cliente"}</p>
+                <p><strong>Dirección:</strong> {pres.direccion}</p>
+                <p><strong>Fecha Entrega:</strong> {pres.fechaEntrega ? new Date(pres.fechaEntrega).toLocaleDateString() : "N/D"}</p>
+                <p><strong>Total Presupuestado:</strong> ${pres.totalPresupuestado || 0}</p>
               </div>
 
               <div className={styles.presupuestoFooter}>
-                <button
-                  className={styles.actionBtn}
-                  onClick={() => handleOpenEdit(pres)}
-                >
-                  Editar
-                </button>
-                <button
-                  className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                  onClick={() => handleDelete(pres._id)}
-                >
-                  Eliminar
-                </button>
+                <button className={styles.actionBtn} onClick={() => handleOpenEdit(pres)}>✏️ Editar</button>
+                <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => handleDelete(pres._id)}>🗑️ Eliminar</button>
+                
+                {pres.estado === "aprobado" && (
+                  <button className={styles.pasarObraBtn} onClick={() => handlePasarAObra(pres)}>
+                    ➡️ Pasar a Obras
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Modal para crear/editar */}
-      {isModalOpen && (
+      {/* Modal para crear/editar presupuesto */}
+      {isPresupuestoModalOpen && (
         <ModalPresupuesto
           editingPresupuesto={editingPresupuesto}
           onClose={handleCloseModal}
           onSaved={handleCloseModal}
+          clientes={clientes} 
+          onAddCliente={() => setIsClienteModalOpen(true)} // ✅ Llamar modal de nuevo cliente
         />
       )}
+
+      {/* Modal para crear obra con datos precargados */}
+      {isObraModalOpen && (
+        <ModalObra 
+          isOpen={isObraModalOpen} 
+          onClose={() => setIsObraModalOpen(false)} 
+          obra={obraForm} // ✅ Enviar los datos precargados
+          onSaved={() => setIsObraModalOpen(false)} 
+        />
+      )}
+
+   
     </div>
   );
 }
