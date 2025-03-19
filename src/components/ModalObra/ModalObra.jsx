@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "../ModalBase/ModalBase.jsx";
+import NuevoCliente from "../NuevoCliente/NuevoCliente.jsx"; // ✅ Importamos el modal de Nuevo Cliente
 
 export default function ModalObra({ obra, onClose, onSaved }) {
   const { token } = useAuth();
@@ -12,6 +13,8 @@ export default function ModalObra({ obra, onClose, onSaved }) {
   // Lista de clientes (si deseas un select)
   const [clientes, setClientes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
+  const [isClienteModalOpen, setIsClienteModalOpen] = useState(false); // ✅ Estado para abrir el modal de cliente
+
 
   // Form con TODOS los campos de tu modelo
   const [form, setForm] = useState({
@@ -280,55 +283,43 @@ export default function ModalObra({ obra, onClose, onSaved }) {
     } catch (error) {
       setErrorMsg(error.message);
     }
+
   };
-
+  const handleClienteCreado = async () => {
+    setIsClienteModalOpen(false);
+    await fetchClientes();
+  };
   return (
-    <ModalBase
-      isOpen={true}
-      onClose={() => onClose(false)}
-      title={isEdit ? "Editar Obra" : "Nueva Obra"}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}
-      >
-        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+    <>
+      <ModalBase isOpen={true} onClose={onClose} title={isEdit ? "Editar Obra" : "Nueva Obra"}>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+          {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
-        {/* Código Obra (read-only) */}
-        <div>
-          <label>Código de Obra (auto)</label>
-          <input type="text" name="codigoObra" value={form.codigoObra} disabled />
-        </div>
+          <div>
+            <label>Código de Obra</label>
+            <input type="text" name="codigoObra" value={form.codigoObra} disabled />
+          </div>
 
-        {/* Cliente */}
-        <div>
-          <label>Cliente</label>
-          <select
-            name="cliente"
-            value={form.cliente}
-            onChange={handleChange}
-            required
-          >
-            <option value="">-- Seleccionar Cliente --</option>
-            {clientes.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.nombre} {c.apellido}
-              </option>
-            ))}
-          </select>
-        </div>
+          {/* Cliente + Botón Nuevo Cliente */}
+          <div>
+            <label>Cliente</label>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <select name="cliente" value={form.cliente} onChange={handleChange} required>
+                <option value="">-- Seleccionar Cliente --</option>
+                {clientes.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.nombre} {c.apellido}
+                  </option>
+                ))}
+              </select>
+              <button type="button" onClick={() => setIsClienteModalOpen(true)}>➕ Nuevo Cliente</button>
+            </div>
+          </div>
 
-        {/* Nombre, dirección, contacto, mapa */}
-        <div>
-          <label>Nombre</label>
-          <input
-            type="text"
-            name="nombre"
-            value={form.nombre}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div>
+            <label>Nombre</label>
+            <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required />
+          </div>
         <div>
           <label>Dirección</label>
           <input
@@ -803,6 +794,16 @@ export default function ModalObra({ obra, onClose, onSaved }) {
           </button>
         </div>
       </form>
-    </ModalBase>
-  );
+      </ModalBase>
+
+{/* ✅ Modal de Nuevo Cliente (solo se muestra si isClienteModalOpen es true) */}
+{isClienteModalOpen && (
+  <div className="overlay">
+    <div className="modal">
+      <NuevoCliente onCreated={handleClienteCreado} onClose={() => setIsClienteModalOpen(false)} />
+    </div>
+  </div>
+)}
+</>
+);
 }

@@ -1,12 +1,12 @@
-// src/components/NuevoCliente/NuevoCliente.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
+import styles from "./NuevoCliente.module.css"; // ✅ Importamos el CSS
 
 export default function NuevoCliente({ onCreated, onClose }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Agregamos condicionFiscal, razonSocial, cuit
+  // Estado del formulario
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -41,12 +41,11 @@ export default function NuevoCliente({ onCreated, onClose }) {
     e.preventDefault();
     setErrorMsg("");
 
-    // Validación mínima
+    // Validaciones
     if (!form.nombre.trim() || !form.apellido.trim() || !form.email.trim()) {
       setErrorMsg("Los campos nombre, apellido y email son requeridos.");
       return;
     }
-    // Si es responsable inscripto, pedimos razonSocial y cuit
     if (form.condicionFiscal === "responsableInscripto") {
       if (!form.razonSocial.trim()) {
         setErrorMsg("La razón social es requerida para Responsable Inscripto.");
@@ -80,109 +79,120 @@ export default function NuevoCliente({ onCreated, onClose }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+    <>
+      {/* Fondo oscuro detrás del modal */}
+      <div className={styles.overlay} onClick={onClose}></div>
 
-      <div>
-        <label>Nombre (requerido)</label>
-        <input
-          type="text"
-          name="nombre"
-          value={form.nombre}
-          onChange={handleInputChange}
-        />
-      </div>
+      {/* Contenedor del modal */}
+      <div className={styles.modal}>
+        <button className={styles.closeButton} onClick={onClose}>✖</button>
+        <h2>Agregar Nuevo Cliente</h2>
 
-      <div>
-        <label>Apellido (requerido)</label>
-        <input
-          type="text"
-          name="apellido"
-          value={form.apellido}
-          onChange={handleInputChange}
-        />
-      </div>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-      <div>
-        <label>Email (requerido)</label>
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleInputChange}
-        />
-      </div>
-
-      <div>
-        <label>Teléfono</label>
-        <input
-          type="text"
-          name="telefono"
-          value={form.telefono}
-          onChange={handleInputChange}
-        />
-      </div>
-
-      <div>
-        <label>Dirección - Calle</label>
-        <input
-          type="text"
-          name="direccion.calle"
-          value={form.direccion.calle}
-          onChange={handleInputChange}
-        />
-      </div>
-
-      <div>
-        <label>Dirección - Ciudad</label>
-        <input
-          type="text"
-          name="direccion.ciudad"
-          value={form.direccion.ciudad}
-          onChange={handleInputChange}
-        />
-      </div>
-
-      <div>
-        <label>Condición Fiscal</label>
-        <select
-          name="condicionFiscal"
-          value={form.condicionFiscal}
-          onChange={handleInputChange}
-        >
-          <option value="consumidorFinal">Consumidor Final</option>
-          <option value="responsableInscripto">Responsable Inscripto</option>
-        </select>
-      </div>
-
-      {/* Mostrar razonSocial y cuit solo si es responsableInscripto */}
-      {form.condicionFiscal === "responsableInscripto" && (
-        <>
           <div>
-            <label>Razón Social (requerido)</label>
+            <label>Nombre <span>*</span></label>
             <input
               type="text"
-              name="razonSocial"
-              value={form.razonSocial}
+              name="nombre"
+              value={form.nombre}
               onChange={handleInputChange}
             />
           </div>
+
           <div>
-            <label>CUIT (requerido)</label>
+            <label>Apellido <span>*</span></label>
             <input
               type="text"
-              name="cuit"
-              value={form.cuit}
+              name="apellido"
+              value={form.apellido}
               onChange={handleInputChange}
             />
           </div>
-        </>
-      )}
 
-      <div style={{ marginTop: "1rem" }}>
-        <button type="submit">Guardar</button>
-        <button type="button" onClick={onClose}>Cancelar</button>
+          <div>
+            <label>Email <span>*</span></label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div>
+            <label>Teléfono</label>
+            <input
+              type="text"
+              name="telefono"
+              value={form.telefono}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div>
+            <label>Dirección - Calle</label>
+            <input
+              type="text"
+              name="direccion.calle"
+              value={form.direccion.calle}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div>
+            <label>Dirección - Ciudad</label>
+            <input
+              type="text"
+              name="direccion.ciudad"
+              value={form.direccion.ciudad}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div>
+            <label>Condición Fiscal</label>
+            <select
+              name="condicionFiscal"
+              value={form.condicionFiscal}
+              onChange={handleInputChange}
+            >
+              <option value="consumidorFinal">Consumidor Final</option>
+              <option value="responsableInscripto">Responsable Inscripto</option>
+            </select>
+          </div>
+
+          {/* Campos adicionales si es Responsable Inscripto */}
+          {form.condicionFiscal === "responsableInscripto" && (
+            <>
+              <div>
+                <label>Razón Social <span>*</span></label>
+                <input
+                  type="text"
+                  name="razonSocial"
+                  value={form.razonSocial}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <label>CUIT <span>*</span></label>
+                <input
+                  type="text"
+                  name="cuit"
+                  value={form.cuit}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </>
+          )}
+
+          <div className={styles.buttonGroup}>
+            <button type="submit" className={styles.saveButton}>Guardar</button>
+            <button type="button" className={styles.cancelButton} onClick={onClose}>Cancelar</button>
+          </div>
+        </form>
       </div>
-    </form>
+    </>
   );
 }
