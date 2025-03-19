@@ -168,15 +168,17 @@ export default function Presupuestos() {
         />
       )}
 
-      {/* Modal para crear obra con datos precargados */}
-      {isObraModalOpen && (
-        <ModalObra 
-          isOpen={isObraModalOpen} 
-          onClose={() => setIsObraModalOpen(false)} 
-          obra={obraForm} // ✅ Enviar los datos precargados
-          onSaved={() => setIsObraModalOpen(false)} 
-        />
-      )}
+{isObraModalOpen && obraForm && (
+  <ModalObra
+    obra={obraForm} // ✅ Ahora pasamos obraForm, que sí está definido
+    onClose={() => setIsObraModalOpen(false)}
+    onSaved={() => {
+      setIsObraModalOpen(false);
+      fetchPresupuestos(); // 🔄 Recargar lista si se guarda
+    }}
+  />
+)}
+
 
    
     </div>

@@ -7,8 +7,8 @@ import NuevoCliente from "../NuevoCliente/NuevoCliente.jsx"; // ✅ Importamos e
 export default function ModalObra({ obra, onClose, onSaved }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const isEdit = !!obra && !!obra._id;  // 🔹 Ahora solo es edición si tiene un ID
 
-  const isEdit = !!obra;
 
   // Lista de clientes (si deseas un select)
   const [clientes, setClientes] = useState([]);
@@ -289,7 +289,7 @@ export default function ModalObra({ obra, onClose, onSaved }) {
     setIsClienteModalOpen(false);
     await fetchClientes();
   };
-  return (
+   return (
     <>
       <ModalBase isOpen={true} onClose={onClose} title={isEdit ? "Editar Obra" : "Nueva Obra"}>
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
@@ -798,11 +798,7 @@ export default function ModalObra({ obra, onClose, onSaved }) {
 
 {/* ✅ Modal de Nuevo Cliente (solo se muestra si isClienteModalOpen es true) */}
 {isClienteModalOpen && (
-  <div className="overlay">
-    <div className="modal">
-      <NuevoCliente onCreated={handleClienteCreado} onClose={() => setIsClienteModalOpen(false)} />
-    </div>
-  </div>
+  <NuevoCliente onCreated={handleClienteCreado} onClose={() => setIsClienteModalOpen(false)} />
 )}
 </>
 );
