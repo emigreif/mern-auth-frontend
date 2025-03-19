@@ -1,9 +1,7 @@
-// src/pages/Proveedores.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { Link } from "react-router-dom";
 import styles from "./Proveedores.module.css";
-
-// Modal para crear nuevo proveedor
 import ModalBase from "../../components/ModalBase/ModalBase.jsx";
 
 export default function Proveedores() {
@@ -13,21 +11,9 @@ export default function Proveedores() {
   const [proveedores, setProveedores] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Modal crear proveedor
   const [isNuevoProvOpen, setIsNuevoProvOpen] = useState(false);
-
-  // Form proveedor
-  const [formProv, setFormProv] = useState({
-    nombre: "",
-    direccion: "",
-    emails: [""], // array de strings
-    telefono: "",
-    whatsapp: "",
-    rubro: [],    // array de strings
-  });
-
-  const rubrosPosibles = ["Vidrio", "Perfiles", "Accesorios", "Compras Generales"];
+  const [filtroRubro, setFiltroRubro] = useState("Todos");
+  const [orden, setOrden] = useState("nombre"); // Opciones: "nombre", "saldo"
 
   useEffect(() => {
     if (token) {
@@ -40,14 +26,11 @@ export default function Proveedores() {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/proveedores`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) {
-        const dataErr = await res.json();
-        throw new Error(dataErr.message || "Error al listar proveedores");
-      }
+      if (!res.ok) throw new Error("Error al listar proveedores");
       const data = await res.json();
-      setProveedores(data);
+      setProveedores(Array.isArray(data) ? data : []);
     } catch (error) {
       setErrorMsg(error.message);
     } finally {
@@ -55,101 +38,70 @@ export default function Proveedores() {
     }
   };
 
-  const handleAddEmail = () => {
-    setFormProv((prev) => ({
-      ...prev,
-      emails: [...prev.emails, ""]
-    }));
-  };
-
-  const handleRemoveEmail = (index) => {
-    setFormProv((prev) => {
-      const newEmails = [...prev.emails];
-      newEmails.splice(index, 1);
-      return { ...prev, emails: newEmails };
-    });
-  };
-
-  const handleEmailChange = (index, value) => {
-    setFormProv((prev) => {
-      const newEmails = [...prev.emails];
-      newEmails[index] = value;
-      return { ...prev, emails: newEmails };
-    });
-  };
-
-  const handleRubroChange = (rubro) => {
-    setFormProv((prev) => {
-      const hasRubro = prev.rubro.includes(rubro);
-      let newRubro = [...prev.rubro];
-      if (hasRubro) {
-        newRubro = newRubro.filter((r) => r !== rubro);
-      } else {
-        newRubro.push(rubro);
-      }
-      return { ...prev, rubro: newRubro };
-    });
-  };
-
-  const handleProvInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormProv((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCreateProveedor = async (e) => {
-    e.preventDefault();
-    setErrorMsg("");
-
-    // Validaciones mínimas
-    if (!formProv.nombre.trim()) {
-      setErrorMsg("El campo 'Nombre' es obligatorio");
-      return;
-    }
-    if (!formProv.direccion.trim()) {
-      setErrorMsg("El campo 'Dirección' es obligatorio");
-      return;
-    }
-
+  /**
+   * Eliminar un proveedor con confirmación
+   */
+  const handleDeleteProveedor = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este proveedor?")) return;
     try {
-      const res = await fetch(`${API_URL}/api/proveedores`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(formProv)
+      const res = await fetch(`${API_URL}/api/proveedores/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) {
-        const dataErr = await res.json();
-        throw new Error(dataErr.message || "Error al crear proveedor");
-      }
-      await res.json();
-      setIsNuevoProvOpen(false);
-      fetchProveedores();
+      if (!res.ok) throw new Error("Error al eliminar proveedor");
+
+      setProveedores((prevProveedores) => prevProveedores.filter((prov) => prov._id !== id));
     } catch (error) {
-      setErrorMsg(error.message);
+      setErrorMsg("No se pudo eliminar el proveedor.");
     }
   };
+
+  /**
+   * Filtrar y ordenar proveedores
+   */
+  const proveedoresFiltrados = proveedores
+    .filter((prov) => filtroRubro === "Todos" || (prov.rubro && prov.rubro.includes(filtroRubro)))
+    .sort((a, b) => {
+      if (orden === "nombre") return a.nombre.localeCompare(b.nombre);
+      if (orden === "saldo") return b.saldo - a.saldo;
+      return 0;
+    });
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Proveedores</h1>
         <button className={styles.addBtn} onClick={() => setIsNuevoProvOpen(true)}>
-          + Agregar Proveedor
+          ➕ Agregar Proveedor
         </button>
+      </div>
+
+      {/* Controles de Filtros y Ordenamiento */}
+      <div className={styles.filters}>
+        <select onChange={(e) => setFiltroRubro(e.target.value)} value={filtroRubro}>
+          <option value="Todos">Todos los Rubros</option>
+          <option value="Vidrio">Vidrio</option>
+          <option value="Perfiles">Perfiles</option>
+          <option value="Accesorios">Accesorios</option>
+          <option value="Compras Generales">Compras Generales</option>
+        </select>
+
+        <select onChange={(e) => setOrden(e.target.value)} value={orden}>
+          <option value="nombre">Ordenar por Nombre</option>
+          <option value="saldo">Ordenar por Saldo</option>
+        </select>
       </div>
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {loading && <div className={styles.spinner}>Cargando proveedores...</div>}
 
-      {!loading && proveedores.length === 0 && !errorMsg && (
+      {!loading && proveedoresFiltrados.length === 0 && !errorMsg && (
         <div className={styles.noData}>No hay proveedores para mostrar</div>
       )}
 
-      {!loading && proveedores.length > 0 && (
-        <div className={styles.proveedoresList}>
-          {proveedores.map((prov) => (
+      {!loading && proveedoresFiltrados.length > 0 && (
+        <div className={styles.proveedoresGrid}>
+          {proveedoresFiltrados.map((prov) => (
             <div key={prov._id} className={styles.proveedorCard}>
               <h2>{prov.nombre}</h2>
               <p><strong>Dirección:</strong> {prov.direccion}</p>
@@ -157,14 +109,22 @@ export default function Proveedores() {
               <p><strong>Rubros:</strong> {prov.rubro?.join(", ")}</p>
               <p><strong>Teléfono:</strong> {prov.telefono}</p>
               <p><strong>WhatsApp:</strong> {prov.whatsapp}</p>
-              {prov.emails && prov.emails.length > 0 && (
-                <p><strong>Emails:</strong> {prov.emails.join(", ")}</p>
-              )}
+              {prov.emails?.length > 0 && <p><strong>Emails:</strong> {prov.emails.join(", ")}</p>}
+
+              <div className={styles.actions}>
+                <Link to={`/proveedores/editar/${prov._id}`} className={styles.btnEdit}>
+                  ✏️ Editar
+                </Link>
+                <button onClick={() => handleDeleteProveedor(prov._id)} className={styles.btnDelete}>
+                  ❌ Eliminar
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
+      
       {/* Modal para nuevo proveedor */}
       {isNuevoProvOpen && (
         <ModalBase
