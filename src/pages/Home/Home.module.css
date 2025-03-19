@@ -23,7 +23,7 @@
 
 .title {
   font-size: 3rem;
-  color: #00a46e;
+ color: #00a46e;;
   margin: 0;
 }
 
@@ -52,13 +52,13 @@
 }
 
 .enterBtn:hover {
-  background-color: #008f57;
+  background-color: #00a46e;
 }
 
 /* Sección Derecha (verde degrade o imagen) */
 .rightSide {
   flex: 1;
-  background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
+  background: linear-gradient(135deg, #00a46e 0%, #00aa63 100%);
   display: flex;
   justify-content: center;
   align-items: center;

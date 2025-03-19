@@ -1,7 +1,6 @@
-// src/pages/Login.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 
 /**
@@ -11,7 +10,7 @@ import styles from "./Login.module.css";
  * - Muestra errorMsg, spinner (opcional), etc.
  */
 export default function Login() {
-  const { login, loginPerfil, token } = useAuth();
+  const { login, loginPerfil } = useAuth();
   const navigate = useNavigate();
 
   // Fases: "login" (usuario) o "perfil" (2do login)
@@ -34,25 +33,18 @@ export default function Login() {
     e.preventDefault();
     setErrorMsg("");
     setLoading(true);
+
     try {
-      // Inicia sesión con email/contraseña
       await login(email, pass);
 
-      // Llamada a /api/perfiles para que se cree el admin si no hay ninguno
-      // O bien, en tu backend ya lo haces al loguear.
-      // Se hace un fetch con el token (localStorage)
+      // Obtener token para llamar a /api/perfiles
       const currentToken = localStorage.getItem("token");
-      if (!currentToken) {
-        throw new Error("No se pudo obtener token tras login.");
-      }
-      // Llamar a /api/perfiles para forzar la creación del admin si no existe
+      if (!currentToken) throw new Error("No se pudo obtener token tras login.");
+
       await fetch(import.meta.env.VITE_API_URL + "/api/perfiles", {
-        headers: {
-          Authorization: `Bearer ${currentToken}`
-        }
+        headers: { Authorization: `Bearer ${currentToken}` },
       });
 
-      // Pasar a la fase "perfil"
       setPhase("perfil");
     } catch (error) {
       setErrorMsg(error.message || "Error en el primer login");
@@ -70,8 +62,7 @@ export default function Login() {
     setLoading(true);
     try {
       await loginPerfil(perfilName, perfilPass);
-      // Tras validar el perfil => navigate a /obras (o donde desees)
-      navigate("/obras");
+      navigate("/obras"); // Redirección tras validación
     } catch (error) {
       setErrorMsg(error.message);
     } finally {
@@ -81,11 +72,11 @@ export default function Login() {
 
   return (
     <div className={styles.authContainer}>
-      {/* Lado izquierdo (form 1: usuario) */}
+      {/* Lado izquierdo (Login Usuario) */}
       <div className={styles.leftSide}>
-        {phase === "login" && (
+        {phase === "login" ? (
           <div className={styles.formBox}>
-            <h2>Iniciar Sesión (Usuario)</h2>
+            <h2>Iniciar Sesión</h2>
             {errorMsg && <p className={`${styles.message} ${styles.error}`}>{errorMsg}</p>}
 
             <form onSubmit={handleGeneralLogin}>
@@ -116,18 +107,21 @@ export default function Login() {
                 {loading ? "Ingresando..." : "Ingresar"}
               </button>
             </form>
-          </div>
-        )}
 
-        {phase !== "login" && (
+            {/* 🔹 Enlace para recuperar contraseña */}
+            <div className={styles.loginLinks}>
+              <Link to="/forgot-password" className={styles.forgotPassword}>¿Olvidaste tu contraseña?</Link>
+            </div>
+          </div>
+        ) : (
           <div className={styles.formBox}>
-            <h2>Ya has iniciado sesión de Usuario</h2>
+            <h2>Ya has iniciado sesión</h2>
             <p>Ahora ingresa tu Perfil para continuar.</p>
           </div>
         )}
       </div>
 
-      {/* Lado derecho (form 2: perfil) */}
+      {/* Lado derecho (Login Perfil) */}
       <div className={styles.rightSide}>
         {phase === "login" ? (
           <>
@@ -142,8 +136,7 @@ export default function Login() {
           <>
             <h1>Ingresa a tu Perfil</h1>
             <p>
-              Ingresa tus credenciales de perfil para acceder a tu cuenta
-              completa.
+              Ingresa tus credenciales de perfil para acceder a tu cuenta completa.
             </p>
             {errorMsg && <p className={`${styles.message} ${styles.error}`}>{errorMsg}</p>}
             <div className={styles.profileForm}>

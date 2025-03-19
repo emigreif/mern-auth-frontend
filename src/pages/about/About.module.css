@@ -1,17 +1,9 @@
 /* src/pages/About/About.module.css */
 
-/* Hero Section */
-.heroSection {
-  position: relative;
-  background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
-  color: #fff;
-  padding: 3rem 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
 
 .heroTitle {
   font-size: 3rem;
+ color: #008f57;;
   margin-bottom: 0.5rem;
   font-weight: 700;
 }
@@ -50,7 +42,7 @@
 .section h3 {
   font-size: 1.6rem;
   margin-bottom: 0.5rem;
-  color: #00aa63;
+ color: #008f57;;
   font-weight: 600;
 }
 
@@ -73,7 +65,7 @@
 }
 
 .benefitIcon {
-  color: #00aa63;
+ color: #008f57;;
   margin-top: 3px;
 }
 

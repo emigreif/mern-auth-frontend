@@ -18,6 +18,7 @@ import {
   faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../context/AuthContext.jsx";
+import styles from "./sidebar.module.css"
 
 
 const Sidebar = () => {
