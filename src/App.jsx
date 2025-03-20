@@ -30,6 +30,7 @@ import Configuracion from "./pages/Configuracion/Configuracion.jsx"; // con <Out
 import Profile from "./pages/Profile/Profile.jsx";
 import Perfiles from "./pages/Perfiles/Perfiles.jsx";
 import Reportes from "./pages/Reportes/Reportes.jsx";
+import BaseMateriales from "./pages/BaseMateriales/BaseMateriales.jsx"; // 🔹 Ahora está en rutas protegidas
 
 // Componentes globales
 import Navbar from "./components/Navbar/Navbar.jsx";
@@ -48,7 +49,7 @@ function PublicRoutes() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-
+          <Route path="/base-materiales" element={<BaseMateriales />} /> {/* 🔹 Ahora es protegida */}
           {/* Si no hay coincidencia, volver a Home */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
@@ -65,7 +66,6 @@ function ProtectedRoutes() {
       <Sidebar />
       <div className="main-content with-sidebar">
         <Routes>
-          {/* Ejemplos de rutas principales */}
           <Route path="/obras" element={<Obras />} />
           <Route path="/presupuestos" element={<Presupuestos />} />
           <Route path="/proveedores" element={<Proveedores />} />
@@ -74,16 +74,15 @@ function ProtectedRoutes() {
           <Route path="/mediciones" element={<Mediciones />} />
           <Route path="/compras" element={<Compras />} />
           <Route path="/reportes" element={<Reportes />} />
+       
 
           {/* Ruta padre: /contabilidad */}
           <Route path="/contabilidad" element={<Contabilidad />}>
-            {/* Sub-ruta => /contabilidad/nomina */}
             <Route path="nomina" element={<Nomina />} />
           </Route>
 
           {/* Ruta padre: /configuracion */}
           <Route path="/configuracion" element={<Configuracion />}>
-            {/* Sub-rutas => /configuracion/profile y /configuracion/perfiles */}
             <Route path="profile" element={<Profile />} />
             <Route path="perfiles" element={<Perfiles />} />
           </Route>

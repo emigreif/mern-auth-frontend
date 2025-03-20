@@ -1,0 +1,152 @@
+/* 📌 Estilos generales */
+.container {
+  width: 90%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* 📌 Estilos para las pestañas */
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  background: #e0e0e0;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.tabs button:hover {
+  background: #d4d4d4;
+}
+
+.activeTab {
+  background: #007bff;
+  color: white;
+}
+
+/* 📌 Contenido de cada pestaña */
+.content {
+  text-align: left;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  background: #f8f9fa;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  border-left: 5px solid #007bff;
+}
+
+/* 📌 Botones */
+.addButton,
+.importButton {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 15px;
+  background: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.importButton {
+  background: #17a2b8;
+}
+
+.addButton:hover {
+  background: #218838;
+}
+
+.importButton:hover {
+  background: #138496;
+}
+
+/* 📌 Estilos para los modales */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.modal h3 {
+  margin-top: 0;
+}
+
+.modal input {
+  width: calc(100% - 20px);
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.modal button {
+  padding: 8px 15px;
+  margin-top: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.modal button:hover {
+  background: #0056b3;
+}
+
+/* 📌 Mensajes */
+.message {
+  margin-top: 20px;
+  padding: 10px;
+  background: #d4edda;
+  color: #155724;
+  border-left: 5px solid #28a745;
+  border-radius: 5px;
+}
+
+/* 📌 Responsive */
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .tabs {
+    flex-direction: column;
+  }
+
+  .tabs button {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}
