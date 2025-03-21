@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ModalBase from "../../components/ModalBase/ModalBase";
-import styles from "./BaseMateriales.module.css"; // ✅ Corrige el error de importación
+import styles from "./BaseMateriales.module.css"; // Estilos CSS
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/general";
 
 const BaseMateriales = () => {
   const [tab, setTab] = useState("perfiles"); // "perfiles" o "vidrios"
   const [perfiles, setPerfiles] = useState([]);
   const [vidrios, setVidrios] = useState([]);
-  
-  const [nuevoPerfil, setNuevoPerfil] = useState({ descripcion: "", extrusora: "", largo: "", pesoxmetro: "" });
-  const [nuevoVidrio, setNuevoVidrio] = useState({ descripcion: "", espesor: "", peso_m2: "" });
+  const [nuevoPerfil, setNuevoPerfil] = useState({ descripcion: "", extrusora: "" });
+  const [nuevoVidrio, setNuevoVidrio] = useState({ descripcion: "", espesor: "" });
 
   // Estados para archivos Excel
   const [archivoPerfiles, setArchivoPerfiles] = useState(null);
@@ -28,15 +27,27 @@ const BaseMateriales = () => {
   }, []);
 
   const fetchPerfiles = async () => {
-    const res = await fetch(`${API_URL}/perfiles`);
-    const data = await res.json();
-    setPerfiles(data);
+    try {
+      const res = await fetch(`${API_URL}/perfiles`);
+      if (!res.ok) throw new Error("Error al obtener perfiles");
+      const data = await res.json();
+      setPerfiles(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      setPerfiles([]);
+    }
   };
 
   const fetchVidrios = async () => {
-    const res = await fetch(`${API_URL}/vidrios`);
-    const data = await res.json();
-    setVidrios(data);
+    try {
+      const res = await fetch(`${API_URL}/vidrios`);
+      if (!res.ok) throw new Error("Error al obtener vidrios");
+      const data = await res.json();
+      setVidrios(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      setVidrios([]);
+    }
   };
 
   const handleAgregarPerfil = async () => {
@@ -100,7 +111,6 @@ const BaseMateriales = () => {
         </button>
       </div>
 
-      {/* Sección de perfiles */}
       {tab === "perfiles" && (
         <div className={styles.content}>
           <button className={styles.addButton} onClick={() => setModalPerfilesOpen(true)}>+ Agregar Perfil</button>
@@ -114,7 +124,6 @@ const BaseMateriales = () => {
         </div>
       )}
 
-      {/* Sección de vidrios */}
       {tab === "vidrios" && (
         <div className={styles.content}>
           <button className={styles.addButton} onClick={() => setModalVidriosOpen(true)}>+ Agregar Vidrio</button>
@@ -128,29 +137,24 @@ const BaseMateriales = () => {
         </div>
       )}
 
-      {/* Modal para agregar Perfil */}
       {modalPerfilesOpen && (
-        <ModalBase isOpen={modalPerfilesOpen} onClose={() => setModalPerfilesOpen(false)} title="Agregar Perfil">
+        <ModalBase onClose={() => setModalPerfilesOpen(false)} title="Agregar Perfil">
           <input type="text" placeholder="Descripción" onChange={(e) => setNuevoPerfil({ ...nuevoPerfil, descripcion: e.target.value })} />
           <input type="text" placeholder="Extrusora" onChange={(e) => setNuevoPerfil({ ...nuevoPerfil, extrusora: e.target.value })} />
-          <input type="number" placeholder="Largo (mm)" onChange={(e) => setNuevoPerfil({ ...nuevoPerfil, largo: e.target.value })} />
-          <input type="number" placeholder="Peso (kg/m)" onChange={(e) => setNuevoPerfil({ ...nuevoPerfil, pesoxmetro: e.target.value })} />
           <button onClick={handleAgregarPerfil}>Guardar</button>
         </ModalBase>
       )}
 
-      {/* Modal para agregar Vidrio */}
       {modalVidriosOpen && (
-        <ModalBase isOpen={modalVidriosOpen} onClose={() => setModalVidriosOpen(false)} title="Agregar Vidrio">
+        <ModalBase onClose={() => setModalVidriosOpen(false)} title="Agregar Vidrio">
           <input type="text" placeholder="Descripción" onChange={(e) => setNuevoVidrio({ ...nuevoVidrio, descripcion: e.target.value })} />
           <input type="number" placeholder="Espesor (mm)" onChange={(e) => setNuevoVidrio({ ...nuevoVidrio, espesor: e.target.value })} />
           <button onClick={handleAgregarVidrio}>Guardar</button>
         </ModalBase>
       )}
 
-      {/* Modal para importar Excel */}
       {modalImportarOpen && (
-        <ModalBase isOpen={modalImportarOpen} onClose={() => setModalImportarOpen(false)} title="Importar Datos">
+        <ModalBase onClose={() => setModalImportarOpen(false)} title="Importar Datos">
           <h3>Importar Perfiles</h3>
           <input type="file" accept=".xlsx" onChange={handleArchivoPerfiles} />
           <button onClick={() => subirArchivo("perfiles")}>Subir</button>
