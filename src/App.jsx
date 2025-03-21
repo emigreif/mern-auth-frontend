@@ -15,6 +15,7 @@ import Planner from "./pages/Planner/Planner.jsx";
 import Login from "./pages/Login/Login.jsx";
 import Register from "./pages/Register/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
+import BaseMateriales from "./pages/BaseMateriales/BaseMateriales.jsx"; // 🔹 Ahora está en rutas protegidas
 
 // Páginas protegidas
 import Obras from "./pages/Obras/Obras.jsx";
@@ -30,7 +31,6 @@ import Configuracion from "./pages/Configuracion/Configuracion.jsx"; // con <Out
 import Profile from "./pages/Profile/Profile.jsx";
 import Perfiles from "./pages/Perfiles/Perfiles.jsx";
 import Reportes from "./pages/Reportes/Reportes.jsx";
-import BaseMateriales from "./pages/BaseMateriales/BaseMateriales.jsx"; // 🔹 Ahora está en rutas protegidas
 
 // Componentes globales
 import Navbar from "./components/Navbar/Navbar.jsx";
@@ -49,8 +49,7 @@ function PublicRoutes() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/base-materiales" element={<BaseMateriales />} /> {/* 🔹 Ahora es protegida */}
-          {/* Si no hay coincidencia, volver a Home */}
+          <Route path="/base-materiales" element={<BaseMateriales />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
