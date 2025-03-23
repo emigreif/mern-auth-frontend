@@ -1,14 +1,6 @@
 /* src/pages/Profile/Profile.module.css */
 
-.pageContainer {
-    width: 90%;
-    max-width: 700px;
-    margin: 2rem auto;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  }
+
   
   .header {
     text-align: center;

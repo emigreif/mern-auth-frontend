@@ -16,7 +16,6 @@
   .modalContent {
     background: #fff;
     width: 90%;
-    max-width: 600px;
     border-radius: 6px;
     position: relative;
     overflow: hidden;

@@ -88,7 +88,6 @@ ul li {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  max-width: 500px;
   background: white;
   padding: 20px;
   border-radius: 8px;

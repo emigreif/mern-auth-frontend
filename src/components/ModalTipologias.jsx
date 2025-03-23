@@ -1,116 +1,137 @@
 // src/components/ModalTipologias.jsx
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-import ModalBase from "./ModalBase.jsx";
+import ModalBase from "./ModalBase";
+import styles from "../styles/modals/ModalTipologias.module.css";
 
-export default function ModalTipologias({ obra, onClose }) {
-  const [tipologias, setTipologias] = useState([]);
-  const [errorMsg, setErrorMsg] = useState("");
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  const [tempTip, setTempTip] = useState({
-    codigo: "",
-    descripcion: "",
-    ancho: 0,
-    alto: 0,
-    cantidad: 1
-  });
+export default function ModalTipologias({ onClose, onCreated }) {
+  const [listaTipologias, setListaTipologias] = useState([]);
+  const [archivoExcel, setArchivoExcel] = useState(null);
+  const [mensaje, setMensaje] = useState("");
+  const [manual, setManual] = useState({ tipo: "", descripcion: "", base: "", altura: "", cantidad: 1 });
 
-  const handleAddManual = () => {
-    if (!tempTip.codigo.trim() || !tempTip.descripcion.trim()) {
-      setErrorMsg("Código y Descripción son requeridos");
+  const handleExcelChange = (e) => {
+    setArchivoExcel(e.target.files[0]);
+  };
+
+  const handleLeerExcel = () => {
+    if (!archivoExcel) return alert("Seleccione un archivo Excel");
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const data = new Uint8Array(evt.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+
+      // Mapeo: extrae los campos esperados
+      const mapeado = json.map((row) => ({
+        tipo: row["Tipo"]?.toString().trim(),
+        cantidad: Number(row["Cant"]) || 1,
+        descripcion: row["Descripción"] || "",
+        base: Number(row["base"]) || 0,
+        altura: Number(row["altura"]) || 0,
+      })).filter(t => t.tipo && t.descripcion);
+
+      setListaTipologias(mapeado);
+    };
+    reader.readAsArrayBuffer(archivoExcel);
+  };
+
+  const handleAgregarManual = () => {
+    if (!manual.tipo || !manual.descripcion || !manual.base || !manual.altura) {
+      alert("Completa todos los campos");
       return;
     }
-    setTipologias([...tipologias, { ...tempTip }]);
-    setTempTip({ codigo: "", descripcion: "", ancho: 0, alto: 0, cantidad: 1 });
+    setListaTipologias([...listaTipologias, { ...manual }]);
+    setManual({ tipo: "", descripcion: "", base: "", altura: "", cantidad: 1 });
   };
 
-  const handleImportExcel = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleGuardar = async () => {
     try {
-      const data = await file.arrayBuffer();
-      const wb = XLSX.read(data);
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      const imported = [];
-      for (let i = 1; i < jsonData.length; i++) {
-        const row = jsonData[i];
-        if (!row || row.length === 0) continue;
-        imported.push({
-          codigo: row[0],
-          descripcion: row[1],
-          ancho: parseFloat(row[2]) || 0,
-          alto: parseFloat(row[3]) || 0,
-          cantidad: parseInt(row[4]) || 1
-        });
-      }
-      setTipologias([...tipologias, ...imported]);
-    } catch (err) {
-      setErrorMsg("Error al importar Excel");
-    }
-  };
+      const res = await fetch(`${API_URL}/api/tipologias/importar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tipologias: listaTipologias })
+      });
 
-  const handleGuardar = () => {
-    // POST /api/tipologias => { obraId, tipologias }
-    onClose();
+      if (!res.ok) throw new Error("Error al guardar tipologías");
+      setMensaje("Tipologías guardadas correctamente");
+      if (onCreated) onCreated();
+      onClose();
+    } catch (err) {
+      console.error(err);
+      setMensaje("Error al guardar");
+    }
   };
 
   return (
-    <ModalBase isOpen={true} onClose={onClose} title={`Carga de Tipologías - Obra ${obra.nombre}`}>
-      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+    <ModalBase isOpen={true} onClose={onClose} title="Cargar Tipologías">
+      <div className={styles.contenedor}>
+        <h4>1. Importar desde Excel</h4>
+        <input type="file" accept=".xlsx" onChange={handleExcelChange} />
+        <button onClick={handleLeerExcel}>📥 Leer Excel</button>
 
-      <div style={{ marginBottom: "1rem", border: "1px solid #ccc", padding: "1rem" }}>
-        <h3>Carga Manual</h3>
-        <input
-          type="text"
-          placeholder="Código"
-          value={tempTip.codigo}
-          onChange={(e) => setTempTip({ ...tempTip, codigo: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Descripción"
-          value={tempTip.descripcion}
-          onChange={(e) => setTempTip({ ...tempTip, descripcion: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Ancho"
-          value={tempTip.ancho}
-          onChange={(e) => setTempTip({ ...tempTip, ancho: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Alto"
-          value={tempTip.alto}
-          onChange={(e) => setTempTip({ ...tempTip, alto: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Cantidad"
-          value={tempTip.cantidad}
-          onChange={(e) => setTempTip({ ...tempTip, cantidad: e.target.value })}
-        />
-        <button onClick={handleAddManual}>Agregar</button>
-      </div>
+        <hr />
 
-      <div style={{ marginBottom: "1rem" }}>
-        <h3>Importar desde Excel</h3>
-        <input type="file" accept=".xls,.xlsx" onChange={handleImportExcel} />
-      </div>
+        <h4>2. Agregar Manualmente</h4>
+        <div className={styles.formulario}>
+          <input
+            type="text"
+            placeholder="Tipo"
+            value={manual.tipo}
+            onChange={(e) => setManual({ ...manual, tipo: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Descripción"
+            value={manual.descripcion}
+            onChange={(e) => setManual({ ...manual, descripcion: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="Base"
+            value={manual.base}
+            onChange={(e) => setManual({ ...manual, base: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="Altura"
+            value={manual.altura}
+            onChange={(e) => setManual({ ...manual, altura: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="Cantidad"
+            value={manual.cantidad}
+            onChange={(e) => setManual({ ...manual, cantidad: e.target.value })}
+          />
+          <button onClick={handleAgregarManual}>➕ Agregar</button>
+        </div>
 
-      <h3>Lista de Tipologías</h3>
-      <ul>
-        {tipologias.map((t, i) => (
-          <li key={i}>
-            {t.codigo} - {t.descripcion} ({t.ancho}x{t.alto}), cant={t.cantidad}
-          </li>
-        ))}
-      </ul>
+        <h4>3. Lista a guardar</h4>
+        {listaTipologias.length === 0 && <p>No hay tipologías aún.</p>}
+        {listaTipologias.length > 0 && (
+          <ul className={styles.lista}>
+            {listaTipologias.map((t, idx) => (
+              <li key={idx}>
+                <strong>{t.tipo}</strong> - {t.descripcion} ({t.base}x{t.altura}) x{t.cantidad}
+              </li>
+            ))}
+          </ul>
+        )}
 
-      <div style={{ marginTop: "1rem" }}>
-        <button onClick={handleGuardar}>Guardar Tipologías</button>
-        <button onClick={onClose}>Cerrar</button>
+        <div className={styles.footer}>
+          <button onClick={handleGuardar} disabled={listaTipologias.length === 0}>
+            Guardar Tipologías
+          </button>
+        </div>
+
+        {mensaje && <p>{mensaje}</p>}
       </div>
     </ModalBase>
   );

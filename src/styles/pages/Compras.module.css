@@ -1,15 +1,7 @@
 /* src/pages/Compras/Compras.module.css */
 
 
-.pageContainer {
-    width: 90%;
 
-    margin: 0;
-    background: #fff;
-    border-radius: 8px;
-    padding: 1rem 2rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  }
   
   .header {
     display: flex;
