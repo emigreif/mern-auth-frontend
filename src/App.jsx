@@ -9,32 +9,32 @@ import {
 import { useAuth } from "./context/AuthContext.jsx";
 
 // Páginas públicas
-import Home from "./pages/Home/Home.jsx";
-import About from "./pages/About/About.jsx";
-import Planner from "./pages/Planner/Planner.jsx";
-import Login from "./pages/Login/Login.jsx";
-import Register from "./pages/Register/Register.jsx";
-import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
-import BaseMateriales from "./pages/BaseMateriales/BaseMateriales.jsx"; // 🔹 Ahora está en rutas protegidas
+import Home from "./pages/Home.jsx";
+import About from "./pages/About.jsx";
+import Planner from "./pages/Planner.jsx";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import BaseMateriales from "./pages/BaseMateriales.jsx"; // 🔹 Ahora está en rutas protegidas
 
 // Páginas protegidas
-import Obras from "./pages/Obras/Obras.jsx";
-import Presupuestos from "./pages/Presupuestos/Presupuestos.jsx";
-import Proveedores from "./pages/Proveedores/Proveedores.jsx";
-import Panol from "./pages/Panol/Panol.jsx";
-import Calendario from "./pages/Calendario/Calendario.jsx";
-import Mediciones from "./pages/Mediciones/Mediciones.jsx";
-import Compras from "./pages/Compras/Compras.jsx";
-import Contabilidad from "./pages/Contabilidad/Contabilidad.jsx"; // con <Outlet />
-import Nomina from "./pages/Nomina/Nomina.jsx";
-import Configuracion from "./pages/Configuracion/Configuracion.jsx"; // con <Outlet />
-import Profile from "./pages/Profile/Profile.jsx";
-import Perfiles from "./pages/Perfiles/Perfiles.jsx";
-import Reportes from "./pages/Reportes/Reportes.jsx";
+import Obras from "./pages/Obras.jsx";
+import Presupuestos from "./pages/Presupuestos.jsx";
+import Proveedores from "./pages/Proveedores.jsx";
+import Panol from "./pages/Panol.jsx";
+import Calendario from "./pages/Calendario.jsx";
+import Mediciones from "./pages/Mediciones.jsx";
+import Compras from "./pages/Compras.jsx";
+import Contabilidad from "./pages/Contabilidad.jsx"; // con <Outlet />
+import Nomina from "./pages/Nomina.jsx";
+import Configuracion from "./pages/Configuracion.jsx"; // con <Outlet />
+import Profile from "./pages/Profile.jsx";
+import Perfiles from "./pages/Perfiles.jsx";
+import Reportes from "./pages/Reportes.jsx";
 
 // Componentes globales
-import Navbar from "./components/Navbar/Navbar.jsx";
-import Sidebar from "./components/Sidebar/Sidebar.jsx";
+import Navbar from "./components/Navbar.jsx";
+import Sidebar from "./components/Sidebar.jsx";
 
 // 1. Rutas públicas
 function PublicRoutes() {
