@@ -5,7 +5,7 @@ import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 // Estilos globales
-import "./styles/Global.css";
+import styles from "./styles/Global.css"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

@@ -100,6 +100,7 @@ const BaseMateriales = () => {
 
   return (
     <div className={styles.container}>
+      
       <h2>Base de Datos General</h2>
 
       <div className={styles.tabs}>

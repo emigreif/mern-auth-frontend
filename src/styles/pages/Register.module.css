@@ -10,7 +10,7 @@
     width: 50%;
     background-color: #fff;
     display: flex;
-    align-items: center;
+    
     justify-content: center;
     padding: 2rem;
   }
@@ -75,7 +75,6 @@
   
   .rightSide {
     width: 50%;
-    background: linear-gradient(135deg, #00b16a 0%, #00aa63 100%);
     color: #fff;
     display: flex;
     flex-direction: column;

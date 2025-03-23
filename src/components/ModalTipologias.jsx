@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase";
-import styles from "../styles/modals/ModalTipologias.module.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 

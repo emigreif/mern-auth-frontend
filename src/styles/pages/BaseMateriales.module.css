@@ -8,6 +8,12 @@
   border-radius: 8px;
   text-align: center;
 }
+.pageContainer {
+  width: 90%;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+}
 
 /* 📌 Estilos para las pestañas */
 .tabs {

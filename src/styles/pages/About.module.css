@@ -1,5 +1,10 @@
 /* src/pages/About/About.module.css */
-
+.pageContainer {
+  width: 90%;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+}
 
 .heroTitle {
   font-size: 3rem;

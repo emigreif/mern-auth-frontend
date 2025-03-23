@@ -1,4 +1,10 @@
 /* src/pages/Planner/Planner.module.css */
+.pageContainer {
+  width: 90%;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+}
 
   
   .header {

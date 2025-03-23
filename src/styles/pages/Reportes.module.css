@@ -1,5 +1,10 @@
 /* src/pages/Reportes/Reportes.module.css */
+.pageContainer {
 
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+}
 
   
   .header {

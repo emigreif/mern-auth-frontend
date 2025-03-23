@@ -5,6 +5,7 @@
   box-sizing: border-box;
 }
 
+
 body {
   font-family: Arial, sans-serif;
   background-color: var(--color-fondo);
@@ -37,14 +38,7 @@ a {
 }
 
 /* Contenedor principal */
-.pageContainer {
-  width: 90%;
-  margin: 0 auto;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+
 
 .main-content {
   padding: 1rem;
