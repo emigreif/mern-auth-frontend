@@ -1,123 +1,111 @@
 // src/components/ModalUbicaciones.jsx
 import React, { useState } from "react";
 import styles from "../styles/modals/ModalUbicaciones.module.css";
+import ModalBase from "./ModalBase";
+import { useAuth } from "../context/AuthContext";
 
 /**
- * ModalUbicaciones: permite definir rangos de pisos y la cantidad de ubicaciones en cada uno
- * para luego generar masivamente en la base de datos.
- *
- * Props:
- *  - obra: objeto con { _id, nombre }
- *  - onClose: function => cierra el modal
- *  - (opcional) onGenerated: function => callback tras generar ubicaciones
+ * Modal para generar ubicaciones por piso y cantidad
+ * @param {Object} obra - Obra actual ({ _id, nombre })
+ * @param {Function} onClose - Cierra el modal
+ * @param {Function} onGenerated - Callback luego de generar
  */
 export default function ModalUbicaciones({ obra, onClose, onGenerated }) {
-  const [pisos, setPisos] = useState([]);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [pisos, setPisos] = useState([{ rango: "", ubicaciones: 1 }]);
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
+  const { token } = useAuth();
 
-  /**
-   * Agrega un nuevo registro de piso con { rango: "", ubicaciones: 1 }
-   */
-  const handleAddPiso = () => {
+  const handleAgregarPiso = () => {
     setPisos([...pisos, { rango: "", ubicaciones: 1 }]);
   };
 
-  /**
-   * Maneja cambios en el array de pisos
-   * @param {number} index - índice del piso en el array
-   * @param {string} field - "rango" o "ubicaciones"
-   * @param {string|number} value - nuevo valor
-   */
-  const handleChangePiso = (index, field, value) => {
-    const updated = [...pisos];
-    updated[index][field] = value;
-    setPisos(updated);
+  const handleChange = (i, campo, valor) => {
+    const copia = [...pisos];
+    copia[i][campo] = valor;
+    setPisos(copia);
   };
 
-  /**
-   * Generar Ubicaciones en masa
-   *  - Validar que la obra exista
-   *  - Validar que haya al menos un piso
-   *  - POST /api/ubicaciones/generar => { obraId, pisos: [{ rango, ubicaciones }, ...] }
-   */
-  const handleGenerate = async () => {
-    setErrorMsg("");
+  const handleGenerar = async () => {
+    setMensaje("");
+    setError("");
+
     if (!obra || !obra._id) {
-      setErrorMsg("No se recibió la obra.");
+      setError("Obra no definida");
       return;
     }
-    if (pisos.length === 0) {
-      setErrorMsg("Debes agregar al menos un piso.");
-      return;
-    }
-    for (let p of pisos) {
-      if (!p.rango.trim()) {
-        setErrorMsg("Cada rango de pisos es requerido.");
+
+    for (let piso of pisos) {
+      if (!piso.rango.trim()) {
+        setError("Cada rango debe completarse");
         return;
       }
-      if (p.ubicaciones <= 0) {
-        setErrorMsg("La cantidad de ubicaciones debe ser mayor a 0.");
+      if (piso.ubicaciones < 1) {
+        setError("Ubicaciones debe ser mayor a 0");
         return;
       }
     }
 
-    // Llamar al endpoint
     try {
       const res = await fetch(`/api/ubicaciones/generar`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({ obraId: obra._id, pisos })
       });
+
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Error al generar ubicaciones");
+        const data = await res.json();
+        throw new Error(data.message || "Error al generar ubicaciones");
       }
-      await res.json();
+
+      const data = await res.json();
+      setMensaje(`Se generaron ${data.creadas} ubicaciones`);
       if (onGenerated) onGenerated();
       onClose();
-    } catch (error) {
-      setErrorMsg(error.message);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
     }
   };
 
-  if (!obra) return null; // O maneja un fallback
-
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeBtn} onClick={onClose}>✖</button>
-        <h2 className={styles.title}>
-          Carga de Ubicaciones - Obra {obra.nombre}
-        </h2>
+    <ModalBase isOpen={true} onClose={onClose} title={`Carga de ubicaciones - Obra: ${obra.nombre}`}>
+      <div className={styles.contenedor}>
+        <p>Agrega pisos con rango y cantidad de ubicaciones por piso.</p>
 
-        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+        {pisos.map((p, i) => (
+          <div key={i} className={styles.fila}>
+            <input
+              type="text"
+              placeholder="Ej: 1-3,5"
+              value={p.rango}
+              onChange={(e) => handleChange(i, "rango", e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Ubicaciones"
+              min={1}
+              value={p.ubicaciones}
+              onChange={(e) => handleChange(i, "ubicaciones", parseInt(e.target.value) || 1)}
+            />
+          </div>
+        ))}
 
-        <div className={styles.formContainer}>
-          {pisos.map((p, i) => (
-            <div key={i} className={styles.pisoItem}>
-              <input
-                type="text"
-                placeholder="Rango de pisos (ej: 1-3, 5, 7-9)"
-                value={p.rango}
-                onChange={(e) => handleChangePiso(i, "rango", e.target.value)}
-              />
-              <input
-                type="number"
-                placeholder="Cant. Ubicaciones"
-                value={p.ubicaciones}
-                onChange={(e) => handleChangePiso(i, "ubicaciones", parseInt(e.target.value) || 0)}
-                style={{ width: "120px" }}
-              />
-            </div>
-          ))}
-        </div>
+        <button className={styles.btnSecundario} onClick={handleAgregarPiso}>
+          + Agregar Piso
+        </button>
 
-        <button onClick={handleAddPiso}>+ Agregar Piso</button>
-        <div className={styles.actions}>
-          <button onClick={handleGenerate}>Generar Ubicaciones</button>
-          <button onClick={onClose}>Cerrar</button>
+        {error && <p className={styles.error}>{error}</p>}
+        {mensaje && <p className={styles.success}>{mensaje}</p>}
+
+        <div className={styles.botones}>
+          <button onClick={handleGenerar}>Generar</button>
+          <button onClick={onClose}>Cancelar</button>
         </div>
       </div>
-    </div>
+    </ModalBase>
   );
 }
