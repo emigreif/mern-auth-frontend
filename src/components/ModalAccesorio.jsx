@@ -1,108 +1,107 @@
-// src/components/ModalAccesorio.jsx
-import React, { useState, useEffect } from "react";
-import ModalBase from "./ModalBase.jsx"; // Tu modal genérico
+import React, { useEffect, useState } from "react";
+import ModalBase from "./ModalBase.jsx";
 import styles from "../styles/modals/ModalAccesorio.module.css";
 
 /**
- * Props:
- *  - isOpen: bool => si el modal está abierto
- *  - onClose: func => cierra el modal
- *  - onSave: func => se llama al guardar
- *  - accesorioData: objeto con datos del accesorio a editar (o null)
+ * Props esperadas:
+ * - isOpen: boolean
+ * - onClose: function
+ * - accesorioData: objeto a editar o null
+ * - onSave: function(data)
  */
 export default function ModalAccesorio({
   isOpen,
   onClose,
-  onSave,
-  accesorioData = null
+  accesorioData = null,
+  onSave
 }) {
-  const [formData, setFormData] = useState({
-    codigo: "",
+  const [form, setForm] = useState({
     descripcion: "",
     color: "",
     cantidad: 0,
     unidad: "u",
+    tipo: "accesorios",
     observaciones: ""
   });
 
-  // Validaciones de campos requeridos
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (accesorioData) {
-      setFormData({
-        codigo: accesorioData.codigo || "",
+      setForm({
         descripcion: accesorioData.descripcion || "",
         color: accesorioData.color || "",
         cantidad: accesorioData.cantidad || 0,
         unidad: accesorioData.unidad || "u",
+        tipo: accesorioData.tipo || "accesorios",
         observaciones: accesorioData.observaciones || ""
       });
     } else {
-      setFormData({
-        codigo: "",
+      setForm({
         descripcion: "",
         color: "",
         cantidad: 0,
         unidad: "u",
+        tipo: "accesorios",
         observaciones: ""
       });
     }
   }, [accesorioData]);
 
   const validate = () => {
-    const newErrors = {};
-    if (!formData.codigo.trim()) newErrors.codigo = "El código es requerido";
-    if (!formData.descripcion.trim()) {
-      newErrors.descripcion = "La descripción es requerida";
-    }
-    // color no es required => optional
-    if (formData.cantidad < 0) {
-      newErrors.cantidad = "La cantidad no puede ser negativa";
-    }
-    // unidad y observaciones => optional
+    const err = {};
+    if (!form.descripcion.trim()) err.descripcion = "Descripción requerida";
+    if (!form.tipo) err.tipo = "Tipo requerido";
+    if (!form.unidad.trim()) err.unidad = "Unidad requerida";
+    if (form.cantidad < 0) err.cantidad = "Cantidad inválida";
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(err);
+    return Object.keys(err).length === 0;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-
-    onSave(formData); // Llamamos a la función que guarda en la DB
+    onSave(form);
   };
 
+  if (!isOpen) return null;
+
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title="Accesorio en Pañol">
+    <ModalBase
+      isOpen={isOpen}
+      onClose={onClose}
+      title={accesorioData ? "Editar Accesorio" : "Nuevo Accesorio"}
+    >
       <form onSubmit={handleSubmit} className={styles.modalForm}>
         <div className={styles.formGroup}>
-          <label>Código (requerido)</label>
-          <input
-            type="text"
-            name="codigo"
-            value={formData.codigo}
-            onChange={handleChange}
-          />
-          {errors.codigo && <small style={{ color: "red" }}>{errors.codigo}</small>}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>Descripción (requerida)</label>
+          <label>Descripción</label>
           <input
             type="text"
             name="descripcion"
-            value={formData.descripcion}
+            value={form.descripcion}
             onChange={handleChange}
           />
-          {errors.descripcion && (
-            <small style={{ color: "red" }}>{errors.descripcion}</small>
-          )}
+          {errors.descripcion && <small className={styles.error}>{errors.descripcion}</small>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Tipo</label>
+          <select name="tipo" value={form.tipo} onChange={handleChange}>
+            <option value="accesorios">Accesorio</option>
+            <option value="herrajes">Herraje</option>
+            <option value="tornillos">Tornillos</option>
+            <option value="bulones">Bulones</option>
+            <option value="felpas">Felpas</option>
+            <option value="selladores / espuma">Selladores / Espuma</option>
+            <option value="otro">Otro</option>
+          </select>
+          {errors.tipo && <small className={styles.error}>{errors.tipo}</small>}
         </div>
 
         <div className={styles.formGroup}>
@@ -110,7 +109,7 @@ export default function ModalAccesorio({
           <input
             type="text"
             name="color"
-            value={formData.color}
+            value={form.color}
             onChange={handleChange}
           />
         </div>
@@ -120,12 +119,10 @@ export default function ModalAccesorio({
           <input
             type="number"
             name="cantidad"
-            value={formData.cantidad}
+            value={form.cantidad}
             onChange={handleChange}
           />
-          {errors.cantidad && (
-            <small style={{ color: "red" }}>{errors.cantidad}</small>
-          )}
+          {errors.cantidad && <small className={styles.error}>{errors.cantidad}</small>}
         </div>
 
         <div className={styles.formGroup}>
@@ -133,25 +130,24 @@ export default function ModalAccesorio({
           <input
             type="text"
             name="unidad"
-            value={formData.unidad}
+            value={form.unidad}
             onChange={handleChange}
           />
+          {errors.unidad && <small className={styles.error}>{errors.unidad}</small>}
         </div>
 
         <div className={styles.formGroup}>
           <label>Observaciones</label>
           <textarea
             name="observaciones"
-            value={formData.observaciones}
+            value={form.observaciones}
             onChange={handleChange}
           />
         </div>
 
         <div className={styles.actions}>
           <button type="submit">Guardar</button>
-          <button type="button" onClick={onClose}>
-            Cancelar
-          </button>
+          <button type="button" onClick={onClose}>Cancelar</button>
         </div>
       </form>
     </ModalBase>
