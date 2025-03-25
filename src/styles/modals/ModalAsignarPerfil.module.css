@@ -1,0 +1,91 @@
+.tabHeader {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tabHeader button {
+    padding: 0.5rem 1rem;
+    background-color: #eee;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .tabHeader .active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .formGroup {
+    margin-bottom: 1rem;
+  }
+  
+  .formGroup label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+  }
+  
+  .formGroup input,
+  .formGroup select {
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .row select,
+  .row input {
+    flex: 1;
+    padding: 0.3rem;
+  }
+  
+  .row button {
+    background-color: transparent;
+    border: none;
+    font-size: 1.1rem;
+    color: red;
+    cursor: pointer;
+  }
+  
+  .submitBtn {
+    margin-top: 1rem;
+    padding: 0.6rem 1.2rem;
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .errorBox {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background-color: #ffe0e0;
+    color: #a00;
+    border: 1px solid #a00;
+    border-radius: 4px;
+  }
+  
+  .resultadoBox {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f0f8ff;
+    border: 1px solid #8cc;
+    border-radius: 4px;
+  }
+  
+  .resultadoBox h4 {
+    margin-bottom: 0.5rem;
+  }
+  
