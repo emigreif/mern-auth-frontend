@@ -9,19 +9,27 @@
   flex-direction: column;
 }
 
-.formGroup input,
-.formGroup select {
-  padding: 0.5rem;
-  font-size: 1rem;
-}
-
-.error {
-  color: red;
-  font-size: 0.85rem;
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+}
+
+.historialSection {
+  margin-top: 2rem;
+  border-top: 1px solid #ccc;
+  padding-top: 1rem;
+}
+
+.historialTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.historialTable th,
+.historialTable td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
 }

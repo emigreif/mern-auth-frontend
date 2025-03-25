@@ -1,0 +1,26 @@
+.formBase {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .formGroup select {
+    padding: 0.5rem;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+  
+  .error {
+    color: red;
+    font-size: 0.9rem;
+  }
+  

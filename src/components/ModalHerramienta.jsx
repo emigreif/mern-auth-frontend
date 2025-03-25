@@ -1,31 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
 import styles from "../styles/modals/ModalHerramienta.module.css";
 
 /**
  * Props esperadas:
- * - isOpen: boolean
+ * - isOpen: bool
  * - onClose: func
- * - herramienta: objeto a editar o null
- * - onSave: func(data)
+ * - onSave: func
+ * - herramienta: objeto a editar (puede incluir historial)
  */
 export default function ModalHerramienta({
   isOpen,
   onClose,
-  herramienta = null,
-  onSave
+  onSave,
+  herramienta = null
 }) {
   const [form, setForm] = useState({
     marca: "",
     modelo: "",
     descripcion: "",
     numeroSerie: "",
-    estado: "en taller",
-    obra: "",
-    responsable: ""
+    estado: "en taller"
   });
-
-  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (herramienta) {
@@ -34,9 +30,7 @@ export default function ModalHerramienta({
         modelo: herramienta.modelo || "",
         descripcion: herramienta.descripcion || "",
         numeroSerie: herramienta.numeroSerie || "",
-        estado: herramienta.estado || "en taller",
-        obra: herramienta.obra || "",
-        responsable: herramienta.responsable || ""
+        estado: herramienta.estado || "en taller"
       });
     } else {
       setForm({
@@ -44,61 +38,47 @@ export default function ModalHerramienta({
         modelo: "",
         descripcion: "",
         numeroSerie: "",
-        estado: "en taller",
-        obra: "",
-        responsable: ""
+        estado: "en taller"
       });
     }
   }, [herramienta]);
 
-  const validate = () => {
-    const err = {};
-    if (!form.marca.trim()) err.marca = "Marca requerida";
-    if (!form.modelo.trim()) err.modelo = "Modelo requerido";
-    if (!form.descripcion.trim()) err.descripcion = "Descripción requerida";
-    if (!form.numeroSerie.trim()) err.numeroSerie = "Número de serie requerido";
-    setErrors(err);
-    return Object.keys(err).length === 0;
-  };
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validate()) return;
     onSave(form);
   };
 
   if (!isOpen) return null;
 
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title={herramienta ? "Editar Herramienta" : "Nueva Herramienta"}>
+    <ModalBase
+      isOpen={isOpen}
+      onClose={onClose}
+      title={herramienta ? "Editar Herramienta" : "Nueva Herramienta"}
+    >
       <form onSubmit={handleSubmit} className={styles.modalForm}>
         <div className={styles.formGroup}>
           <label>Marca</label>
-          <input type="text" name="marca" value={form.marca} onChange={handleChange} />
-          {errors.marca && <small className={styles.error}>{errors.marca}</small>}
+          <input type="text" name="marca" value={form.marca} onChange={handleChange} required />
         </div>
 
         <div className={styles.formGroup}>
           <label>Modelo</label>
-          <input type="text" name="modelo" value={form.modelo} onChange={handleChange} />
-          {errors.modelo && <small className={styles.error}>{errors.modelo}</small>}
+          <input type="text" name="modelo" value={form.modelo} onChange={handleChange} required />
         </div>
 
         <div className={styles.formGroup}>
           <label>Descripción</label>
-          <input type="text" name="descripcion" value={form.descripcion} onChange={handleChange} />
-          {errors.descripcion && <small className={styles.error}>{errors.descripcion}</small>}
+          <input type="text" name="descripcion" value={form.descripcion} onChange={handleChange} required />
         </div>
 
         <div className={styles.formGroup}>
-          <label>Número de Serie</label>
-          <input type="text" name="numeroSerie" value={form.numeroSerie} onChange={handleChange} />
-          {errors.numeroSerie && <small className={styles.error}>{errors.numeroSerie}</small>}
+          <label>N° Serie</label>
+          <input type="text" name="numeroSerie" value={form.numeroSerie} onChange={handleChange} required />
         </div>
 
         <div className={styles.formGroup}>
@@ -110,25 +90,46 @@ export default function ModalHerramienta({
           </select>
         </div>
 
-        {/* Solo si va a obra pedimos obra y responsable */}
-        {form.estado === "en obra" && (
-          <>
-            <div className={styles.formGroup}>
-              <label>Obra</label>
-              <input type="text" name="obra" value={form.obra} onChange={handleChange} />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Responsable</label>
-              <input type="text" name="responsable" value={form.responsable} onChange={handleChange} />
-            </div>
-          </>
-        )}
-
         <div className={styles.actions}>
           <button type="submit">Guardar</button>
           <button type="button" onClick={onClose}>Cancelar</button>
         </div>
       </form>
+
+      {/* Historial (solo si está en edición) */}
+      {herramienta?.historial && herramienta.historial.length > 0 && (
+        <div className={styles.historialSection}>
+          <h3>Historial de Movimientos</h3>
+          <table className={styles.historialTable}>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Estado Anterior</th>
+                <th>Estado Nuevo</th>
+                <th>Obra</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              {herramienta.historial
+                .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+                .map((mov, i) => (
+                  <tr key={i}>
+                    <td>{new Date(mov.fecha).toLocaleDateString()}</td>
+                    <td>{mov.estadoAnterior || "-"}</td>
+                    <td>{mov.estadoNuevo}</td>
+                    <td>{mov.obra?.nombre || "-"}</td>
+                    <td>
+                      {mov.responsable?.nombre
+                        ? `${mov.responsable.nombre} ${mov.responsable.apellido || ""}`
+                        : "-"}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </ModalBase>
   );
 }

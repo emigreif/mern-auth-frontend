@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/Panol.module.css";
 
@@ -6,138 +6,141 @@ import ModalHerramienta from "../components/ModalHerramienta.jsx";
 import ModalPerfil from "../components/ModalPerfil.jsx";
 import ModalVidrio from "../components/ModalVidrio.jsx";
 import ModalAccesorio from "../components/ModalAccesorio.jsx";
+import ModalAsignarHerramienta from "../components/ModalAsignarHerramienta.jsx";
 
 const Panol = () => {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [tab, setTab] = useState("herramientas");
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const [herramientas, setHerramientas] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
   const [vidrios, setVidrios] = useState([]);
   const [accesorios, setAccesorios] = useState([]);
 
-  const [search, setSearch] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [modalType, setModalType] = useState(""); // "herramienta", "perfil", etc.
 
-  const [modals, setModals] = useState({
-    herramienta: false,
-    perfil: false,
-    vidrio: false,
-    accesorio: false,
-  });
+  // Modal de asignar herramienta
+  const [isAsignarOpen, setIsAsignarOpen] = useState(false);
+  const [herramientaAsignarId, setHerramientaAsignarId] = useState(null);
 
   useEffect(() => {
-    if (token) {
-      fetchData();
-    }
+    if (token) fetchData();
   }, [token]);
 
   const fetchData = async () => {
     setLoading(true);
+    setErrorMsg("");
     try {
       const res = await fetch(`${API_URL}/api/panol`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` }
       });
+      if (!res.ok) throw new Error("Error al obtener datos del pañol");
       const data = await res.json();
       setHerramientas(data.herramientas || []);
       setPerfiles(data.perfiles || []);
       setVidrios(data.vidrios || []);
       setAccesorios(data.accesorios || []);
     } catch (err) {
-      setErrorMsg("Error al cargar el pañol");
+      setErrorMsg(err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const filteredList = (list) =>
+    list.filter((item) =>
+      JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
+    );
+
   const openModal = (type, item = null) => {
+    setModalType(type);
     setEditingItem(item);
-    setModals((prev) => ({ ...prev, [type]: true }));
+    setIsModalOpen(true);
   };
 
-  const closeModals = () => {
-    setModals({ herramienta: false, perfil: false, vidrio: false, accesorio: false });
+  const closeModal = () => {
+    setIsModalOpen(false);
     setEditingItem(null);
+    setModalType("");
     fetchData();
   };
 
-  const handleGuardar = async (tipo, data) => {
-    const isEdit = !!editingItem;
-    const id = editingItem?._id;
-    const endpoint = `/api/panol/${tipo}${isEdit ? `/${id}` : ""}`;
+  const handleSave = async (data) => {
+    const endpointMap = {
+      herramienta: "herramientas",
+      perfil: "perfiles",
+      vidrio: "vidrios",
+      accesorio: "accesorios"
+    };
+
+    const endpoint = endpointMap[modalType];
+    if (!endpoint) return;
+
+    const isEdit = editingItem?._id;
     const method = isEdit ? "PUT" : "POST";
+    const url = isEdit
+      ? `${API_URL}/api/panol/${endpoint}/${editingItem._id}`
+      : `${API_URL}/api/panol/${endpoint}`;
 
     try {
-      const res = await fetch(`${API_URL}${endpoint}`, {
+      const res = await fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       });
-
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.message || "Error al guardar");
       }
-
-      closeModals();
+      closeModal();
     } catch (err) {
-      alert(err.message);
+      alert(`Error: ${err.message}`);
     }
   };
 
-  const handleDelete = async (tipo, id) => {
-    if (!confirm("¿Eliminar elemento?")) return;
-
-    try {
-      const res = await fetch(`${API_URL}/api/panol/${tipo}/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("Error al eliminar");
-
-      fetchData();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  const filtered = (items) =>
-    items.filter((item) =>
-      JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
-    );
-
-  const renderTable = (items, fields, tipo) => (
+  const renderTable = (data, fields, type) => (
     <>
-      {filtered(items).length === 0 ? (
-        <p>No hay elementos</p>
+      {data.length === 0 ? (
+        <div className={styles.noData}>No hay datos para mostrar</div>
       ) : (
         <table className={styles.tableBase}>
           <thead>
             <tr>
-              {fields.map((f) => (
-                <th key={f}>{f}</th>
+              {fields.map((field) => (
+                <th key={field}>{field}</th>
               ))}
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {filtered(items).map((item) => (
+            {filteredList(data).map((item) => (
               <tr key={item._id}>
-                {fields.map((f) => (
-                  <td key={f}>{item[f]}</td>
+                {fields.map((field) => (
+                  <td key={field}>{item[field]}</td>
                 ))}
                 <td>
-                  <button onClick={() => openModal(tipo, item)}>✏️</button>
-                  <button onClick={() => handleDelete(tipo, item._id)}>🗑️</button>
+                  <button onClick={() => openModal(type, item)}>✏️ Editar</button>
+                  {type === "herramienta" && (
+                    <button
+                      style={{ marginLeft: "0.5rem" }}
+                      onClick={() => {
+                        setHerramientaAsignarId(item._id);
+                        setIsAsignarOpen(true);
+                      }}
+                    >
+                      🧰 Asignar
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -149,77 +152,93 @@ const Panol = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <h1>Pañol</h1>
+      <div className={styles.header}>
+        <h1>Pañol</h1>
+      </div>
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-      {loading && <p>Cargando...</p>}
+      {loading && <p>Cargando datos...</p>}
 
       <div className={styles.tabs}>
-        {["herramienta", "perfil", "vidrio", "accesorio"].map((t) => (
+        {["herramientas", "perfiles", "vidrios", "accesorios"].map((t) => (
           <button
             key={t}
-            className={`${styles.tabBtn} ${tab === t + "s" ? styles.active : ""}`}
-            onClick={() => setTab(t + "s")}
+            className={`${styles.tabBtn} ${tab === t ? styles.active : ""}`}
+            onClick={() => {
+              setTab(t);
+              setSearch("");
+            }}
           >
-            {t.charAt(0).toUpperCase() + t.slice(1)}s
+            {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
 
       <div className={styles.searchSection}>
         <input
-          placeholder="Buscar..."
+          type="text"
+          className={styles.searchInput}
+          placeholder={`Buscar ${tab}...`}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={() => openModal(tab.slice(0, -1))}>
+        <button className={styles.addBtn} onClick={() => openModal(tab)}>
           + Agregar {tab.slice(0, -1)}
         </button>
       </div>
 
       {tab === "herramientas" &&
-        renderTable(herramientas, ["marca", "modelo", "estado"], "herramientas")}
-
+        renderTable(herramientas, ["marca", "modelo", "estado"], "herramienta")}
       {tab === "perfiles" &&
-        renderTable(perfiles, ["codigo", "descripcion", "color"], "perfiles")}
-
-{tab === "vidrios" &&
-  renderTable(vidrios, ["descripcion", "tipo", "cantidad"], "vidrios")}
-
+        renderTable(perfiles, ["codigo", "descripcion", "color", "cantidad"], "perfil")}
+      {tab === "vidrios" &&
+        renderTable(vidrios, ["descripcion", "tipo", "ancho", "alto", "cantidad"], "vidrio")}
       {tab === "accesorios" &&
-        renderTable(accesorios, ["codigo", "descripcion", "tipo"], "accesorios")}
+        renderTable(accesorios, ["descripcion", "tipo", "color", "cantidad", "unidad"], "accesorio")}
 
-      {/* Modales */}
-      {modals.herramienta && (
+      {/* === Modales === */}
+      {modalType === "herramienta" && (
         <ModalHerramienta
-          isOpen={modals.herramienta}
-          onClose={closeModals}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onSave={handleSave}
           herramienta={editingItem}
-          onSave={(data) => handleGuardar("herramientas", data)}
         />
       )}
-      {modals.perfil && (
+      {modalType === "perfil" && (
         <ModalPerfil
-          isOpen={modals.perfil}
-          onClose={closeModals}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onSave={handleSave}
           perfilData={editingItem}
-          onSave={(data) => handleGuardar("perfiles", data)}
         />
       )}
-      {modals.vidrio && (
+      {modalType === "vidrio" && (
         <ModalVidrio
-          isOpen={modals.vidrio}
-          onClose={closeModals}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onSave={handleSave}
           vidrioData={editingItem}
-          onSave={(data) => handleGuardar("vidrios", data)}
         />
       )}
-      {modals.accesorio && (
+      {modalType === "accesorio" && (
         <ModalAccesorio
-          isOpen={modals.accesorio}
-          onClose={closeModals}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onSave={handleSave}
           accesorioData={editingItem}
-          onSave={(data) => handleGuardar("accesorios", data)}
+        />
+      )}
+
+      {/* Modal de asignación */}
+      {isAsignarOpen && (
+        <ModalAsignarHerramienta
+          isOpen={isAsignarOpen}
+          onClose={() => setIsAsignarOpen(false)}
+          herramientaId={herramientaAsignarId}
+          token={token}
+          API_URL={API_URL}
+          onSuccess={fetchData}
         />
       )}
     </div>
