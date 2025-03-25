@@ -1,154 +1,124 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/Panol.module.css";
 
+// Modales base
 import ModalHerramienta from "../components/ModalHerramienta.jsx";
 import ModalPerfil from "../components/ModalPerfil.jsx";
 import ModalVidrio from "../components/ModalVidrio.jsx";
 import ModalAccesorio from "../components/ModalAccesorio.jsx";
-import ModalAsignarHerramienta from "../components/ModalAsignarHerramienta.jsx";
 
-const Panol = () => {
+// Nuevos modales de asignación
+import ModalAsignarPerfil from "../components/ModalAsignarPerfil.jsx";
+import ModalAsignarAccesorio from "../components/ModalAsignarAccesorio.jsx";
+import ModalAsignarVidrio from "../components/ModalAsignarVidrio.jsx";
+
+export default function Panol() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [tab, setTab] = useState("herramientas");
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
 
   const [herramientas, setHerramientas] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
   const [vidrios, setVidrios] = useState([]);
   const [accesorios, setAccesorios] = useState([]);
+  const [obras, setObras] = useState([]);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
   const [editingItem, setEditingItem] = useState(null);
-  const [modalType, setModalType] = useState(""); // "herramienta", "perfil", etc.
 
-  // Modal de asignar herramienta
-  const [isAsignarOpen, setIsAsignarOpen] = useState(false);
-  const [herramientaAsignarId, setHerramientaAsignarId] = useState(null);
+  const [modalHerramientaOpen, setModalHerramientaOpen] = useState(false);
+  const [modalPerfilOpen, setModalPerfilOpen] = useState(false);
+  const [modalVidrioOpen, setModalVidrioOpen] = useState(false);
+  const [modalAccesorioOpen, setModalAccesorioOpen] = useState(false);
 
-  useEffect(() => {
-    if (token) fetchData();
-  }, [token]);
+  // Modales de asignación
+  const [modalAsignarPerfilOpen, setModalAsignarPerfilOpen] = useState(false);
+  const [modalAsignarAccesorioOpen, setModalAsignarAccesorioOpen] = useState(false);
+  const [modalAsignarVidrioOpen, setModalAsignarVidrioOpen] = useState(false);
+
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
-    setLoading(true);
-    setErrorMsg("");
     try {
+      setLoading(true);
+      setErrorMsg("");
       const res = await fetch(`${API_URL}/api/panol`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Error al obtener datos del pañol");
       const data = await res.json();
       setHerramientas(data.herramientas || []);
       setPerfiles(data.perfiles || []);
       setVidrios(data.vidrios || []);
       setAccesorios(data.accesorios || []);
     } catch (err) {
-      setErrorMsg(err.message);
+      setErrorMsg("Error al obtener datos del pañol");
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredList = (list) =>
-    list.filter((item) =>
-      JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
-    );
-
-  const openModal = (type, item = null) => {
-    setModalType(type);
-    setEditingItem(item);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingItem(null);
-    setModalType("");
-    fetchData();
-  };
-
-  const handleSave = async (data) => {
-    const endpointMap = {
-      herramienta: "herramientas",
-      perfil: "perfiles",
-      vidrio: "vidrios",
-      accesorio: "accesorios"
-    };
-
-    const endpoint = endpointMap[modalType];
-    if (!endpoint) return;
-
-    const isEdit = editingItem?._id;
-    const method = isEdit ? "PUT" : "POST";
-    const url = isEdit
-      ? `${API_URL}/api/panol/${endpoint}/${editingItem._id}`
-      : `${API_URL}/api/panol/${endpoint}`;
-
+  const fetchObras = async () => {
     try {
-      const res = await fetch(url, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+      const res = await fetch(`${API_URL}/api/obras`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Error al guardar");
-      }
-      closeModal();
+      const data = await res.json();
+      setObras(data || []);
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      console.error("Error al obtener obras", err);
     }
   };
 
-  const renderTable = (data, fields, type) => (
-    <>
-      {data.length === 0 ? (
-        <div className={styles.noData}>No hay datos para mostrar</div>
-      ) : (
-        <table className={styles.tableBase}>
-          <thead>
-            <tr>
-              {fields.map((field) => (
-                <th key={field}>{field}</th>
-              ))}
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredList(data).map((item) => (
-              <tr key={item._id}>
-                {fields.map((field) => (
-                  <td key={field}>{item[field]}</td>
-                ))}
-                <td>
-                  <button onClick={() => openModal(type, item)}>✏️ Editar</button>
-                  {type === "herramienta" && (
-                    <button
-                      style={{ marginLeft: "0.5rem" }}
-                      onClick={() => {
-                        setHerramientaAsignarId(item._id);
-                        setIsAsignarOpen(true);
-                      }}
-                    >
-                      🧰 Asignar
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </>
-  );
+  useEffect(() => {
+    if (token) {
+      fetchData();
+      fetchObras();
+    }
+  }, [token]);
+
+  const filteredList = (list) =>
+    list.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()));
+
+  const handleTabChange = (t) => {
+    setTab(t);
+    setSearch("");
+  };
+
+  const handleOpenModal = (type, item = null) => {
+    setEditingItem(item);
+    switch (type) {
+      case "herramienta":
+        setModalHerramientaOpen(true);
+        break;
+      case "perfil":
+        setModalPerfilOpen(true);
+        break;
+      case "vidrio":
+        setModalVidrioOpen(true);
+        break;
+      case "accesorio":
+        setModalAccesorioOpen(true);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCloseAllModals = () => {
+    setEditingItem(null);
+    setModalHerramientaOpen(false);
+    setModalPerfilOpen(false);
+    setModalVidrioOpen(false);
+    setModalAccesorioOpen(false);
+    setModalAsignarPerfilOpen(false);
+    setModalAsignarAccesorioOpen(false);
+    setModalAsignarVidrioOpen(false);
+    fetchData();
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -164,10 +134,7 @@ const Panol = () => {
           <button
             key={t}
             className={`${styles.tabBtn} ${tab === t ? styles.active : ""}`}
-            onClick={() => {
-              setTab(t);
-              setSearch("");
-            }}
+            onClick={() => handleTabChange(t)}
           >
             {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
@@ -182,67 +149,128 @@ const Panol = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className={styles.addBtn} onClick={() => openModal(tab)}>
-          + Agregar {tab.slice(0, -1)}
+        <button className={styles.addBtn} onClick={() => handleOpenModal(tab)}>
+          + Agregar {tab.charAt(0).toUpperCase() + tab.slice(1)}
         </button>
+
+        {tab !== "herramientas" && (
+          <button
+            className={styles.secondaryBtn}
+            onClick={() => {
+              if (tab === "perfiles") setModalAsignarPerfilOpen(true);
+              else if (tab === "accesorios") setModalAsignarAccesorioOpen(true);
+              else if (tab === "vidrios") setModalAsignarVidrioOpen(true);
+            }}
+          >
+            ➡️ Asignar a Obra
+          </button>
+        )}
       </div>
 
-      {tab === "herramientas" &&
-        renderTable(herramientas, ["marca", "modelo", "estado"], "herramienta")}
-      {tab === "perfiles" &&
-        renderTable(perfiles, ["codigo", "descripcion", "color", "cantidad"], "perfil")}
-      {tab === "vidrios" &&
-        renderTable(vidrios, ["descripcion", "tipo", "ancho", "alto", "cantidad"], "vidrio")}
-      {tab === "accesorios" &&
-        renderTable(accesorios, ["descripcion", "tipo", "color", "cantidad", "unidad"], "accesorio")}
+      <TableComponent
+        data={
+          tab === "herramientas"
+            ? filteredList(herramientas)
+            : tab === "perfiles"
+            ? filteredList(perfiles)
+            : tab === "vidrios"
+            ? filteredList(vidrios)
+            : filteredList(accesorios)
+        }
+        onEdit={(item) => handleOpenModal(tab, item)}
+        fields={
+          tab === "herramientas"
+            ? ["marca", "modelo", "estado"]
+            : tab === "perfiles"
+            ? ["codigo", "descripcion", "color", "cantidad"]
+            : tab === "vidrios"
+            ? ["tipo", "ancho", "alto", "cantidad"]
+            : ["codigo", "descripcion", "color", "cantidad"]
+        }
+      />
 
-      {/* === Modales === */}
-      {modalType === "herramienta" && (
-        <ModalHerramienta
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          onSave={handleSave}
-          herramienta={editingItem}
-        />
+      {/* Modales */}
+      {modalHerramientaOpen && (
+        <ModalHerramienta herramienta={editingItem} onClose={handleCloseAllModals} onSaved={handleCloseAllModals} />
       )}
-      {modalType === "perfil" && (
-        <ModalPerfil
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          onSave={handleSave}
-          perfilData={editingItem}
-        />
+      {modalPerfilOpen && (
+        <ModalPerfil isOpen={true} perfilData={editingItem} onClose={handleCloseAllModals} onSave={handleCloseAllModals} />
       )}
-      {modalType === "vidrio" && (
-        <ModalVidrio
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          onSave={handleSave}
-          vidrioData={editingItem}
-        />
+      {modalVidrioOpen && (
+        <ModalVidrio isOpen={true} vidrioData={editingItem} onClose={handleCloseAllModals} onSave={handleCloseAllModals} />
       )}
-      {modalType === "accesorio" && (
-        <ModalAccesorio
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          onSave={handleSave}
-          accesorioData={editingItem}
-        />
+      {modalAccesorioOpen && (
+        <ModalAccesorio isOpen={true} accesorioData={editingItem} onClose={handleCloseAllModals} onSave={handleCloseAllModals} />
       )}
 
-      {/* Modal de asignación */}
-      {isAsignarOpen && (
-        <ModalAsignarHerramienta
-          isOpen={isAsignarOpen}
-          onClose={() => setIsAsignarOpen(false)}
-          herramientaId={herramientaAsignarId}
+      {/* Asignación a Obra */}
+      {modalAsignarPerfilOpen && (
+        <ModalAsignarPerfil
+          isOpen={modalAsignarPerfilOpen}
+          onClose={handleCloseAllModals}
+          perfiles={perfiles}
+          obras={obras}
           token={token}
           API_URL={API_URL}
-          onSuccess={fetchData}
+          onSuccess={handleCloseAllModals}
+        />
+      )}
+      {modalAsignarAccesorioOpen && (
+        <ModalAsignarAccesorio
+          isOpen={modalAsignarAccesorioOpen}
+          onClose={handleCloseAllModals}
+          accesorios={accesorios}
+          obras={obras}
+          token={token}
+          API_URL={API_URL}
+          onSuccess={handleCloseAllModals}
+        />
+      )}
+      {modalAsignarVidrioOpen && (
+        <ModalAsignarVidrio
+          isOpen={modalAsignarVidrioOpen}
+          onClose={handleCloseAllModals}
+          vidrios={vidrios}
+          obras={obras}
+          token={token}
+          API_URL={API_URL}
+          onSuccess={handleCloseAllModals}
         />
       )}
     </div>
   );
-};
+}
 
-export default Panol;
+const TableComponent = ({ data, fields, onEdit }) => {
+  const styles = require("../styles/pages/Panol.module.css");
+  return (
+    <>
+      {data.length === 0 ? (
+        <div className={styles.noData}>No hay datos para mostrar</div>
+      ) : (
+        <table className={styles.tableBase}>
+          <thead>
+            <tr>
+              {fields.map((field) => (
+                <th key={field}>{field.toUpperCase()}</th>
+              ))}
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item._id}>
+                {fields.map((field) => (
+                  <td key={field}>{item[field]}</td>
+                ))}
+                <td>
+                  <button onClick={() => onEdit(item)}>✏️ Editar</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </>
+  );
+};
