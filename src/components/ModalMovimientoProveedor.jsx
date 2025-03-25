@@ -1,7 +1,7 @@
-// src/components/NuevoMovimientoProveedor.jsx
+// src/components/ModalMovimientoProveedor.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/modals/NuevoMovimientoProveedor.module.css";
+import styles from "../styles/modals/ModalMovimientoProveedor.module.css";
 
 /**
  * Modal para crear un nuevo movimiento contable (factura/pago)
@@ -11,7 +11,7 @@ import styles from "../styles/modals/NuevoMovimientoProveedor.module.css";
  *  - onSuccess
  *  - onClose
  */
-export default function NuevoMovimientoProveedor({ proveedorId, onSuccess, onClose }) {
+export default function ModalMovimientoProveedor({ proveedorId, onSuccess, onClose }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 

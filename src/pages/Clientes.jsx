@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/pages/Clientes.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/ModalBase.jsx";
-import NuevoCliente from "../components/NuevoCliente.jsx";
+import ModalNuevoCliente from "../components/ModalNuevoCliente.jsx";
 
 const Clientes = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -97,7 +97,7 @@ const Clientes = () => {
           onClose={() => handleCloseModal(false)}
           title="Agregar Cliente"
         >
-          <NuevoCliente
+          <ModalNuevoCliente
             onCreated={() => handleCloseModal(true)}
             onClose={() => handleCloseModal(false)}
           />

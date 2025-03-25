@@ -5,7 +5,7 @@ import styles from "../styles/pages/Nomina.module.css";
 
 // Ejemplo: un modal + un componente para crear empleado
 import ModalBase from "../components/ModalBase.jsx";
-import NuevoEmpleado from "../components/NuevoEmpleado.jsx";
+import ModalNuevoEmpleado from "../components/ModalNuevoEmpleado.jsx";
 
 /**
  * Página "Nómina"
@@ -112,7 +112,7 @@ const Nomina = () => {
           onClose={() => handleCloseModal(false)}
           title="Agregar Empleado"
         >
-          <NuevoEmpleado
+          <ModalNuevoEmpleado
             onCreated={() => handleCloseModal(true)}
             onClose={() => handleCloseModal(false)}
           />

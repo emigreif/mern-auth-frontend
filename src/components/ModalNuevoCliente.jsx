@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/modals/NuevoCliente.module.css"; // ✅ Importamos el CSS
+import styles from "../styles/modals/ModalNuevoCliente.module.css"; // ✅ Importamos el CSS
 
-export default function NuevoCliente({ onCreated, onClose }) {
+export default function ModalNuevoCliente({ onCreated, onClose }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 

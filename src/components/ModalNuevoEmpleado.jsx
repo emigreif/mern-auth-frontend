@@ -1,8 +1,8 @@
-// src/components/NuevoEmpleado/NuevoEmpleado.jsx
+// src/components/ModalNuevoEmpleado/ModalNuevoEmpleado.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-export default function NuevoEmpleado({ onCreated, onClose }) {
+export default function ModalNuevoEmpleado({ onCreated, onClose }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 

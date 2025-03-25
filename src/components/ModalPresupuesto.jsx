@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
-import NuevoCliente from "./NuevoCliente.jsx"; // ✅ Importamos el modal de nuevo cliente
+import ModalNuevoCliente from "./ModalNuevoCliente.jsx"; // ✅ Importamos el modal de nuevo cliente
 
 export default function ModalPresupuesto({
   editingPresupuesto,
@@ -184,7 +184,7 @@ export default function ModalPresupuesto({
 
       {/* ✅ Modal de Nuevo Cliente */}
       {isClienteModalOpen && (
-        <NuevoCliente onCreated={handleClienteCreado} onClose={() => setIsClienteModalOpen(false)} />
+        <ModalNuevoCliente onCreated={handleClienteCreado} onClose={() => setIsClienteModalOpen(false)} />
       )}
     </>
   );

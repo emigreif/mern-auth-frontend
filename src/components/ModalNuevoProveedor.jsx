@@ -1,7 +1,7 @@
-// src/components/NuevoProveedor.jsx
+// src/components/ModalNuevoProveedor.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/modals/NuevoProveedor.module.css";
+import styles from "../styles/modals/ModalNuevoProveedor.module.css";
 import ModalBase from "./ModalBase.jsx";
 
 /**
@@ -10,7 +10,7 @@ import ModalBase from "./ModalBase.jsx";
  *  - onCreated => callback tras crear
  *  - onClose => cierra modal
  */
-export default function NuevoProveedor({ onCreated, onClose }) {
+export default function ModalNuevoProveedor({ onCreated, onClose }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 

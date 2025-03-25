@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx"; // Ajusta ruta
 import * as XLSX from "xlsx";
 import styles from "../styles/modals/ModalCompra.module.css";
 import ModalBase from "./ModalBase.jsx";
-import NuevoProveedor from "./NuevoProveedor.jsx"; // Modal para crear proveedor
+import ModalNuevoProveedor from "./ModalNuevoProveedor.jsx"; // Modal para crear proveedor
 
 export default function ModalCompra({ editingCompra, onClose, onSaved }) {
   const { token } = useAuth();
@@ -247,7 +247,7 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
 
       {/* Modal para crear Proveedor */}
       {showProvModal && (
-        <NuevoProveedor
+        <ModalNuevoProveedor
           onCreated={() => {
             setShowProvModal(false);
             fetchProveedores();

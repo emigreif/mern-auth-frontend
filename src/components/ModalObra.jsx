@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
-import NuevoCliente from "./NuevoCliente.jsx"; // ✅ Importamos el modal de Nuevo Cliente
+import ModalNuevoCliente from "./ModalNuevoCliente.jsx"; // ✅ Importamos el modal de Nuevo Cliente
 
 export default function ModalObra({ obra, onClose, onSaved }) {
   const { token } = useAuth();
@@ -798,7 +798,7 @@ export default function ModalObra({ obra, onClose, onSaved }) {
 
 {/* ✅ Modal de Nuevo Cliente (solo se muestra si isClienteModalOpen es true) */}
 {isClienteModalOpen && (
-  <NuevoCliente onCreated={handleClienteCreado} onClose={() => setIsClienteModalOpen(false)} />
+  <ModalNuevoCliente onCreated={handleClienteCreado} onClose={() => setIsClienteModalOpen(false)} />
 )}
 </>
 );
