@@ -1,11 +1,10 @@
-// src/pages/Mediciones.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/Mediciones.module.css";
 
-// Se asume que estos modales existen
+// Modales específicos
 import ModalUbicaciones from "../components/ModalUbicaciones.jsx";
-import ModalTipologias from "../components/ModalTipologias.jsx";
+import ModalImportarTipologias from "../components/ModalImportarTipologias.jsx";
 import ModalAsignacion from "../components/ModalAsignacion.jsx";
 import ModalPlanillaMedicion from "../components/ModalPlanillaMedicion.jsx";
 import ModalReporteMedicion from "../components/ModalReporteMedicion.jsx";
@@ -51,26 +50,25 @@ const Mediciones = () => {
     }
   };
 
-  // Funciones para abrir cada modal
-  const handleOpenUbicaciones = (obra) => {
+  const abrirModal = (modal, obra) => {
     setObraSeleccionada(obra);
-    setModalUbicacionesOpen(true);
-  };
-  const handleOpenTipologias = (obra) => {
-    setObraSeleccionada(obra);
-    setModalTipologiasOpen(true);
-  };
-  const handleOpenAsignacion = (obra) => {
-    setObraSeleccionada(obra);
-    setModalAsignacionOpen(true);
-  };
-  const handleOpenPlanilla = (obra) => {
-    setObraSeleccionada(obra);
-    setModalPlanillaOpen(true);
-  };
-  const handleOpenReporte = (obra) => {
-    setObraSeleccionada(obra);
-    setModalReporteOpen(true);
+    switch (modal) {
+      case "ubicaciones":
+        setModalUbicacionesOpen(true);
+        break;
+      case "tipologias":
+        setModalTipologiasOpen(true);
+        break;
+      case "asignacion":
+        setModalAsignacionOpen(true);
+        break;
+      case "planilla":
+        setModalPlanillaOpen(true);
+        break;
+      case "reporte":
+        setModalReporteOpen(true);
+        break;
+    }
   };
 
   return (
@@ -100,36 +98,21 @@ const Mediciones = () => {
               <tr key={obra._id}>
                 <td>{obra.codigoObra}</td>
                 <td>{obra.nombre}</td>
-                <td>
-                  <button
-                    className={styles.actionsBtn}
-                    onClick={() => handleOpenUbicaciones(obra)}
-                  >
-                    Ubicaciones
+                <td className={styles.actionsTd}>
+                  <button onClick={() => abrirModal("ubicaciones", obra)}>
+                    📍 Ubicaciones
                   </button>
-                  <button
-                    className={styles.actionsBtn}
-                    onClick={() => handleOpenTipologias(obra)}
-                  >
-                    Tipologías
+                  <button onClick={() => abrirModal("tipologias", obra)}>
+                    🧱 Tipologías
                   </button>
-                  <button
-                    className={styles.actionsBtn}
-                    onClick={() => handleOpenAsignacion(obra)}
-                  >
-                    Asignación
+                  <button onClick={() => abrirModal("asignacion", obra)}>
+                    🧩 Asignación
                   </button>
-                  <button
-                    className={styles.actionsBtn}
-                    onClick={() => handleOpenPlanilla(obra)}
-                  >
-                    Planilla
+                  <button onClick={() => abrirModal("planilla", obra)}>
+                    📄 Planilla
                   </button>
-                  <button
-                    className={styles.actionsBtn}
-                    onClick={() => handleOpenReporte(obra)}
-                  >
-                    Reporte
+                  <button onClick={() => abrirModal("reporte", obra)}>
+                    📊 Reporte
                   </button>
                 </td>
               </tr>
@@ -145,24 +128,31 @@ const Mediciones = () => {
           onClose={() => setModalUbicacionesOpen(false)}
         />
       )}
+
       {modalTipologiasOpen && obraSeleccionada && (
-        <ModalTipologias
+        <ModalImportarTipologias
           obra={obraSeleccionada}
+          endpoint="/api/tipologias/importar"
+          titulo="Cargar Tipologías de Medición"
           onClose={() => setModalTipologiasOpen(false)}
+          onSaved={fetchObras}
         />
       )}
+
       {modalAsignacionOpen && obraSeleccionada && (
         <ModalAsignacion
           obra={obraSeleccionada}
           onClose={() => setModalAsignacionOpen(false)}
         />
       )}
+
       {modalPlanillaOpen && obraSeleccionada && (
         <ModalPlanillaMedicion
           obra={obraSeleccionada}
           onClose={() => setModalPlanillaOpen(false)}
         />
       )}
+
       {modalReporteOpen && obraSeleccionada && (
         <ModalReporteMedicion
           obra={obraSeleccionada}
