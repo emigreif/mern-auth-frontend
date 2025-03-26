@@ -38,7 +38,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className={styles.pageContainer}>
+    <div className={styles.forgotContainer}>
       {/* Lado izquierdo (form) */}
       <div className={styles.leftSide}>
         <div className={styles.formBox}>
