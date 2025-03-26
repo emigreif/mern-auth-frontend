@@ -1,87 +1,72 @@
-import React, { useEffect, useState } from "react";
+// src/components/ModalPerfil.jsx
+import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
-import styles from "../styles/modals/ModalPerfil.module.css";
+import styles from "../styles/modals/ModalShared.module.css";
 
 /**
- * Props esperadas:
- * - isOpen: boolean
- * - onClose: function
- * - perfilData: objeto (si está editando) o null
- * - onSave: function(data)
+ * ModalPerfil: para ver/editar un “perfil” en OV
+ * Props:
+ *  - isOpen: bool
+ *  - onClose: func
+ *  - perfilData: obj => datos iniciales
+ *  - onSave: func => guardar
  */
 export default function ModalPerfil({
   isOpen,
   onClose,
-  perfilData = null,
+  perfilData = {},
   onSave
 }) {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     codigo: "",
     descripcion: "",
     color: "",
-    cantidad: 0,
     largo: 0,
-    pesoxmetro: 0
+    pesoxmetro: 0,
+    cantidad: 0
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (perfilData) {
-      setForm({
-        codigo: perfilData.codigo || "",
-        descripcion: perfilData.descripcion || "",
-        color: perfilData.color || "",
-        cantidad: perfilData.cantidad || 0,
-        largo: perfilData.largo || 0,
-        pesoxmetro: perfilData.pesoxmetro || 0
-      });
-    } else {
-      setForm({
-        codigo: "",
-        descripcion: "",
-        color: "",
-        cantidad: 0,
-        largo: 0,
-        pesoxmetro: 0
-      });
+      setFormData(perfilData);
     }
   }, [perfilData]);
 
-  const validate = () => {
-    const newErrors = {};
-    if (!form.codigo.trim()) newErrors.codigo = "Código requerido";
-    if (!form.descripcion.trim()) newErrors.descripcion = "Descripción requerida";
-    if (form.cantidad < 0) newErrors.cantidad = "Cantidad inválida";
-    if (form.largo <= 0) newErrors.largo = "Largo inválido";
-    if (form.pesoxmetro <= 0) newErrors.pesoxmetro = "Peso inválido";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    const err = {};
+    if (!formData.codigo) err.codigo = "Código requerido";
+    if (!formData.descripcion) err.descripcion = "Descripción requerida";
+    if (formData.cantidad < 0) err.cantidad = "Cantidad no puede ser negativa";
+    if (formData.largo < 0) err.largo = "Largo no puede ser negativo";
+    if (formData.pesoxmetro < 0) err.pesoxmetro = "Peso x metro inválido";
+    setErrors(err);
+    return Object.keys(err).length === 0;
+  };
+
+  const handleSave = (e) => {
     e.preventDefault();
     if (!validate()) return;
-    onSave(form);
+    onSave(formData);
   };
 
   if (!isOpen) return null;
 
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title={perfilData ? "Editar Perfil" : "Nuevo Perfil"}>
-      <form onSubmit={handleSubmit} className={styles.modalForm}>
+    <ModalBase isOpen={isOpen} onClose={onClose} title="Perfil OV">
+      <form onSubmit={handleSave} className={styles.modalForm}>
         <div className={styles.formGroup}>
           <label>Código</label>
           <input
             type="text"
             name="codigo"
-            value={form.codigo}
+            value={formData.codigo || ""}
             onChange={handleChange}
           />
           {errors.codigo && <small className={styles.error}>{errors.codigo}</small>}
@@ -92,7 +77,7 @@ export default function ModalPerfil({
           <input
             type="text"
             name="descripcion"
-            value={form.descripcion}
+            value={formData.descripcion || ""}
             onChange={handleChange}
           />
           {errors.descripcion && <small className={styles.error}>{errors.descripcion}</small>}
@@ -103,9 +88,31 @@ export default function ModalPerfil({
           <input
             type="text"
             name="color"
-            value={form.color}
+            value={formData.color || ""}
             onChange={handleChange}
           />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Largo</label>
+          <input
+            type="number"
+            name="largo"
+            value={formData.largo || 0}
+            onChange={handleChange}
+          />
+          {errors.largo && <small className={styles.error}>{errors.largo}</small>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Peso x metro</label>
+          <input
+            type="number"
+            name="pesoxmetro"
+            value={formData.pesoxmetro || 0}
+            onChange={handleChange}
+          />
+          {errors.pesoxmetro && <small className={styles.error}>{errors.pesoxmetro}</small>}
         </div>
 
         <div className={styles.formGroup}>
@@ -113,33 +120,10 @@ export default function ModalPerfil({
           <input
             type="number"
             name="cantidad"
-            value={form.cantidad}
+            value={formData.cantidad || 0}
             onChange={handleChange}
           />
           {errors.cantidad && <small className={styles.error}>{errors.cantidad}</small>}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>Largo (mm)</label>
-          <input
-            type="number"
-            name="largo"
-            value={form.largo}
-            onChange={handleChange}
-          />
-          {errors.largo && <small className={styles.error}>{errors.largo}</small>}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>Peso por metro (kg)</label>
-          <input
-            type="number"
-            step="0.01"
-            name="pesoxmetro"
-            value={form.pesoxmetro}
-            onChange={handleChange}
-          />
-          {errors.pesoxmetro && <small className={styles.error}>{errors.pesoxmetro}</small>}
         </div>
 
         <div className={styles.actions}>
