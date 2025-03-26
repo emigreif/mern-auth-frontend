@@ -1,9 +1,8 @@
 /* src/pages/Profile/Profile.module.css */
-
 .pageContainer {
-  width: 90%;
+  
   background-color: #fff;
-  border-radius: 8px;
+  margin:  0.1rem;
   padding: 2rem;
 }
   

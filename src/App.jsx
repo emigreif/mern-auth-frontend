@@ -59,11 +59,17 @@ function PublicRoutes() {
 
 // 2. Rutas protegidas
 function ProtectedRoutes() {
+  const [sidebarExpanded, setSidebarExpanded] = React.useState(false);
+
   return (
     <div className="app-container">
       <Navbar />
-      <Sidebar />
-      <div className="main-content with-sidebar">
+      <Sidebar expanded={sidebarExpanded} setExpanded={setSidebarExpanded} />
+      <div
+        className={`main-content ${
+          sidebarExpanded ? "with-sidebar-expanded" : "with-sidebar-collapsed"
+        }`}
+      >
         <Routes>
           <Route path="/obras" element={<Obras />} />
           <Route path="/presupuestos" element={<Presupuestos />} />
@@ -73,20 +79,13 @@ function ProtectedRoutes() {
           <Route path="/mediciones" element={<Mediciones />} />
           <Route path="/compras" element={<Compras />} />
           <Route path="/reportes" element={<Reportes />} />
-       
-
-          {/* Ruta padre: /contabilidad */}
           <Route path="/contabilidad" element={<Contabilidad />}>
             <Route path="nomina" element={<Nomina />} />
           </Route>
-
-          {/* Ruta padre: /configuracion */}
           <Route path="/configuracion" element={<Configuracion />}>
             <Route path="profile" element={<Profile />} />
             <Route path="perfiles" element={<Perfiles />} />
           </Route>
-
-          {/* Si no coincide => redirigir a /obras */}
           <Route path="*" element={<Navigate to="/obras" />} />
         </Routes>
       </div>

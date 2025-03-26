@@ -1,7 +1,9 @@
 .pageContainer {
+  
+  background-color: #fff;
+  margin:  0.1rem;
   padding: 2rem;
 }
-
 .proveedoresGrid {
   display: grid;
   gap: 1rem;

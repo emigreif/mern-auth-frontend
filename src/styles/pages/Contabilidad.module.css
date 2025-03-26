@@ -1,7 +1,9 @@
 .pageContainer {
+  
+  background-color: #fff;
+  margin:  0.1rem;
   padding: 2rem;
 }
-
 .header {
   margin-bottom: 2rem;
 }

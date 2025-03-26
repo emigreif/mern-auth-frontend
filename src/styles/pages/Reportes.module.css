@@ -1,11 +1,10 @@
 /* src/pages/Reportes/Reportes.module.css */
 .pageContainer {
-
+  
   background-color: #fff;
-  border-radius: 8px;
+  margin:  0.1rem;
   padding: 2rem;
 }
-
   
   .header {
     display: flex;
