@@ -4,32 +4,23 @@
   padding: 0;
   box-sizing: border-box;
 }
-
-
 body {
   font-family: Arial, sans-serif;
   background-color: var(--color-fondo);
   color: var(--color-texto);
 }
-
 a {
   text-decoration: none;
   color: inherit;
 }
-
-
-/* Estructura principal */
 .app-container {
-
   background-color: #00a46e;
 
   min-height: 100vh;
 }
-
 .main-content.with-sidebar-collapsed {
   margin-left: 60px;
 }
-
 .main-content.with-sidebar-expanded {
   margin-left: 180px;
 }

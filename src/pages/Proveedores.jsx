@@ -32,7 +32,12 @@ export default function Proveedores() {
 
   const [formProv, setFormProv] = useState(initialFormProv);
 
-  const rubrosPosibles = ["Vidrio", "Perfiles", "Accesorios", "Compras Generales"];
+  const rubrosPosibles = [
+    "Vidrio",
+    "Perfiles",
+    "Accesorios",
+    "Compras Generales",
+  ];
 
   useEffect(() => {
     if (token) fetchProveedores();
@@ -108,7 +113,10 @@ export default function Proveedores() {
     try {
       const res = await fetch(`${API_URL}/api/proveedores`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(newProv),
       });
       const data = await res.json();
@@ -139,7 +147,10 @@ export default function Proveedores() {
     try {
       const res = await fetch(`${API_URL}/api/proveedores/${currentProvId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(updatedProv),
       });
       const data = await res.json();
@@ -214,9 +225,15 @@ export default function Proveedores() {
             {prov.emails?.length > 0 && <p>Emails: {prov.emails.join(", ")}</p>}
 
             <div className={styles.actions}>
-              <button onClick={() => handleOpenModalForEdit(prov)}>✏️ Editar</button>
-              <button onClick={() => handleDeleteProveedor(prov._id)}>❌ Eliminar</button>
-              <button onClick={() => handleOpenMovimientoProveedor(prov)}>➕ Movimiento</button>
+              <button onClick={() => handleOpenModalForEdit(prov)}>
+                ✏️ Editar
+              </button>
+              <button onClick={() => handleDeleteProveedor(prov._id)}>
+                ❌ Eliminar
+              </button>
+              <button onClick={() => handleOpenMovimientoProveedor(prov)}>
+                ➕ Movimiento
+              </button>
             </div>
           </div>
         ))}
@@ -228,30 +245,70 @@ export default function Proveedores() {
           onClose={handleCloseModal}
           title={editMode ? "Editar Proveedor" : "Nuevo Proveedor"}
         >
-          <form onSubmit={editMode ? handleUpdateProveedor : handleCreateProveedor}>
+          <form
+            onSubmit={editMode ? handleUpdateProveedor : handleCreateProveedor}
+          >
             <label>Nombre</label>
-            <input type="text" name="nombre" value={formProv.nombre} onChange={(e) => setFormProv({ ...formProv, nombre: e.target.value })} required />
+            <input
+              type="text"
+              name="nombre"
+              value={formProv.nombre}
+              onChange={(e) =>
+                setFormProv({ ...formProv, nombre: e.target.value })
+              }
+              required
+            />
 
             <label>Dirección</label>
-            <input type="text" name="direccion" value={formProv.direccion} onChange={(e) => setFormProv({ ...formProv, direccion: e.target.value })} required />
+            <input
+              type="text"
+              name="direccion"
+              value={formProv.direccion}
+              onChange={(e) =>
+                setFormProv({ ...formProv, direccion: e.target.value })
+              }
+              required
+            />
 
             <label>Teléfono</label>
-            <input type="text" name="telefono" value={formProv.telefono} onChange={(e) => setFormProv({ ...formProv, telefono: e.target.value })} />
+            <input
+              type="text"
+              name="telefono"
+              value={formProv.telefono}
+              onChange={(e) =>
+                setFormProv({ ...formProv, telefono: e.target.value })
+              }
+            />
 
             <label>WhatsApp</label>
-            <input type="text" name="whatsapp" value={formProv.whatsapp} onChange={(e) => setFormProv({ ...formProv, whatsapp: e.target.value })} />
+            <input
+              type="text"
+              name="whatsapp"
+              value={formProv.whatsapp}
+              onChange={(e) =>
+                setFormProv({ ...formProv, whatsapp: e.target.value })
+              }
+            />
 
             <label>Emails</label>
             {formProv.emails.map((email, i) => (
               <div key={i}>
-                <input type="email" value={email} onChange={(e) => handleEmailChange(i, e.target.value)} />
-                <button type="button" onClick={() => handleRemoveEmail(i)}>X</button>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => handleEmailChange(i, e.target.value)}
+                />
+                <button type="button" onClick={() => handleRemoveEmail(i)}>
+                  X
+                </button>
               </div>
             ))}
-            <button type="button" onClick={handleAddEmail}>+ Añadir Email</button>
+            <button type="button" onClick={handleAddEmail}>
+              + Añadir Email
+            </button>
 
             <label>Rubros</label>
-            {rubrosPosibles.map(r => (
+            {rubrosPosibles.map((r) => (
               <label key={r}>
                 <input
                   type="checkbox"
@@ -264,7 +321,9 @@ export default function Proveedores() {
 
             <div>
               <button type="submit">Guardar</button>
-              <button type="button" onClick={handleCloseModal}>Cancelar</button>
+              <button type="button" onClick={handleCloseModal}>
+                Cancelar
+              </button>
             </div>
           </form>
         </ModalBase>
