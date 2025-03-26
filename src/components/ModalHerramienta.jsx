@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
-import styles from "../styles/modals/ModalHerramienta.module.css";
+import styles from "../styles/modals/GlobalModal.module.css";
 
 /**
  * Props esperadas:

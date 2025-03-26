@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/modals/ModalIngresoMaterial.module.css";
+import styles from "../styles/modals/GlobalModal.module.css";
 import ModalBase from "./ModalBase.jsx";
 
 /**

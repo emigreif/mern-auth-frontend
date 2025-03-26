@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
-import styles from "../styles/modals/ModalVidrio.module.css";
+import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave }) {
   const [form, setForm] = useState({

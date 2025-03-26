@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
-import styles from "../styles/modals/ModalAsignarPerfil.module.css"; // reutilizamos estilos
+import styles from "../styles/modals/GlobalModal.module.css"; // reutilizamos estilos
 
 /**
  * Props:

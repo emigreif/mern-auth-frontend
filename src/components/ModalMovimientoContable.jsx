@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
-import styles from "../styles/modals/ModalMovimientoContable.module.css";
+import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalMovimientoContable({
   mode = "create",
