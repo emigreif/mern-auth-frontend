@@ -4,7 +4,7 @@ import styles from "../styles/pages/Mediciones.module.css";
 
 // Modales específicos
 import ModalUbicaciones from "../components/ModalUbicaciones.jsx";
-import ModalImportarTipologias from "../components/ModalImportarTipologias.jsx";
+import ModalImportarTipologiasOV from "../components/ModalImportarTipologiasOV.jsx";
 import ModalAsignacion from "../components/ModalAsignacion.jsx";
 import ModalPlanillaMedicion from "../components/ModalPlanillaMedicion.jsx";
 import ModalReporteMedicion from "../components/ModalReporteMedicion.jsx";
@@ -130,7 +130,7 @@ const Mediciones = () => {
       )}
 
       {modalTipologiasOpen && obraSeleccionada && (
-        <ModalImportarTipologias
+        <ModalImportarTipologiasOV
           obra={obraSeleccionada}
           endpoint="/api/tipologias/importar"
           titulo="Cargar Tipologías de Medición"

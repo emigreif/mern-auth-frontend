@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
 import ModalNuevoCliente from "./ModalNuevoCliente.jsx";
-import ModalPerfilesOV from "./ModalPerfilesOV.jsx";
-import ModalVidriosOV from "./ModalVidriosOV.jsx";
-import ModalAccesoriosOV from "./ModalAccesoriosOV.jsx";
-import ModalTipologiasOV from "./ModalTipologiasOV.jsx";
+import ModalImportarPerfilesOV from "./ModalImportarPerfilesOV.jsx";
+import ModalImportarVidriosOV from "./ModalImportarVidriosOV.jsx";
+import ModalImportarAccesoriosOV from "./ModalImportarAccesoriosOV.jsx";
+import ModalImportarTipologiasOV from "./ModalImportarTipologiasOV.jsx";
 
 export default function ModalObra({ obra, onClose, onSaved }) {
   const { token } = useAuth();
@@ -207,16 +207,16 @@ export default function ModalObra({ obra, onClose, onSaved }) {
 
       {/* Modales para materiales OV */}
       {modalPerfilesOpen && (
-        <ModalPerfilesOV obra={obra} onClose={() => setModalPerfilesOpen(false)} />
+        <ModalImportarPerfilesOV obra={obra} onClose={() => setModalPerfilesOpen(false)} />
       )}
       {modalVidriosOpen && (
-        <ModalVidriosOV obra={obra} onClose={() => setModalVidriosOpen(false)} />
+        <ModalImportarVidriosOV obra={obra} onClose={() => setModalVidriosOpen(false)} />
       )}
       {modalAccesoriosOpen && (
-        <ModalAccesoriosOV obra={obra} onClose={() => setModalAccesoriosOpen(false)} />
+        <ModalImportarAccesoriosOV obra={obra} onClose={() => setModalAccesoriosOpen(false)} />
       )}
       {modalTipologiasOpen && (
-        <ModalTipologiasOV obra={obra} onClose={() => setModalTipologiasOpen(false)} />
+        <ModalImportarTipologiasOV obra={obra} onClose={() => setModalTipologiasOpen(false)} />
       )}
 
       {/* Modal para crear nuevo cliente */}
