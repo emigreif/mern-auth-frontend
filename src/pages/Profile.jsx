@@ -1,7 +1,7 @@
 // src/pages/Profile.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/GlobalStylePages.css";
+import styles from "../styles/pages/GlobalStylePages.module.css";
 const Profile = () => {
   const { user, token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";

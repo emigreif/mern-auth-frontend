@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/ModalBase.jsx";
-import styles from "../styles/pages/GlobalStylePages.css";
+import styles from "../styles/pages/GlobalStylePages.module.css";
 
 /**
  * Página "Reportes"

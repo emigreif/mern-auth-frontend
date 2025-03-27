@@ -1,6 +1,6 @@
 // src/pages/Obras.jsx
 import React, { useState, useEffect } from "react";
-import styles from "../styles/pages/GlobalStylePages.css";
+import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 
 import ModalObra from "../components/ModalObra.jsx";

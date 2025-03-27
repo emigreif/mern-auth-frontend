@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
-import styles from "../styles/pages/GlobalStylePages.css";
+import styles from "../styles/pages/GlobalStylePages.module.css";
 export default function Configuracion() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
