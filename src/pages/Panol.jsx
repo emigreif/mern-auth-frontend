@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/GlobalStylePages.module.css";
+import globalStyles from "../styles/pages/GlobalStylePages.module.css";
 
 // Modales base
 import ModalHerramienta from "../components/ModalHerramienta.jsx";
@@ -13,12 +13,14 @@ import ModalAsignarPerfil from "../components/ModalAsignarPerfil.jsx";
 import ModalAsignarAccesorio from "../components/ModalAsignarAccesorio.jsx";
 import ModalAsignarVidrio from "../components/ModalAsignarVidrio.jsx";
 
+// Importamos el módulo de estilos exclusivo para Panol
+import panolStyles from "../styles/pages/Panol.module.css";
+
 export default function Panol() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [tab, setTab] = useState("herramientas");
-
   const [herramientas, setHerramientas] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
   const [vidrios, setVidrios] = useState([]);
@@ -26,7 +28,6 @@ export default function Panol() {
   const [obras, setObras] = useState([]);
 
   const [search, setSearch] = useState("");
-
   const [editingItem, setEditingItem] = useState(null);
 
   const [modalHerramientaOpen, setModalHerramientaOpen] = useState(false);
@@ -81,7 +82,9 @@ export default function Panol() {
   }, [token]);
 
   const filteredList = (list) =>
-    list.filter((item) => JSON.stringify(item).toLowerCase().includes(search.toLowerCase()));
+    list.filter((item) =>
+      JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
+    );
 
   const handleTabChange = (t) => {
     setTab(t);
@@ -121,19 +124,19 @@ export default function Panol() {
   };
 
   return (
-    <div className={styles.pageContainer}>
-      <div className={styles.header}>
+    <div className={globalStyles.pageContainer}>
+      <div className={globalStyles.header}>
         <h1>Pañol</h1>
       </div>
 
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+      {errorMsg && <p className={globalStyles.error}>{errorMsg}</p>}
       {loading && <p>Cargando datos...</p>}
 
-      <div className={styles.tabs}>
+      <div className={globalStyles.tabs}>
         {["herramientas", "perfiles", "vidrios", "accesorios"].map((t) => (
           <button
             key={t}
-            className={`${styles.tabBtn} ${tab === t ? styles.active : ""}`}
+            className={`${globalStyles.tabBtn} ${tab === t ? globalStyles.active : ""}`}
             onClick={() => handleTabChange(t)}
           >
             {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -141,21 +144,24 @@ export default function Panol() {
         ))}
       </div>
 
-      <div className={styles.searchSection}>
+      <div className={globalStyles.searchSection}>
         <input
           type="text"
-          className={styles.searchInput}
+          className={globalStyles.searchInput}
           placeholder={`Buscar ${tab}...`}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className={styles.addBtn} onClick={() => handleOpenModal(tab)}>
+        <button
+          className={globalStyles.addBtn}
+          onClick={() => handleOpenModal(tab)}
+        >
           + Agregar {tab.charAt(0).toUpperCase() + tab.slice(1)}
         </button>
 
         {tab !== "herramientas" && (
           <button
-            className={styles.secondaryBtn}
+            className={globalStyles.secondaryBtn}
             onClick={() => {
               if (tab === "perfiles") setModalAsignarPerfilOpen(true);
               else if (tab === "accesorios") setModalAsignarAccesorioOpen(true);
@@ -189,21 +195,40 @@ export default function Panol() {
         }
       />
 
-      {/* Modales */}
+      {/* Modales para creación/edición */}
       {modalHerramientaOpen && (
-        <ModalHerramienta herramienta={editingItem} onClose={handleCloseAllModals} onSaved={handleCloseAllModals} />
+        <ModalHerramienta
+          herramienta={editingItem}
+          onClose={handleCloseAllModals}
+          onSaved={handleCloseAllModals}
+        />
       )}
       {modalPerfilOpen && (
-        <ModalPerfil isOpen={true} perfilData={editingItem} onClose={handleCloseAllModals} onSave={handleCloseAllModals} />
+        <ModalPerfil
+          isOpen={true}
+          perfilData={editingItem}
+          onClose={handleCloseAllModals}
+          onSave={handleCloseAllModals}
+        />
       )}
       {modalVidrioOpen && (
-        <ModalVidrio isOpen={true} vidrioData={editingItem} onClose={handleCloseAllModals} onSave={handleCloseAllModals} />
+        <ModalVidrio
+          isOpen={true}
+          vidrioData={editingItem}
+          onClose={handleCloseAllModals}
+          onSave={handleCloseAllModals}
+        />
       )}
       {modalAccesorioOpen && (
-        <ModalAccesorio isOpen={true} accesorioData={editingItem} onClose={handleCloseAllModals} onSave={handleCloseAllModals} />
+        <ModalAccesorio
+          isOpen={true}
+          accesorioData={editingItem}
+          onClose={handleCloseAllModals}
+          onSave={handleCloseAllModals}
+        />
       )}
 
-      {/* Asignación a Obra */}
+      {/* Modales de asignación a Obra */}
       {modalAsignarPerfilOpen && (
         <ModalAsignarPerfil
           isOpen={modalAsignarPerfilOpen}
@@ -242,13 +267,12 @@ export default function Panol() {
 }
 
 const TableComponent = ({ data, fields, onEdit }) => {
-  const styles = require("../styles/pages/Panol.module.css");
   return (
     <>
       {data.length === 0 ? (
-        <div className={styles.noData}>No hay datos para mostrar</div>
+        <div className={panolStyles.noData}>No hay datos para mostrar</div>
       ) : (
-        <table className={styles.tableBase}>
+        <table className={panolStyles.tableBase}>
           <thead>
             <tr>
               {fields.map((field) => (

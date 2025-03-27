@@ -1,30 +1,21 @@
 // src/components/ModalIngresoMaterial.jsx
-
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
 
-/**
- * Props:
- *  - compra: la OC (objeto con _id, numeroOC, tipo, pedido/vidrios/accesorios)
- *  - onClose: cierra modal
- *  - onSaved: callback tras guardar
- */
 export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Número de remito ingresado por el usuario
+  // Número de remito y lista de items a ingresar
   const [numeroRemito, setNumeroRemito] = useState("");
-  // Lista de items con la cantidad ingresada
-  // Ej: [{ itemId: "abc123", cantidadIngresada: 10 }, ...]
   const [items, setItems] = useState([]);
-  // Estados de error y loading
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Maneja cambios en la cantidad ingresada de un ítem
+  // Maneja el cambio en la cantidad ingresada para cada ítem
   const handleChangeCantidad = (itemId, val) => {
     const cantidad = parseFloat(val) || 0;
     setItems((prev) => {
@@ -39,7 +30,6 @@ export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
     });
   };
 
-  // Envía los datos al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
@@ -54,15 +44,13 @@ export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
         },
         body: JSON.stringify({ numeroRemito, items })
       });
-
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.message || "Error al ingresar material");
       }
-
       await res.json();
       setLoading(false);
-      onSaved(); // Notifica al padre que se guardó correctamente
+      onSaved();
     } catch (error) {
       setErrorMsg(error.message);
       setLoading(false);
@@ -70,11 +58,7 @@ export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
   };
 
   return (
-    <ModalBase
-      isOpen={true}
-      onClose={onClose}
-      title={`Ingreso de Material - OC #${compra.numeroOC}`}
-    >
+    <ModalBase isOpen={true} onClose={onClose} title={`Ingreso de Material - OC #${compra.numeroOC}`}>
       <form onSubmit={handleSubmit} className={styles.modalForm}>
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
         {loading && <p className={styles.loading}>Guardando...</p>}
@@ -88,14 +72,11 @@ export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
           />
         </div>
 
-        {/* Renderiza la lista de ítems según el tipo de compra */}
         <div className={styles.itemsList}>
           {compra.tipo === "aluminio" &&
             compra.pedido.map((p) => (
               <div key={p._id} className={styles.itemRow}>
-                <span>
-                  {p.codigo} - {p.descripcion}
-                </span>
+                <span>{p.codigo} - {p.descripcion}</span>
                 <input
                   type="number"
                   placeholder="Cantidad a ingresar"
@@ -103,13 +84,10 @@ export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
                 />
               </div>
             ))}
-
           {compra.tipo === "vidrios" &&
             compra.vidrios.map((v) => (
               <div key={v._id} className={styles.itemRow}>
-                <span>
-                  {v.codigo} - {v.descripcion}
-                </span>
+                <span>{v.codigo} - {v.descripcion}</span>
                 <input
                   type="number"
                   placeholder="Cantidad a ingresar"
@@ -117,13 +95,10 @@ export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
                 />
               </div>
             ))}
-
           {compra.tipo === "accesorios" &&
             compra.accesorios.map((a) => (
               <div key={a._id} className={styles.itemRow}>
-                <span>
-                  {a.codigo} - {a.descripcion}
-                </span>
+                <span>{a.codigo} - {a.descripcion}</span>
                 <input
                   type="number"
                   placeholder="Cantidad a ingresar"
@@ -134,12 +109,10 @@ export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
         </div>
 
         <div className={styles.actions}>
-          <button type="submit" disabled={loading}>
-            Guardar
-          </button>
-          <button type="button" onClick={onClose} disabled={loading}>
+          <Button type="submit" disabled={loading}>Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
             Cancelar
-          </button>
+          </Button>
         </div>
       </form>
     </ModalBase>

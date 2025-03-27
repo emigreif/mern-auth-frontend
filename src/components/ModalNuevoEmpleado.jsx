@@ -1,6 +1,9 @@
-// src/components/ModalNuevoEmpleado/ModalNuevoEmpleado.jsx
+// src/components/ModalNuevoEmpleado.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
+import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalNuevoEmpleado({ onCreated, onClose }) {
   const { token } = useAuth();
@@ -63,108 +66,60 @@ export default function ModalNuevoEmpleado({ onCreated, onClose }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+    <ModalBase isOpen={true} onClose={onClose} title="Nuevo Empleado">
+      <form onSubmit={handleSubmit} className={styles.modalForm}>
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-      <div>
-        <label>Nombre</label>
-        <input
-          type="text"
-          name="nombre"
-          value={form.nombre}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>Nombre</label>
+          <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required />
+        </div>
 
-      <div>
-        <label>Apellido</label>
-        <input
-          type="text"
-          name="apellido"
-          value={form.apellido}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>Apellido</label>
+          <input type="text" name="apellido" value={form.apellido} onChange={handleChange} required />
+        </div>
 
-      <div>
-        <label>DNI</label>
-        <input
-          type="text"
-          name="dni"
-          value={form.dni}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>DNI</label>
+          <input type="text" name="dni" value={form.dni} onChange={handleChange} required />
+        </div>
 
-      <div>
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>Email</label>
+          <input type="email" name="email" value={form.email} onChange={handleChange} />
+        </div>
 
-      <div>
-        <label>Teléfono</label>
-        <input
-          type="text"
-          name="telefono"
-          value={form.telefono}
-          onChange={handleChange}
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>Teléfono</label>
+          <input type="text" name="telefono" value={form.telefono} onChange={handleChange} />
+        </div>
 
-      <div>
-        <label>Dirección</label>
-        <input
-          type="text"
-          name="direccion"
-          value={form.direccion}
-          onChange={handleChange}
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>Dirección</label>
+          <input type="text" name="direccion" value={form.direccion} onChange={handleChange} />
+        </div>
 
-      <div>
-        <label>Puesto</label>
-        <input
-          type="text"
-          name="puesto"
-          value={form.puesto}
-          onChange={handleChange}
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>Puesto</label>
+          <input type="text" name="puesto" value={form.puesto} onChange={handleChange} />
+        </div>
 
-      <div>
-        <label>Salario</label>
-        <input
-          type="number"
-          name="salario"
-          value={form.salario}
-          onChange={handleChange}
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>Salario</label>
+          <input type="number" name="salario" value={form.salario} onChange={handleChange} />
+        </div>
 
-      <div>
-        <label>Activo</label>
-        <input
-          type="checkbox"
-          name="activo"
-          checked={form.activo}
-          onChange={handleChange}
-        />
-      </div>
+        <div className={styles.formGroup}>
+          <label>Activo</label>
+          <input type="checkbox" name="activo" checked={form.activo} onChange={handleChange} />
+        </div>
 
-      <div style={{ marginTop: "1rem" }}>
-        <button type="submit">Guardar</button>
-        <button type="button" onClick={onClose}>
-          Cancelar
-        </button>
-      </div>
-    </form>
+        <div className={styles.actions}>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
+        </div>
+      </form>
+    </ModalBase>
   );
 }

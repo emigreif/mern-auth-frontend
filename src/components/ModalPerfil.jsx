@@ -1,23 +1,10 @@
 // src/components/ModalPerfil.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";
 
-
-/**
- * ModalPerfil: para ver/editar un “perfil” en OV
- * Props:
- *  - isOpen: bool
- *  - onClose: func
- *  - perfilData: obj => datos iniciales
- *  - onSave: func => guardar
- */
-export default function ModalPerfil({
-  isOpen,
-  onClose,
-  perfilData = {},
-  onSave
-}) {
+export default function ModalPerfil({ isOpen, onClose, perfilData = {}, onSave }) {
   const [formData, setFormData] = useState({
     codigo: "",
     descripcion: "",
@@ -26,7 +13,6 @@ export default function ModalPerfil({
     pesoxmetro: 0,
     cantidad: 0
   });
-
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -37,7 +23,7 @@ export default function ModalPerfil({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
@@ -64,72 +50,36 @@ export default function ModalPerfil({
       <form onSubmit={handleSave} className={styles.modalForm}>
         <div className={styles.formGroup}>
           <label>Código</label>
-          <input
-            type="text"
-            name="codigo"
-            value={formData.codigo || ""}
-            onChange={handleChange}
-          />
+          <input type="text" name="codigo" value={formData.codigo || ""} onChange={handleChange} />
           {errors.codigo && <small className={styles.error}>{errors.codigo}</small>}
         </div>
-
         <div className={styles.formGroup}>
           <label>Descripción</label>
-          <input
-            type="text"
-            name="descripcion"
-            value={formData.descripcion || ""}
-            onChange={handleChange}
-          />
+          <input type="text" name="descripcion" value={formData.descripcion || ""} onChange={handleChange} />
           {errors.descripcion && <small className={styles.error}>{errors.descripcion}</small>}
         </div>
-
         <div className={styles.formGroup}>
           <label>Color</label>
-          <input
-            type="text"
-            name="color"
-            value={formData.color || ""}
-            onChange={handleChange}
-          />
+          <input type="text" name="color" value={formData.color || ""} onChange={handleChange} />
         </div>
-
         <div className={styles.formGroup}>
           <label>Largo</label>
-          <input
-            type="number"
-            name="largo"
-            value={formData.largo || 0}
-            onChange={handleChange}
-          />
+          <input type="number" name="largo" value={formData.largo || 0} onChange={handleChange} />
           {errors.largo && <small className={styles.error}>{errors.largo}</small>}
         </div>
-
         <div className={styles.formGroup}>
           <label>Peso x metro</label>
-          <input
-            type="number"
-            name="pesoxmetro"
-            value={formData.pesoxmetro || 0}
-            onChange={handleChange}
-          />
+          <input type="number" name="pesoxmetro" value={formData.pesoxmetro || 0} onChange={handleChange} />
           {errors.pesoxmetro && <small className={styles.error}>{errors.pesoxmetro}</small>}
         </div>
-
         <div className={styles.formGroup}>
           <label>Cantidad</label>
-          <input
-            type="number"
-            name="cantidad"
-            value={formData.cantidad || 0}
-            onChange={handleChange}
-          />
+          <input type="number" name="cantidad" value={formData.cantidad || 0} onChange={handleChange} />
           {errors.cantidad && <small className={styles.error}>{errors.cantidad}</small>}
         </div>
-
         <div className={styles.actions}>
-          <button type="submit">Guardar</button>
-          <button type="button" onClick={onClose}>Cancelar</button>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
         </div>
       </form>
     </ModalBase>

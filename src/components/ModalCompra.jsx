@@ -1,22 +1,22 @@
 // src/components/ModalCompra.jsx
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx"; // Ajusta ruta
+import { useAuth } from "../context/AuthContext.jsx";
 import * as XLSX from "xlsx";
-import styles from "../styles/modals/GlobalModal.module.css";
 import ModalBase from "./ModalBase.jsx";
-import ModalNuevoProveedor from "./ModalNuevoProveedor.jsx"; // Modal para crear proveedor
+import ModalNuevoProveedor from "./ModalNuevoProveedor.jsx";
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalCompra({ editingCompra, onClose, onSaved }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
+  
   const isEdit = !!editingCompra;
   const [errorMsg, setErrorMsg] = useState("");
   const [obras, setObras] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [showProvModal, setShowProvModal] = useState(false);
-  const [showObraModal, setShowObraModal] = useState(false);
-
+  
   const [tipo, setTipo] = useState("aluminio");
   const [form, setForm] = useState({
     proveedor: "",
@@ -27,19 +27,19 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
     lugarEntrega: "",
     direccionEntrega: "",
     tratamiento: "",
-    pedido: [], // Aluminio
+    pedido: [],
     vidrios: [],
     accesorios: []
   });
-
+  
   useEffect(() => {
     fetchObras();
     fetchProveedores();
     if (isEdit) {
       loadCompra(editingCompra);
     }
-  }, []);
-
+  }, [token]);
+  
   const fetchObras = async () => {
     try {
       const res = await fetch(`${API_URL}/api/obras`, {
@@ -48,10 +48,10 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
       const data = await res.json();
       setObras(data);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching obras", error);
     }
   };
-
+  
   const fetchProveedores = async () => {
     try {
       const res = await fetch(`${API_URL}/api/proveedores`, {
@@ -60,10 +60,10 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
       const data = await res.json();
       setProveedores(data);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching proveedores", error);
     }
   };
-
+  
   const loadCompra = (compra) => {
     setTipo(compra.tipo);
     setForm({
@@ -80,20 +80,11 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
       accesorios: compra.accesorios || []
     });
   };
-
+  
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
-  // Validación
-  const validate = () => {
-    let errs = "";
-    if (!form.proveedor) errs += "Falta proveedor. ";
-    if (!form.obra) errs += "Falta obra. ";
-    return errs;
-  };
-
-  // Importar Excel
+  
   const handleImportExcel = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -116,27 +107,18 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
       if (tipo === "aluminio") {
         setForm((prev) => ({ ...prev, pedido: items }));
       } else if (tipo === "vidrios") {
-        // Ajustar a tu estructura
         setForm((prev) => ({ ...prev, vidrios: items }));
       } else if (tipo === "accesorios") {
-        // Ajustar a tu estructura
         setForm((prev) => ({ ...prev, accesorios: items }));
       }
     } catch (error) {
       setErrorMsg("Error al importar Excel");
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
-
-    const validationErrors = validate();
-    if (validationErrors) {
-      setErrorMsg(validationErrors);
-      return;
-    }
-
     try {
       let url = `${API_URL}/api/compras/${tipo}`;
       let method = "POST";
@@ -162,11 +144,10 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
       setErrorMsg(error.message);
     }
   };
-
+  
   return (
     <ModalBase isOpen={true} onClose={onClose} title={isEdit ? "Editar Compra" : "Nueva Compra"}>
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-
       <form onSubmit={handleSubmit}>
         {!isEdit && (
           <div className={styles.formGroup}>
@@ -178,74 +159,63 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
             </select>
           </div>
         )}
-
         <div className={styles.formGroup}>
           <label>Proveedor (requerido)</label>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <select
-              name="proveedor"
-              value={form.proveedor}
-              onChange={handleChange}
-              required
-            >
+          <div className={styles.flexRow}>
+            <select name="proveedor" value={form.proveedor} onChange={handleChange} required>
               <option value="">-- Seleccionar --</option>
               {proveedores.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.nombre}
-                </option>
+                <option key={p._id} value={p._id}>{p.nombre}</option>
               ))}
             </select>
-            <button type="button" onClick={() => setShowProvModal(true)}>
-              + Agregar
-            </button>
+            <Button onClick={() => setShowProvModal(true)}>+ Agregar</Button>
           </div>
         </div>
-
         <div className={styles.formGroup}>
           <label>Obra (requerido)</label>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <select
-              name="obra"
-              value={form.obra}
-              onChange={handleChange}
-              required
-            >
+          <div className={styles.flexRow}>
+            <select name="obra" value={form.obra} onChange={handleChange} required>
               <option value="">-- Seleccionar --</option>
               {obras.map((o) => (
-                <option key={o._id} value={o._id}>
-                  {o.nombre}
-                </option>
+                <option key={o._id} value={o._id}>{o.nombre}</option>
               ))}
             </select>
-            <button type="button" onClick={() => setShowObraModal(true)}>
-              + Agregar
-            </button>
+            <Button onClick={() => { /* Acción para agregar obra */ }}>+ Agregar</Button>
           </div>
         </div>
-
         <div className={styles.formGroup}>
           <label>Fecha Estimada Entrega</label>
-          <input
-            type="date"
-            name="fechaEstimadaEntrega"
-            value={form.fechaEstimadaEntrega}
-            onChange={handleChange}
-          />
+          <input type="date" name="fechaEstimadaEntrega" value={form.fechaEstimadaEntrega} onChange={handleChange} />
         </div>
-
-        {/* Subir Excel */}
+        <div className={styles.formGroup}>
+          <label>Factura</label>
+          <input type="text" name="factura" value={form.factura} onChange={handleChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Remito</label>
+          <input type="text" name="remito" value={form.remito} onChange={handleChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Lugar de Entrega</label>
+          <input type="text" name="lugarEntrega" value={form.lugarEntrega} onChange={handleChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Dirección de Entrega</label>
+          <input type="text" name="direccionEntrega" value={form.direccionEntrega} onChange={handleChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Tratamiento</label>
+          <input type="text" name="tratamiento" value={form.tratamiento} onChange={handleChange} />
+        </div>
         <div className={styles.formGroup}>
           <label>Importar Ítems desde Excel</label>
           <input type="file" accept=".xlsx,.xls" onChange={handleImportExcel} />
         </div>
-
         <div className={styles.formActions}>
-          <button type="submit">Guardar</button>
-          <button type="button" onClick={onClose}>Cancelar</button>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
         </div>
       </form>
-
-      {/* Modal para crear Proveedor */}
       {showProvModal && (
         <ModalNuevoProveedor
           onCreated={() => {
@@ -255,7 +225,6 @@ export default function ModalCompra({ editingCompra, onClose, onSaved }) {
           onClose={() => setShowProvModal(false)}
         />
       )}
-
     </ModalBase>
   );
 }

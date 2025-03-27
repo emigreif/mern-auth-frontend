@@ -1,14 +1,8 @@
 // src/components/PerfilSelector.jsx
 import React from "react";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 
-/**
- * Props:
- *  - isOpen
- *  - onClose
- *  - perfiles: array de { _id, nombre }
- *  - onSelectPerfil(perfil)
- */
 const PerfilSelector = ({ isOpen, onClose, perfiles = [], onSelectPerfil }) => {
   if (!isOpen) return null;
 
@@ -16,7 +10,7 @@ const PerfilSelector = ({ isOpen, onClose, perfiles = [], onSelectPerfil }) => {
     <ModalBase isOpen={isOpen} onClose={onClose} title="Selecciona tu Perfil">
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         {perfiles.map((perfil) => (
-          <button
+          <Button
             key={perfil._id}
             onClick={() => {
               onSelectPerfil(perfil);
@@ -24,7 +18,7 @@ const PerfilSelector = ({ isOpen, onClose, perfiles = [], onSelectPerfil }) => {
             }}
           >
             {perfil.nombre}
-          </button>
+          </Button>
         ))}
       </div>
     </ModalBase>

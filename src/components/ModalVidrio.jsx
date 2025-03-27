@@ -1,5 +1,7 @@
+// src/components/ModalVidrio.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave }) {
@@ -8,9 +10,8 @@ export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave
     tipo: "simple",
     ancho: 0,
     alto: 0,
-    cantidad: 0
+    cantidad: 0,
   });
-
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave
         tipo: vidrioData.tipo || "simple",
         ancho: vidrioData.ancho || 0,
         alto: vidrioData.alto || 0,
-        cantidad: vidrioData.cantidad || 0
+        cantidad: vidrioData.cantidad || 0,
       });
     } else {
       setForm({
@@ -28,10 +29,18 @@ export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave
         tipo: "simple",
         ancho: 0,
         alto: 0,
-        cantidad: 0
+        cantidad: 0,
       });
     }
   }, [vidrioData]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const validate = () => {
     const err = {};
@@ -43,11 +52,6 @@ export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave
     return Object.keys(err).length === 0;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
@@ -57,27 +61,18 @@ export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave
   if (!isOpen) return null;
 
   return (
-    <ModalBase
-      isOpen={isOpen}
-      onClose={onClose}
-      title={vidrioData ? "Editar Vidrio" : "Nuevo Vidrio"}
-    >
+    <ModalBase isOpen={isOpen} onClose={onClose} title={vidrioData ? "Editar Vidrio" : "Nuevo Vidrio"}>
       <form onSubmit={handleSubmit} className={styles.modalForm}>
         <div className={styles.formGroup}>
           <label>Descripción</label>
-          <input
-            type="text"
-            name="descripcion"
-            value={form.descripcion}
-            onChange={handleChange}
-          />
+          <input type="text" name="descripcion" value={form.descripcion} onChange={handleChange} />
           {errors.descripcion && <small className={styles.error}>{errors.descripcion}</small>}
         </div>
 
         <div className={styles.formGroup}>
           <label>Tipo</label>
           <select name="tipo" value={form.tipo} onChange={handleChange}>
-            <option value="simple">Simple (VS)</option>
+            <option value="simple">Simple</option>
             <option value="dvh">Doble (DVH)</option>
             <option value="tvh">Triple (TVH)</option>
             <option value="laminado">Laminado</option>
@@ -103,8 +98,8 @@ export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave
         </div>
 
         <div className={styles.actions}>
-          <button type="submit">Guardar</button>
-          <button type="button" onClick={onClose}>Cancelar</button>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
         </div>
       </form>
     </ModalBase>

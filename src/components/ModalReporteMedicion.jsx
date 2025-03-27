@@ -1,6 +1,9 @@
 // src/components/ModalReporteMedicion.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
+import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalReporteMedicion({ obra, onClose }) {
   const { token } = useAuth();
@@ -11,32 +14,19 @@ export default function ModalReporteMedicion({ obra, onClose }) {
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    // Evita fetch si no hay obra._id
     if (!obra || !obra._id) return;
 
     const fetchReporte = async () => {
       try {
         setErrorMsg("");
-        // GET /api/mediciones/reporte?obraId=...
-        const res = await fetch(
-          `${API_URL}/api/mediciones/reporte/obra/${obra._id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
+        const res = await fetch(`${API_URL}/api/mediciones/reporte/obra/${obra._id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         if (!res.ok) {
-          const dataErr = await res.json();
-          throw new Error(dataErr.message || "Error al obtener reporte de medición");
+          const errData = await res.json();
+          throw new Error(errData.message || "Error al obtener reporte de medición");
         }
         const data = await res.json();
-
-        // Suponiendo data = { obraId, mediciones: [...], tipologias: [...] } 
-        // Ajusta si tu backend retorna otra estructura
-        // Por ejemplo, data.ubicaciones, data.tipologias, etc.
-        // En este ejemplo, asumimos:
-        //   data.mediciones => array de ubicaciones con anchoMedido, altoMedido, ...
-        //   data.tipologias => array con resumen
-
         if (data.mediciones) {
           setUbicacionesMedidas(data.mediciones);
         }
@@ -49,56 +39,52 @@ export default function ModalReporteMedicion({ obra, onClose }) {
     };
 
     fetchReporte();
-  }, [obra, token]);
+  }, [obra, token, API_URL]);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2>Reporte de Medición - {obra?.nombre || ""}</h2>
+    <ModalBase isOpen={true} onClose={onClose} title={`Reporte de Medición - ${obra?.nombre || ""}`}>
+      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-
+      <section>
         <h3>1) Ubicaciones con Medidas</h3>
-        {ubicacionesMedidas.length === 0 && (
+        {ubicacionesMedidas.length === 0 ? (
           <p>No hay ubicaciones medidas registradas.</p>
-        )}
-        {ubicacionesMedidas.map((u) => (
-          <div key={u._id} style={{ marginBottom: "1rem" }}>
-            <p>
-              <strong>
-                {u.piso}
-                {u.ubicacion} - {u.tipologia?.codigo}
-              </strong>
-              <br />
-              Medido: {u.anchoMedido} x {u.altoMedido}
-              <br />
-              Observaciones: {u.observaciones}
-            </p>
-          </div>
-        ))}
-
-        <h3>2) Tipologías con Ubicaciones</h3>
-        {tipologiasResumen.length === 0 && (
-          <p>No hay resumen de tipologías.</p>
-        )}
-        {tipologiasResumen.map((t) => (
-          <div key={t.tipologiaId} style={{ marginBottom: "1rem" }}>
-            <h4>
-              {t.codigo} - {t.descripcion}
-            </h4>
-            {t.ubicaciones.map((u) => (
-              <p key={u.ubicacionId}>
-                {u.piso}
-                {u.ubicacion}: {u.anchoMedido} x {u.altoMedido}
+        ) : (
+          ubicacionesMedidas.map((u) => (
+            <div key={u._id} className={styles.reportItem}>
+              <p>
+                <strong>
+                  {u.piso}{u.ubicacion} - {u.tipologia?.codigo}
+                </strong>
               </p>
-            ))}
-          </div>
-        ))}
+              <p>Medido: {u.anchoMedido} x {u.altoMedido}</p>
+              <p>Observaciones: {u.observaciones}</p>
+            </div>
+          ))
+        )}
+      </section>
 
-        <button onClick={onClose} style={{ marginTop: "1rem" }}>
-          Cerrar
-        </button>
+      <section>
+        <h3>2) Tipologías con Ubicaciones</h3>
+        {tipologiasResumen.length === 0 ? (
+          <p>No hay resumen de tipologías.</p>
+        ) : (
+          tipologiasResumen.map((t) => (
+            <div key={t.tipologiaId} className={styles.reportItem}>
+              <h4>{t.codigo} - {t.descripcion}</h4>
+              {t.ubicaciones.map((u) => (
+                <p key={u.ubicacionId}>
+                  {u.piso}{u.ubicacion}: {u.anchoMedido} x {u.altoMedido}
+                </p>
+              ))}
+            </div>
+          ))
+        )}
+      </section>
+
+      <div className={styles.actions}>
+        <Button variant="secondary" onClick={onClose}>Cerrar</Button>
       </div>
-    </div>
+    </ModalBase>
   );
 }

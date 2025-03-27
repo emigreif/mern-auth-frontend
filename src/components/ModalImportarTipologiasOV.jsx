@@ -1,47 +1,39 @@
+// src/components/ModalImportarTipologiasOV.jsx
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-/**
- * ModalImportarTipologias:
- * - Carga manual o por Excel desde fila 11.
- * - Reutilizable para tipologías reales o tipologíasOV.
- */
-export default function ModalImportarTipologias({
-  obra,
-  endpoint,
-  titulo = "Cargar Tipologías",
-  onClose,
-  onSaved,
-}) {
+export default function ModalImportarTipologiasOV({ obra, onClose, onCreated }) {
   const { token } = useAuth();
-  const [archivoExcel, setArchivoExcel] = useState(null);
+
   const [tipologias, setTipologias] = useState([]);
-  const [manual, setManual] = useState({
+  const [nuevo, setNuevo] = useState({
     tipo: "",
     descripcion: "",
     base: "",
     altura: "",
     cantidad: 1,
   });
+  const [archivoExcel, setArchivoExcel] = useState(null);
+  const [search, setSearch] = useState("");
 
-  const handleExcelChange = (e) => setArchivoExcel(e.target.files[0]);
+  const handleArchivo = (e) => setArchivoExcel(e.target.files[0]);
 
   const handleLeerExcel = () => {
     if (!archivoExcel) return alert("Selecciona un archivo Excel");
-
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: "array" });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      // Lee desde la fila 11 (index 10)
       const json = XLSX.utils.sheet_to_json(sheet, { range: 10 });
-
-      const rows = json
+      const filas = json
         .map((row) => ({
           tipo: row["Tipo"]?.toString().trim(),
           descripcion: row["Descripción"]?.toString().trim() || "",
@@ -50,19 +42,17 @@ export default function ModalImportarTipologias({
           cantidad: Number(row["Cant"]),
         }))
         .filter((t) => t.tipo && !isNaN(t.base) && !isNaN(t.altura) && !isNaN(t.cantidad));
-
-      setTipologias(rows);
+      setTipologias([...tipologias, ...filas]);
     };
     reader.readAsArrayBuffer(archivoExcel);
   };
 
   const handleAgregarManual = () => {
-    const { tipo, descripcion, base, altura, cantidad } = manual;
+    const { tipo, descripcion, base, altura, cantidad } = nuevo;
     if (!tipo || !descripcion || !base || !altura) {
       alert("Completa todos los campos requeridos");
       return;
     }
-
     setTipologias((prev) => [
       ...prev,
       {
@@ -73,26 +63,22 @@ export default function ModalImportarTipologias({
         cantidad: Number(cantidad),
       },
     ]);
-
-    setManual({ tipo: "", descripcion: "", base: "", altura: "", cantidad: 1 });
+    setNuevo({ tipo: "", descripcion: "", base: "", altura: "", cantidad: 1 });
   };
 
   const handleGuardar = async () => {
-    const datos = tipologias.map((t) => ({ ...t, obra: obra._id }));
-
+    if (!tipologias.length) return alert("No hay tipologías para guardar");
     try {
-      const res = await fetch(`${API_URL}${endpoint}`, {
+      const res = await fetch(`${API_URL}/api/obras/${obra._id}/perfiles-ov`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ tipologias: datos }),
+        body: JSON.stringify({ tipologias: tipologias.map((t) => ({ ...t, obra: obra._id })) }),
       });
-
       if (!res.ok) throw new Error("Error al guardar tipologías");
-
-      if (onSaved) onSaved();
+      if (onCreated) onCreated();
       onClose();
     } catch (err) {
       console.error("Error al guardar:", err);
@@ -101,42 +87,87 @@ export default function ModalImportarTipologias({
   };
 
   return (
-    <ModalBase isOpen={true} onClose={onClose} title={`${titulo} - ${obra?.nombre || ""}`}>
+    <ModalBase isOpen={true} onClose={onClose} title={`Cargar Tipologías - ${obra?.nombre || ""}`}>
       <div className={styles.contenedor}>
-        <section>
+        {/* Sección Excel */}
+        <section className={styles.section}>
           <h3>1. Importar desde Excel</h3>
-          <input type="file" accept=".xlsx" onChange={handleExcelChange} />
-          <button onClick={handleLeerExcel}>📥 Leer Excel</button>
+          <input type="file" accept=".xlsx" onChange={handleArchivo} />
+          <Button onClick={handleLeerExcel}>📥 Leer Excel</Button>
         </section>
 
         <hr />
 
-        <section>
+        {/* Sección Manual */}
+        <section className={styles.section}>
           <h3>2. Agregar Manualmente</h3>
           <div className={styles.formulario}>
-            <input type="text" placeholder="Tipo" value={manual.tipo} onChange={(e) => setManual({ ...manual, tipo: e.target.value })} />
-            <input type="text" placeholder="Descripción" value={manual.descripcion} onChange={(e) => setManual({ ...manual, descripcion: e.target.value })} />
-            <input type="number" placeholder="Base" value={manual.base} onChange={(e) => setManual({ ...manual, base: e.target.value })} />
-            <input type="number" placeholder="Altura" value={manual.altura} onChange={(e) => setManual({ ...manual, altura: e.target.value })} />
-            <input type="number" placeholder="Cantidad" value={manual.cantidad} onChange={(e) => setManual({ ...manual, cantidad: e.target.value })} />
-            <button onClick={handleAgregarManual}>➕ Agregar</button>
+            <input
+              type="text"
+              placeholder="Tipo"
+              value={nuevo.tipo}
+              onChange={(e) => setNuevo({ ...nuevo, tipo: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Descripción"
+              value={nuevo.descripcion}
+              onChange={(e) => setNuevo({ ...nuevo, descripcion: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="Base"
+              value={nuevo.base}
+              onChange={(e) => setNuevo({ ...nuevo, base: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="Altura"
+              value={nuevo.altura}
+              onChange={(e) => setNuevo({ ...nuevo, altura: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="Cantidad"
+              value={nuevo.cantidad}
+              onChange={(e) => setNuevo({ ...nuevo, cantidad: e.target.value })}
+            />
+            <Button onClick={handleAgregarManual}>➕ Agregar</Button>
           </div>
         </section>
 
         <hr />
 
-        <section>
+        {/* Sección Lista */}
+        <section className={styles.section}>
           <h3>3. Lista para Guardar</h3>
+          <input
+            type="text"
+            placeholder="Buscar por código, descripción, color, etc."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={styles.searchInput}
+          />
           <ul className={styles.lista}>
-            {tipologias.map((t, i) => (
-              <li key={i}>
-                {t.tipo} - {t.descripcion} ({t.base}x{t.altura}) x{t.cantidad}
-              </li>
-            ))}
+            {tipologias
+              .filter((p) =>
+                JSON.stringify(p).toLowerCase().includes(search.toLowerCase())
+              )
+              .map((t, i) => (
+                <li key={i}>
+                  {t.tipo} - {t.descripcion} ({t.base}x{t.altura}) x{t.cantidad}
+                </li>
+              ))}
           </ul>
-          <button onClick={handleGuardar} disabled={tipologias.length === 0}>
+        </section>
+
+        <hr />
+
+        {/* Sección Guardar */}
+        <section className={styles.section}>
+          <Button onClick={handleGuardar} disabled={tipologias.length === 0}>
             💾 Guardar Tipologías
-          </button>
+          </Button>
         </section>
       </div>
     </ModalBase>

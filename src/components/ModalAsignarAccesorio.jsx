@@ -1,18 +1,10 @@
+// src/components/ModalAsignarAccesorio.jsx
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
-import styles from "../styles/modals/GlobalModal.module.css"; // Reutilizamos el CSS
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
 
-/**
- * Props:
- * - isOpen
- * - onClose
- * - accesorios (stock actual)
- * - obras
- * - API_URL
- * - token
- * - onSuccess
- */
 export default function ModalAsignarAccesorio({ isOpen, onClose, accesorios = [], obras = [], API_URL, token, onSuccess }) {
   const [tab, setTab] = useState("manual");
   const [obraSeleccionada, setObraSeleccionada] = useState("");
@@ -115,7 +107,6 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, accesorios = []
       setErrores(["Selecciona una obra antes de importar."]);
       return;
     }
-
     try {
       const res = await fetch(`${API_URL}/api/panol/accesorios/asignar-excel`, {
         method: "POST",
@@ -137,8 +128,12 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, accesorios = []
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Accesorios a Obra">
       <div className={styles.tabHeader}>
-        <button onClick={() => setTab("manual")} className={tab === "manual" ? styles.active : ""}>Carga Manual</button>
-        <button onClick={() => setTab("excel")} className={tab === "excel" ? styles.active : ""}>Importar Excel</button>
+        <Button onClick={() => setTab("manual")} className={tab === "manual" ? styles.active : ""}>
+          Carga Manual
+        </Button>
+        <Button onClick={() => setTab("excel")} className={tab === "excel" ? styles.active : ""}>
+          Importar Excel
+        </Button>
       </div>
 
       <div className={styles.formGroup}>
@@ -161,14 +156,12 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, accesorios = []
                   <option key={code} value={code}>{code}</option>
                 ))}
               </select>
-
               <select value={l.color} onChange={(e) => handleLineaChange(i, "color", e.target.value)}>
                 <option value="">Color</option>
                 {[...new Set(accesorios.map((a) => a.color))].map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-
               <input
                 type="number"
                 min={1}
@@ -176,12 +169,15 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, accesorios = []
                 value={l.cantidad}
                 onChange={(e) => handleLineaChange(i, "cantidad", e.target.value)}
               />
-
-              <button type="button" onClick={() => quitarLinea(i)}>❌</button>
+              <Button variant="danger" onClick={() => quitarLinea(i)}>
+                ❌
+              </Button>
             </div>
           ))}
-          <button type="button" onClick={agregarLinea}>➕ Agregar línea</button>
-          <button className={styles.submitBtn} onClick={handleAsignarManual}>Asignar Accesorios</button>
+          <Button onClick={agregarLinea}>➕ Agregar línea</Button>
+          <Button className={styles.submitBtn} onClick={handleAsignarManual}>
+            Asignar Accesorios
+          </Button>
         </>
       )}
 
@@ -201,7 +197,9 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, accesorios = []
                   </li>
                 ))}
               </ul>
-              <button className={styles.submitBtn} onClick={handleAsignarDesdeExcel}>Asignar desde Excel</button>
+              <Button className={styles.submitBtn} onClick={handleAsignarDesdeExcel}>
+                Asignar desde Excel
+              </Button>
             </>
           )}
         </>
@@ -219,7 +217,7 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, accesorios = []
         <div className={styles.resultadoBox}>
           <h4>Resultado:</h4>
           {resultado.asignados && <p>✅ Asignados: {resultado.asignados.length}</p>}
-          {resultado.faltantes?.length > 0 && (
+          {resultado.faltantes && resultado.faltantes.length > 0 && (
             <>
               <p>❌ Faltantes:</p>
               <ul>

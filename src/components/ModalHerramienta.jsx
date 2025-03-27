@@ -1,20 +1,10 @@
+// src/components/ModalHerramienta.jsx
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";
 
-/**
- * Props esperadas:
- * - isOpen: bool
- * - onClose: func
- * - onSave: func
- * - herramienta: objeto a editar (puede incluir historial)
- */
-export default function ModalHerramienta({
-  isOpen,
-  onClose,
-  onSave,
-  herramienta = null
-}) {
+export default function ModalHerramienta({ isOpen, onClose, onSave, herramienta = null }) {
   const [form, setForm] = useState({
     marca: "",
     modelo: "",
@@ -44,7 +34,7 @@ export default function ModalHerramienta({
   }, [herramienta]);
 
   const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e) => {
@@ -55,32 +45,24 @@ export default function ModalHerramienta({
   if (!isOpen) return null;
 
   return (
-    <ModalBase
-      isOpen={isOpen}
-      onClose={onClose}
-      title={herramienta ? "Editar Herramienta" : "Nueva Herramienta"}
-    >
+    <ModalBase isOpen={isOpen} onClose={onClose} title={herramienta ? "Editar Herramienta" : "Nueva Herramienta"}>
       <form onSubmit={handleSubmit} className={styles.modalForm}>
         <div className={styles.formGroup}>
           <label>Marca</label>
           <input type="text" name="marca" value={form.marca} onChange={handleChange} required />
         </div>
-
         <div className={styles.formGroup}>
           <label>Modelo</label>
           <input type="text" name="modelo" value={form.modelo} onChange={handleChange} required />
         </div>
-
         <div className={styles.formGroup}>
           <label>Descripción</label>
           <input type="text" name="descripcion" value={form.descripcion} onChange={handleChange} required />
         </div>
-
         <div className={styles.formGroup}>
           <label>N° Serie</label>
           <input type="text" name="numeroSerie" value={form.numeroSerie} onChange={handleChange} required />
         </div>
-
         <div className={styles.formGroup}>
           <label>Estado</label>
           <select name="estado" value={form.estado} onChange={handleChange}>
@@ -89,14 +71,13 @@ export default function ModalHerramienta({
             <option value="en reparación">En Reparación</option>
           </select>
         </div>
-
         <div className={styles.actions}>
-          <button type="submit">Guardar</button>
-          <button type="button" onClick={onClose}>Cancelar</button>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
         </div>
       </form>
 
-      {/* Historial (solo si está en edición) */}
+      {/* Si existe historial, se muestra */}
       {herramienta?.historial && herramienta.historial.length > 0 && (
         <div className={styles.historialSection}>
           <h3>Historial de Movimientos</h3>
@@ -119,11 +100,7 @@ export default function ModalHerramienta({
                     <td>{mov.estadoAnterior || "-"}</td>
                     <td>{mov.estadoNuevo}</td>
                     <td>{mov.obra?.nombre || "-"}</td>
-                    <td>
-                      {mov.responsable?.nombre
-                        ? `${mov.responsable.nombre} ${mov.responsable.apellido || ""}`
-                        : "-"}
-                    </td>
+                    <td>{mov.responsable?.nombre ? `${mov.responsable.nombre} ${mov.responsable.apellido || ""}` : "-"}</td>
                   </tr>
                 ))}
             </tbody>

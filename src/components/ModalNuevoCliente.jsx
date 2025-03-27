@@ -1,11 +1,14 @@
+// src/components/ModalNuevoCliente.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/modals/GlobalModal.module.css"; 
+import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
+
 export default function ModalNuevoCliente({ onCreated, onClose }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Estado del formulario
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -19,12 +22,10 @@ export default function ModalNuevoCliente({ onCreated, onClose }) {
     razonSocial: "",
     cuit: ""
   });
-
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
     if (name.startsWith("direccion.")) {
       const subfield = name.split(".")[1];
       setForm((prev) => ({
@@ -40,7 +41,7 @@ export default function ModalNuevoCliente({ onCreated, onClose }) {
     e.preventDefault();
     setErrorMsg("");
 
-    // Validaciones
+    // Validaciones básicas
     if (!form.nombre.trim() || !form.apellido.trim() || !form.email.trim()) {
       setErrorMsg("Los campos nombre, apellido y email son requeridos.");
       return;
@@ -78,120 +79,59 @@ export default function ModalNuevoCliente({ onCreated, onClose }) {
   };
 
   return (
-    <>
-      {/* Fondo oscuro detrás del modal */}
-      <div className={styles.overlay} onClick={onClose}></div>
+    <ModalBase isOpen={true} onClose={onClose} title="Agregar Nuevo Cliente">
+      <form onSubmit={handleSubmit} className={styles.formBase}>
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+        
+        <div className={styles.formGroup}>
+          <label>Nombre <span>*</span></label>
+          <input type="text" name="nombre" value={form.nombre} onChange={handleInputChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Apellido <span>*</span></label>
+          <input type="text" name="apellido" value={form.apellido} onChange={handleInputChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Email <span>*</span></label>
+          <input type="email" name="email" value={form.email} onChange={handleInputChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Teléfono</label>
+          <input type="text" name="telefono" value={form.telefono} onChange={handleInputChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Dirección - Calle</label>
+          <input type="text" name="direccion.calle" value={form.direccion.calle} onChange={handleInputChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Dirección - Ciudad</label>
+          <input type="text" name="direccion.ciudad" value={form.direccion.ciudad} onChange={handleInputChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Condición Fiscal</label>
+          <select name="condicionFiscal" value={form.condicionFiscal} onChange={handleInputChange}>
+            <option value="consumidorFinal">Consumidor Final</option>
+            <option value="responsableInscripto">Responsable Inscripto</option>
+          </select>
+        </div>
+        {form.condicionFiscal === "responsableInscripto" && (
+          <>
+            <div className={styles.formGroup}>
+              <label>Razón Social <span>*</span></label>
+              <input type="text" name="razonSocial" value={form.razonSocial} onChange={handleInputChange} />
+            </div>
+            <div className={styles.formGroup}>
+              <label>CUIT <span>*</span></label>
+              <input type="text" name="cuit" value={form.cuit} onChange={handleInputChange} />
+            </div>
+          </>
+        )}
 
-      {/* Contenedor del modal */}
-      <div className={styles.modal}>
-        <button className={styles.closeButton} onClick={onClose}>✖</button>
-        <h2>Agregar Nuevo Cliente</h2>
-
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-
-          <div>
-            <label>Nombre <span>*</span></label>
-            <input
-              type="text"
-              name="nombre"
-              value={form.nombre}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label>Apellido <span>*</span></label>
-            <input
-              type="text"
-              name="apellido"
-              value={form.apellido}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label>Email <span>*</span></label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label>Teléfono</label>
-            <input
-              type="text"
-              name="telefono"
-              value={form.telefono}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label>Dirección - Calle</label>
-            <input
-              type="text"
-              name="direccion.calle"
-              value={form.direccion.calle}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label>Dirección - Ciudad</label>
-            <input
-              type="text"
-              name="direccion.ciudad"
-              value={form.direccion.ciudad}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label>Condición Fiscal</label>
-            <select
-              name="condicionFiscal"
-              value={form.condicionFiscal}
-              onChange={handleInputChange}
-            >
-              <option value="consumidorFinal">Consumidor Final</option>
-              <option value="responsableInscripto">Responsable Inscripto</option>
-            </select>
-          </div>
-
-          {/* Campos adicionales si es Responsable Inscripto */}
-          {form.condicionFiscal === "responsableInscripto" && (
-            <>
-              <div>
-                <label>Razón Social <span>*</span></label>
-                <input
-                  type="text"
-                  name="razonSocial"
-                  value={form.razonSocial}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
-                <label>CUIT <span>*</span></label>
-                <input
-                  type="text"
-                  name="cuit"
-                  value={form.cuit}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </>
-          )}
-
-          <div className={styles.buttonGroup}>
-            <button type="submit" className={styles.saveButton}>Guardar</button>
-            <button type="button" className={styles.cancelButton} onClick={onClose}>Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </>
+        <div className={styles.buttonGroup}>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
+        </div>
+      </form>
+    </ModalBase>
   );
 }

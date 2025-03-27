@@ -1,6 +1,8 @@
+// src/components/ModalMovimientoContable.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalMovimientoContable({
@@ -87,13 +89,11 @@ export default function ModalMovimientoContable({
         fetch(`${API_URL}/api/proveedores`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${API_URL}/api/clientes`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
-
       const [obrasData, provsData, clientesData] = await Promise.all([
         resObras.json(),
         resProvs.json(),
         resClientes.json(),
       ]);
-
       setObras(obrasData);
       setProveedores(provsData);
       setClientes(clientesData);
@@ -127,12 +127,10 @@ export default function ModalMovimientoContable({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
-
     if (!form.fecha || form.monto <= 0) {
       setErrorMsg("Fecha y monto válidos son obligatorios");
       return;
     }
-
     const body = {
       ...form,
       monto: parseFloat(form.monto),
@@ -141,17 +139,14 @@ export default function ModalMovimientoContable({
         monto: parseFloat(p.monto || 0)
       }))
     };
-
     if (form.fechaAcreditacion) {
       body.fechaAcreditacion = new Date(form.fechaAcreditacion);
     }
-
     try {
       const url = mode === "edit"
         ? `${API_URL}/api/contabilidad/${movimiento._id}`
         : `${API_URL}/api/contabilidad`;
       const method = mode === "edit" ? "PUT" : "POST";
-
       const res = await fetch(url, {
         method,
         headers: {
@@ -160,13 +155,11 @@ export default function ModalMovimientoContable({
         },
         body: JSON.stringify(body)
       });
-
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.message || "Error al guardar");
       }
-
-      if (onSuccess) onSuccess();
+      onSuccess && onSuccess();
       onClose();
     } catch (err) {
       setErrorMsg(err.message);
@@ -177,13 +170,9 @@ export default function ModalMovimientoContable({
   const esTransferencia = form.tipo === "TRANSFERENCIA_EMITIDA" || form.tipo === "TRANSFERENCIA_RECIBIDA";
 
   return (
-    <ModalBase
-      isOpen={true}
-      onClose={onClose}
-      title={mode === "edit" ? "Editar Movimiento" : "Nuevo Movimiento Contable"}
-    >
+    <ModalBase isOpen={isOpen} onClose={onClose} title={mode === "edit" ? "Editar Movimiento" : "Nuevo Movimiento Contable"}>
       <form onSubmit={handleSubmit} className={styles.formBase}>
-        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
         <label>Tipo</label>
         <select name="tipo" value={form.tipo} onChange={handleChange}>
@@ -198,7 +187,9 @@ export default function ModalMovimientoContable({
             "EFECTIVO_EMITIDO",
             "CHEQUE_EMITIDO",
             "TRANSFERENCIA_EMITIDA"
-          ].map(t => <option key={t} value={t}>{t}</option>)}
+          ].map(t => (
+            <option key={t} value={t}>{t}</option>
+          ))}
         </select>
 
         <label>Monto</label>
@@ -321,28 +312,21 @@ export default function ModalMovimientoContable({
         <h4>Partidas por Obra</h4>
         {form.partidasObra.map((p, i) => (
           <div key={i} className={styles.partidaRow}>
-            <select
-              value={p.obra}
-              onChange={(e) => handlePartidaChange(i, "obra", e.target.value)}
-            >
+            <select value={p.obra} onChange={(e) => handlePartidaChange(i, "obra", e.target.value)}>
               <option value="">-- Seleccionar Obra --</option>
               {obras.map((o) => (
                 <option key={o._id} value={o._id}>{o.nombre}</option>
               ))}
             </select>
-            <input
-              type="number"
-              value={p.monto}
-              onChange={(e) => handlePartidaChange(i, "monto", e.target.value)}
-            />
-            <button type="button" onClick={() => removePartida(i)}>X</button>
+            <input type="number" value={p.monto} onChange={(e) => handlePartidaChange(i, "monto", e.target.value)} />
+            <Button type="button" onClick={() => removePartida(i)}>X</Button>
           </div>
         ))}
-        <button type="button" onClick={addPartida}>+ Agregar Partida</button>
+        <Button type="button" onClick={addPartida}>+ Agregar Partida</Button>
 
         <div className={styles.actions}>
-          <button type="submit">Guardar</button>
-          <button type="button" onClick={onClose}>Cancelar</button>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
         </div>
       </form>
     </ModalBase>

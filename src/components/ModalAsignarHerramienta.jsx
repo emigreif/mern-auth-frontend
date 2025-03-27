@@ -1,5 +1,7 @@
+// src/components/ModalAsignarHerramienta.jsx
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId, token, API_URL, onSuccess }) {
@@ -19,7 +21,7 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId
   const fetchObras = async () => {
     try {
       const res = await fetch(`${API_URL}/api/obras`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       setObras(data);
@@ -31,7 +33,7 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId
   const fetchNomina = async () => {
     try {
       const res = await fetch(`${API_URL}/api/nomina`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       setNomina(data);
@@ -49,14 +51,14 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ estado, obra, responsable })
+        body: JSON.stringify({ estado, obra, responsable }),
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Error al asignar");
+        const errData = await res.json();
+        throw new Error(errData.message || "Error al asignar");
       }
 
       onSuccess();
@@ -85,7 +87,9 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId
           <select value={obra} onChange={(e) => setObra(e.target.value)} required>
             <option value="">-- Seleccionar Obra --</option>
             {obras.map((o) => (
-              <option key={o._id} value={o._id}>{o.nombre}</option>
+              <option key={o._id} value={o._id}>
+                {o.nombre}
+              </option>
             ))}
           </select>
         </div>
@@ -95,14 +99,18 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId
           <select value={responsable} onChange={(e) => setResponsable(e.target.value)} required>
             <option value="">-- Seleccionar Responsable --</option>
             {nomina.map((n) => (
-              <option key={n._id} value={n._id}>{n.nombre} {n.apellido}</option>
+              <option key={n._id} value={n._id}>
+                {n.nombre} {n.apellido}
+              </option>
             ))}
           </select>
         </div>
 
         <div className={styles.actions}>
-          <button type="submit">Asignar</button>
-          <button type="button" onClick={onClose}>Cancelar</button>
+          <Button type="submit">Asignar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>
+            Cancelar
+          </Button>
         </div>
       </form>
     </ModalBase>

@@ -1,6 +1,8 @@
+// src/components/ModalImportarPerfilesOV.jsx
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -18,7 +20,6 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
     largo: 0,
     pesoxmetro: 0
   });
-
   const [archivoExcel, setArchivoExcel] = useState(null);
   const [search, setSearch] = useState("");
 
@@ -26,14 +27,13 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
 
   const leerExcel = () => {
     if (!archivoExcel) return alert("Selecciona un archivo Excel");
-
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: "array" });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(sheet, { range: 10 }); // desde fila 11
-
+      // Lee desde la fila 11 (index 10)
+      const json = XLSX.utils.sheet_to_json(sheet, { range: 10 });
       const filas = json
         .map((row) => ({
           codigo: row["Código"]?.toString().trim() || "",
@@ -44,7 +44,6 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
           pesoxmetro: Number(row["Peso x metro"]) || 0
         }))
         .filter((p) => p.codigo && p.cantidad > 0 && p.largo > 0);
-
       setPerfiles([...perfiles, ...filas]);
     };
     reader.readAsArrayBuffer(archivoExcel);
@@ -52,8 +51,8 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
 
   const agregarManual = () => {
     const { codigo, descripcion, color, cantidad, largo, pesoxmetro } = nuevo;
-    if (!codigo || !cantidad || !largo) return alert("Completa los campos obligatorios");
-
+    if (!codigo || !descripcion || cantidad <= 0 || largo <= 0)
+      return alert("Completa los campos obligatorios");
     const perfil = {
       codigo: codigo.trim(),
       descripcion: descripcion.trim(),
@@ -75,7 +74,6 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
 
   const guardar = async () => {
     if (!perfiles.length) return alert("No hay perfiles para guardar");
-
     try {
       const res = await fetch(`${API_URL}/api/obras/${obra._id}/perfiles-ov`, {
         method: "POST",
@@ -85,9 +83,7 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
         },
         body: JSON.stringify({ perfiles })
       });
-
       if (!res.ok) throw new Error("Error al guardar perfiles");
-
       if (onCreated) onCreated();
       onClose();
     } catch (err) {
@@ -103,16 +99,16 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
   return (
     <ModalBase isOpen={true} onClose={onClose} title="Importar Perfiles OV">
       <div className={styles.container}>
-        {/* Importar desde Excel */}
+        {/* Sección Excel */}
         <section className={styles.section}>
           <h3>1. Cargar desde Excel</h3>
           <input type="file" accept=".xlsx" onChange={handleArchivo} />
-          <button onClick={leerExcel}>📥 Leer Excel</button>
+          <Button onClick={leerExcel}>📥 Leer Excel</Button>
         </section>
 
         <hr />
 
-        {/* Agregar Manual */}
+        {/* Sección Manual */}
         <section className={styles.section}>
           <h3>2. Agregar Manualmente</h3>
           <div className={styles.form}>
@@ -152,13 +148,13 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
               value={nuevo.pesoxmetro}
               onChange={(e) => setNuevo({ ...nuevo, pesoxmetro: e.target.value })}
             />
-            <button onClick={agregarManual}>➕ Agregar</button>
+            <Button onClick={agregarManual}>➕ Agregar</Button>
           </div>
         </section>
 
         <hr />
 
-        {/* Buscar y ver lista */}
+        {/* Sección Lista */}
         <section className={styles.section}>
           <h3>3. Lista de Perfiles</h3>
           <input
@@ -179,11 +175,11 @@ export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
 
         <hr />
 
-        {/* Guardar */}
+        {/* Sección Guardar */}
         <section className={styles.section}>
-          <button onClick={guardar} disabled={perfiles.length === 0}>
+          <Button onClick={guardar} disabled={perfiles.length === 0}>
             💾 Guardar Perfiles
-          </button>
+          </Button>
         </section>
       </div>
     </ModalBase>

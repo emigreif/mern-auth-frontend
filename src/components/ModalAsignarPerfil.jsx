@@ -1,21 +1,12 @@
+// src/components/ModalAsignarPerfil.jsx
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";
 
-/**
- * Props:
- * - isOpen
- * - onClose
- * - perfiles (del stock actual)
- * - obras (para seleccionar)
- * - API_URL
- * - token
- * - onSuccess
- */
 export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obras = [], API_URL, token, onSuccess }) {
   const [tab, setTab] = useState("manual");
-
   const [obraSeleccionada, setObraSeleccionada] = useState("");
   const [lineas, setLineas] = useState([{ codigo: "", color: "", cantidad: 0 }]);
   const [errores, setErrores] = useState([]);
@@ -66,7 +57,6 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
       setErrores(["Debes seleccionar una obra"]);
       return;
     }
-
     lineas.forEach((l, idx) => {
       if (!l.codigo || !l.color || l.cantidad <= 0) {
         erroresTemp.push(`Línea ${idx + 1}: campos inválidos`);
@@ -74,12 +64,10 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
       const errorStock = validarStock(l.codigo, l.color, l.cantidad);
       if (errorStock) erroresTemp.push(`Línea ${idx + 1}: ${errorStock}`);
     });
-
     if (erroresTemp.length > 0) {
       setErrores(erroresTemp);
       return;
     }
-
     try {
       const res = await fetch(`${API_URL}/api/panol/perfiles/asignar-manual`, {
         method: "POST",
@@ -102,13 +90,12 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
     const file = e.target.files[0];
     if (!file) return;
     setExcelFile(file);
-
     const reader = new FileReader();
     reader.onload = (event) => {
       const data = new Uint8Array(event.target.result);
       const workbook = XLSX.read(data, { type: "array" });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, { range: 11 }); // fila 12 en adelante
+      const rows = XLSX.utils.sheet_to_json(sheet, { range: 11 });
       setExcelRows(rows);
     };
     reader.readAsArrayBuffer(file);
@@ -119,7 +106,6 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
       setErrores(["Selecciona una obra antes de importar."]);
       return;
     }
-
     try {
       const res = await fetch(`${API_URL}/api/panol/perfiles/asignar-excel`, {
         method: "POST",
@@ -141,8 +127,12 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Perfiles a Obra">
       <div className={styles.tabHeader}>
-        <button onClick={() => setTab("manual")} className={tab === "manual" ? styles.active : ""}>Carga Manual</button>
-        <button onClick={() => setTab("excel")} className={tab === "excel" ? styles.active : ""}>Importar Excel</button>
+        <Button onClick={() => setTab("manual")} className={tab === "manual" ? styles.active : ""}>
+          Carga Manual
+        </Button>
+        <Button onClick={() => setTab("excel")} className={tab === "excel" ? styles.active : ""}>
+          Importar Excel
+        </Button>
       </div>
 
       <div className={styles.formGroup}>
@@ -165,14 +155,12 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
                   <option key={code} value={code}>{code}</option>
                 ))}
               </select>
-
               <select value={l.color} onChange={(e) => handleLineaChange(i, "color", e.target.value)}>
                 <option value="">Color</option>
                 {[...new Set(perfiles.map((p) => p.color))].map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-
               <input
                 type="number"
                 min={1}
@@ -180,12 +168,15 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
                 value={l.cantidad}
                 onChange={(e) => handleLineaChange(i, "cantidad", e.target.value)}
               />
-
-              <button type="button" onClick={() => quitarLinea(i)}>❌</button>
+              <Button variant="danger" onClick={() => quitarLinea(i)}>
+                ❌
+              </Button>
             </div>
           ))}
-          <button type="button" onClick={agregarLinea}>➕ Agregar línea</button>
-          <button className={styles.submitBtn} onClick={handleAsignarManual}>Asignar Perfiles</button>
+          <Button onClick={agregarLinea}>➕ Agregar línea</Button>
+          <Button onClick={handleAsignarManual} className={styles.submitBtn}>
+            Asignar Perfiles
+          </Button>
         </>
       )}
 
@@ -205,7 +196,9 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
                   </li>
                 ))}
               </ul>
-              <button className={styles.submitBtn} onClick={handleAsignarDesdeExcel}>Asignar desde Excel</button>
+              <Button onClick={handleAsignarDesdeExcel} className={styles.submitBtn}>
+                Asignar desde Excel
+              </Button>
             </>
           )}
         </>
@@ -222,9 +215,7 @@ export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obr
       {resultado && (
         <div className={styles.resultadoBox}>
           <h4>Resultado:</h4>
-          {resultado.asignados && (
-            <p>✅ Asignados correctamente: {resultado.asignados.length}</p>
-          )}
+          {resultado.asignados && <p>✅ Asignados: {resultado.asignados.length}</p>}
           {resultado.faltantes && resultado.faltantes.length > 0 && (
             <>
               <p>❌ Faltantes:</p>

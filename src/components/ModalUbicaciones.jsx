@@ -1,7 +1,9 @@
 // src/components/ModalUbicaciones.jsx
 import React, { useState, useEffect } from "react";
-import styles from "../styles/modals/GlobalModal.module.css";
 import { useAuth } from "../context/AuthContext";
+import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -23,6 +25,7 @@ export default function ModalUbicaciones({ obra, onClose }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
+      // Filtrar solo las ubicaciones de la obra actual
       const filtradas = data.filter((u) => u.obra === obra._id);
       setUbicacionesGeneradas(ordenarUbicaciones(filtradas));
     } catch (err) {
@@ -34,12 +37,9 @@ export default function ModalUbicaciones({ obra, onClose }) {
     return [...ubicaciones].sort((a, b) => {
       const pisoA = parseInt(a.piso.replace(/\D/g, "")) || 0;
       const pisoB = parseInt(b.piso.replace(/\D/g, "")) || 0;
-
       if (pisoA !== pisoB) return pisoA - pisoB;
-
       const ubA = parseInt(a.ubicacion.replace(/\D/g, "")) || 0;
       const ubB = parseInt(b.ubicacion.replace(/\D/g, "")) || 0;
-
       return ubA - ubB;
     });
   };
@@ -60,7 +60,6 @@ export default function ModalUbicaciones({ obra, onClose }) {
   const parseRangoPisos = (rango) => {
     const partes = rango.split(",").map((r) => r.trim());
     const pisos = [];
-
     partes.forEach((parte) => {
       if (parte.includes("-")) {
         const [start, end] = parte.split("-").map(Number);
@@ -71,27 +70,22 @@ export default function ModalUbicaciones({ obra, onClose }) {
         pisos.push(parte);
       }
     });
-
     return pisos;
   };
 
   const handleGenerar = async () => {
     setErrorMsg("");
-
     if (!obra || !obra._id) return setErrorMsg("Obra no especificada.");
     if (pisos.length === 0) return setErrorMsg("Agregá al menos un piso.");
-
     for (let p of pisos) {
       if (!p.rango.trim()) return setErrorMsg("Cada rango de pisos es obligatorio.");
       if (p.ubicaciones <= 0) return setErrorMsg("Ubicaciones debe ser mayor a 0.");
     }
-
     try {
       for (const pisoConfig of pisos) {
         const rangos = parseRangoPisos(pisoConfig.rango);
         const nuevos = rangos.filter((p) => !pisoYaExiste(`P${p}`));
         if (nuevos.length === 0) continue;
-
         const res = await fetch(`${API_URL}/api/ubicaciones/generar`, {
           method: "POST",
           headers: {
@@ -103,15 +97,12 @@ export default function ModalUbicaciones({ obra, onClose }) {
             pisos: [{ rango: nuevos.join(","), ubicaciones: pisoConfig.ubicaciones }],
           }),
         });
-
         if (!res.ok) {
           const text = await res.text();
           throw new Error(`Error al generar ubicaciones: ${text}`);
         }
-
         await fetchUbicacionesObra();
       }
-
       setPisos([]);
     } catch (error) {
       console.error("❌ Error:", error);
@@ -121,7 +112,6 @@ export default function ModalUbicaciones({ obra, onClose }) {
 
   const handleEliminarPiso = async (piso) => {
     if (!confirm(`¿Eliminar todas las ubicaciones del piso ${piso}?`)) return;
-
     try {
       const res = await fetch(`${API_URL}/api/ubicaciones/eliminar-por-piso`, {
         method: "DELETE",
@@ -131,9 +121,7 @@ export default function ModalUbicaciones({ obra, onClose }) {
         },
         body: JSON.stringify({ piso, obraId: obra._id }),
       });
-
       if (!res.ok) throw new Error("Error al eliminar ubicaciones del piso");
-
       await fetchUbicacionesObra();
     } catch (error) {
       console.error("Error al eliminar piso:", error);
@@ -141,62 +129,62 @@ export default function ModalUbicaciones({ obra, onClose }) {
   };
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeBtn} onClick={onClose}>✖</button>
-        <h2 className={styles.title}>Carga de Ubicaciones - Obra {obra.nombre}</h2>
+    <ModalBase isOpen={true} onClose={onClose} title={`Carga de Ubicaciones - Obra ${obra.nombre}`}>
+      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+      <div className={styles.formContainer}>
+        {pisos.map((p, i) => (
+          <div key={i} className={styles.pisoItem}>
+            <input
+              type="text"
+              placeholder="Rango de pisos (ej: 1-3, 5, 7-9)"
+              value={p.rango}
+              onChange={(e) => handleChangePiso(i, "rango", e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Cant. Ubicaciones"
+              value={p.ubicaciones}
+              onChange={(e) => handleChangePiso(i, "ubicaciones", parseInt(e.target.value) || 0)}
+              style={{ width: "120px" }}
+            />
+          </div>
+        ))}
+      </div>
 
-        <div className={styles.formContainer}>
-          {pisos.map((p, i) => (
-            <div key={i} className={styles.pisoItem}>
-              <input
-                type="text"
-                placeholder="Rango de pisos (ej: 1-3, 5, 7-9)"
-                value={p.rango}
-                onChange={(e) => handleChangePiso(i, "rango", e.target.value)}
-              />
-              <input
-                type="number"
-                placeholder="Cant. Ubicaciones"
-                value={p.ubicaciones}
-                onChange={(e) => handleChangePiso(i, "ubicaciones", parseInt(e.target.value) || 0)}
-                style={{ width: "120px" }}
-              />
+      <div className={styles.actions}>
+        <Button onClick={handleAddPiso}>+ Agregar Piso</Button>
+      </div>
+
+      <div className={styles.actions}>
+        <Button onClick={handleGenerar}>Generar Ubicaciones</Button>
+      </div>
+
+      <hr />
+
+      <h3>Ubicaciones generadas</h3>
+      {ubicacionesGeneradas.length === 0 && <p>No hay ubicaciones aún.</p>}
+      {ubicacionesGeneradas.length > 0 && (
+        <div className={styles.listaPisos}>
+          {[...new Set(ubicacionesGeneradas.map((u) => u.piso))].map((piso) => (
+            <div key={piso} className={styles.pisoGrupo}>
+              <div className={styles.pisoHeader}>
+                <strong>{piso}</strong>
+                <Button variant="danger" onClick={() => handleEliminarPiso(piso)}>
+                  🗑 Eliminar Piso
+                </Button>
+              </div>
+              <ul>
+                {ubicacionesGeneradas
+                  .filter((u) => u.piso === piso)
+                  .map((u) => (
+                    <li key={u._id}>{u.ubicacion}</li>
+                  ))}
+              </ul>
             </div>
           ))}
         </div>
-
-        <button onClick={handleAddPiso}>+ Agregar Piso</button>
-        <div className={styles.actions}>
-          <button onClick={handleGenerar}>Generar Ubicaciones</button>
-        </div>
-
-        <hr />
-
-        <h3>Ubicaciones generadas</h3>
-        {ubicacionesGeneradas.length === 0 && <p>No hay ubicaciones aún.</p>}
-        {ubicacionesGeneradas.length > 0 && (
-          <div className={styles.listaPisos}>
-            {[...new Set(ubicacionesGeneradas.map((u) => u.piso))].map((piso) => (
-              <div key={piso} className={styles.pisoGrupo}>
-                <div className={styles.pisoHeader}>
-                  <strong>{piso}</strong>
-                  <button onClick={() => handleEliminarPiso(piso)}>🗑 Eliminar Piso</button>
-                </div>
-                <ul>
-                  {ubicacionesGeneradas
-                    .filter((u) => u.piso === piso)
-                    .map((u) => (
-                      <li key={u._id}>{u.ubicacion}</li>
-                    ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+      )}
+    </ModalBase>
   );
 }

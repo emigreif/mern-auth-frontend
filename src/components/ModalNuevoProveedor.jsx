@@ -1,15 +1,10 @@
 // src/components/ModalNuevoProveedor.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
 import ModalBase from "./ModalBase.jsx";
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
 
-/**
- * Modal para crear un nuevo Proveedor
- *  - Se validan campos requeridos (nombre, direccion).
- *  - onCreated => callback tras crear
- *  - onClose => cierra modal
- */
 export default function ModalNuevoProveedor({ onCreated, onClose }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -36,7 +31,7 @@ export default function ModalNuevoProveedor({ onCreated, onClose }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Manejo de emails si es array
+  // Manejo de emails (arreglo)
   const handleEmailChange = (index, value) => {
     const newEmails = [...form.emails];
     newEmails[index] = value;
@@ -100,11 +95,10 @@ export default function ModalNuevoProveedor({ onCreated, onClose }) {
 
   return (
     <ModalBase isOpen={true} onClose={onClose} title="Nuevo Proveedor">
-      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-
+      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       <form onSubmit={handleSubmit} className={styles.formBase}>
-        <div>
-          <label>Nombre (requerido)</label>
+        <div className={styles.formGroup}>
+          <label>Nombre <span>*</span></label>
           <input
             type="text"
             name="nombre"
@@ -113,8 +107,8 @@ export default function ModalNuevoProveedor({ onCreated, onClose }) {
           />
         </div>
 
-        <div>
-          <label>Dirección (requerida)</label>
+        <div className={styles.formGroup}>
+          <label>Dirección <span>*</span></label>
           <input
             type="text"
             name="direccion"
@@ -123,7 +117,7 @@ export default function ModalNuevoProveedor({ onCreated, onClose }) {
           />
         </div>
 
-        <div>
+        <div className={styles.formGroup}>
           <label>Teléfono</label>
           <input
             type="text"
@@ -133,7 +127,7 @@ export default function ModalNuevoProveedor({ onCreated, onClose }) {
           />
         </div>
 
-        <div>
+        <div className={styles.formGroup}>
           <label>WhatsApp</label>
           <input
             type="text"
@@ -143,7 +137,7 @@ export default function ModalNuevoProveedor({ onCreated, onClose }) {
           />
         </div>
 
-        <div>
+        <div className={styles.formGroup}>
           <label>Emails</label>
           {form.emails.map((email, i) => (
             <div key={i} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
@@ -152,13 +146,15 @@ export default function ModalNuevoProveedor({ onCreated, onClose }) {
                 value={email}
                 onChange={(e) => handleEmailChange(i, e.target.value)}
               />
-              <button type="button" onClick={() => removeEmail(i)}>X</button>
+              <Button variant="danger" type="button" onClick={() => removeEmail(i)}>
+                X
+              </Button>
             </div>
           ))}
-          <button type="button" onClick={addEmail}>+ Añadir Email</button>
+          <Button type="button" onClick={addEmail}>+ Añadir Email</Button>
         </div>
 
-        <div>
+        <div className={styles.formGroup}>
           <label>Rubros</label>
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
             {rubrosPosibles.map((r) => (
@@ -175,8 +171,8 @@ export default function ModalNuevoProveedor({ onCreated, onClose }) {
         </div>
 
         <div className={styles.actions}>
-          <button type="submit">Guardar</button>
-          <button type="button" onClick={onClose}>Cancelar</button>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
         </div>
       </form>
     </ModalBase>

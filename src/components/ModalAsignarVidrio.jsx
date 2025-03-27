@@ -1,18 +1,10 @@
-import React, { useEffect, useState } from "react";
+// src/components/ModalAsignarVidrio.jsx
+import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
-import styles from "../styles/modals/GlobalModal.module.css"; // reutilizamos estilos
+import Button from "./Button.jsx";
+import styles from "../styles/modals/GlobalModal.module.css";
 
-/**
- * Props:
- * - isOpen
- * - onClose
- * - vidrios (stock actual)
- * - obras
- * - API_URL
- * - token
- * - onSuccess
- */
 export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrios = [], API_URL, token, onSuccess }) {
   const [tab, setTab] = useState("manual");
   const [obraSeleccionada, setObraSeleccionada] = useState("");
@@ -52,22 +44,19 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
 
   const handleAsignarManual = async () => {
     const erroresTemp = [];
-
     if (!obraSeleccionada) {
-      erroresTemp.push("Debes seleccionar una obra.");
+      setErrores(["Debes seleccionar una obra"]);
+      return;
     }
-
     pedidos.forEach((p, idx) => {
       if (!p.ancho || !p.alto || p.ancho <= 0 || p.alto <= 0) {
         erroresTemp.push(`Línea ${idx + 1}: medidas inválidas.`);
       }
     });
-
     if (erroresTemp.length > 0) {
       setErrores(erroresTemp);
       return;
     }
-
     try {
       const res = await fetch(`${API_URL}/api/panol/vidrios/asignar-manual`, {
         method: "POST",
@@ -77,7 +66,6 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
         },
         body: JSON.stringify({ obra: obraSeleccionada, items: pedidos })
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       setResultado(data);
@@ -90,7 +78,6 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
   const handleExcelChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (event) => {
       const data = new Uint8Array(event.target.result);
@@ -107,7 +94,6 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
       setErrores(["Selecciona una obra antes de importar."]);
       return;
     }
-
     try {
       const res = await fetch(`${API_URL}/api/panol/vidrios/asignar-excel`, {
         method: "POST",
@@ -117,7 +103,6 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
         },
         body: JSON.stringify({ obra: obraSeleccionada, items: excelRows })
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       setResultado(data);
@@ -130,8 +115,12 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Vidrios a Obra">
       <div className={styles.tabHeader}>
-        <button onClick={() => setTab("manual")} className={tab === "manual" ? styles.active : ""}>Carga Manual</button>
-        <button onClick={() => setTab("excel")} className={tab === "excel" ? styles.active : ""}>Importar Excel</button>
+        <Button onClick={() => setTab("manual")} className={tab === "manual" ? styles.active : ""}>
+          Carga Manual
+        </Button>
+        <Button onClick={() => setTab("excel")} className={tab === "excel" ? styles.active : ""}>
+          Importar Excel
+        </Button>
       </div>
 
       <div className={styles.formGroup}>
@@ -162,11 +151,15 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
                 value={p.alto}
                 onChange={(e) => handleLineaChange(i, "alto", e.target.value)}
               />
-              <button type="button" onClick={() => quitarLinea(i)}>❌</button>
+              <Button variant="danger" onClick={() => quitarLinea(i)}>
+                ❌
+              </Button>
             </div>
           ))}
-          <button type="button" onClick={agregarLinea}>➕ Agregar línea</button>
-          <button className={styles.submitBtn} onClick={handleAsignarManual}>Asignar Vidrios</button>
+          <Button onClick={agregarLinea}>➕ Agregar línea</Button>
+          <Button className={styles.submitBtn} onClick={handleAsignarManual}>
+            Asignar Vidrios
+          </Button>
         </>
       )}
 
@@ -186,7 +179,9 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
                   </li>
                 ))}
               </ul>
-              <button className={styles.submitBtn} onClick={handleAsignarDesdeExcel}>Asignar desde Excel</button>
+              <Button className={styles.submitBtn} onClick={handleAsignarDesdeExcel}>
+                Asignar desde Excel
+              </Button>
             </>
           )}
         </>
@@ -204,13 +199,13 @@ export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrio
         <div className={styles.resultadoBox}>
           <h4>Resultado:</h4>
           {resultado.asignados && <p>✅ Asignados: {resultado.asignados.length}</p>}
-          {resultado.faltantes?.length > 0 && (
+          {resultado.faltantes && resultado.faltantes.length > 0 && (
             <>
               <p>❌ Faltantes:</p>
               <ul>
                 {resultado.faltantes.map((f, idx) => (
                   <li key={idx}>
-                    {f.ancho} x {f.alto} {f.motivo && `(${f.motivo})`}
+                    {f.ancho} mm x {f.alto} mm {f.motivo && `(${f.motivo})`}
                   </li>
                 ))}
               </ul>

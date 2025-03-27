@@ -18,7 +18,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext.jsx";
 
-import styles from "../styles/Sidebar.module.css"; // ✅ CSS modular
+import styles from "../styles/components/Sidebar.module.css"; // ✅ CSS modular
 
 const Sidebar = ({ expanded, setExpanded }) => {
   const { logout } = useAuth();
