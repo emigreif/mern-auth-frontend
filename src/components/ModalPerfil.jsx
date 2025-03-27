@@ -1,7 +1,11 @@
 // src/components/ModalPerfil.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
+<<<<<<< HEAD
 import styles from "../styles/modals/ModalShared.module.css";
+=======
+import styles from "../styles/modals/GlobalModal.module.css";
+>>>>>>> 067f81afb9a1815cf3791ade861ecff3c48363b2
 
 /**
  * ModalPerfil: para ver/editar un “perfil” en OV

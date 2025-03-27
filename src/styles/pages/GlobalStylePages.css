@@ -1,0 +1,276 @@
+/* === 📦 CONTAINER GENERAL === */
+.pageContainer {
+    background-color: #fff;
+    margin: 0.1rem;
+    padding: 2rem;
+  }
+  
+  .container {
+    width: 100%;
+    padding: 15px;
+  }
+  
+  /* === 📌 HEADER === */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .header h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .header button {
+    background-color: #00aa63;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .header button:hover {
+    background-color: #008f57;
+  }
+  
+  /* === 📑 TABS === */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .tabs button,
+  .tabBtn {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+  }
+  
+  .tabs button:hover,
+  .tabBtn:hover {
+    background-color: #ddd;
+  }
+  
+  .tabBtn.active,
+  .activeTab {
+    background-color: #00aa63;
+    color: #fff;
+  }
+  
+  /* === 🧾 LISTAS / TARJETAS === */
+  .list,
+  .presupuestosList,
+  .movimientosList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .listItem,
+  .presupuestoCard,
+  .movCard,
+  .proveedorCard,
+  .profileCard {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .listItem h2,
+  .movCard h3,
+  .presupuestoHeader h2 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .listItem p,
+  .movCard p,
+  .presupuestoInfo {
+    margin: 0.3rem 0;
+    color: #555;
+  }
+  
+  /* === 📋 TABLAS === */
+  .tableBase,
+  .obrasTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .tableBase th,
+  .tableBase td,
+  .obrasTable th,
+  .obrasTable td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: left;
+  }
+  
+  .tableBase th,
+  .obrasTable th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  /* === 🧩 BOTONES === */
+  .addBtn,
+  .addButton,
+  .saveBtn,
+  .newCompraBtn,
+  .newMovBtn,
+  .newObraBtn,
+  .newPresupuestoBtn,.actionsBtn,
+  .actionBtn,.importButton,
+  .btn,
+  .filterBtn {
+    background-color: #00aa63;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  } 
+    
+  .addBtn:hover,
+  .addButton:hover,
+  .saveBtn:hover,
+  .newCompraBtn:hover,
+  .newMovBtn:hover,
+  .newObraBtn:hover,
+  .newPresupuestoBtn:hover,.actionsBtn:hover,.importButton:hover ,
+  .actionBtn:hover,
+  .btn:hover,
+  .filterBtn:hover {
+    background-color: #008f57;
+  } 
+   
+   .deleteBtn,
+  .anularBtn {
+    background-color: #dc3545;
+  }
+  
+  .deleteBtn:hover,
+  .anularBtn:hover {
+    background-color: #b02a37;
+  }
+  
+  /* === 📦 FORMULARIOS === */
+  .formGroup,
+  .permissionsContainer {
+    margin-bottom: 1rem;
+  }
+  
+  .formGroup label,
+  .permissionItem label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: #555;
+  }
+  
+  .formGroup input,
+  .searchInput,
+  .filterInput,
+  .filterSelect {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* === 💬 MENSAJES / ESTADOS === */
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+  }
+  
+  .success {
+    color: green;
+    margin-bottom: 1rem;
+  }
+  
+  .spinner,
+  .noData,
+  .noEvents {
+    text-align: center;
+    margin: 2rem;
+    font-size: 1.2rem;
+    color: #888;
+  }
+  
+  .message {
+    margin-top: 20px;
+    padding: 10px;
+    background: #d4edda;
+    color: #155724;
+    border-left: 5px solid #28a745;
+    border-radius: 5px;
+  }
+  
+  /* === 🔍 FILTROS / BÚSQUEDA === */
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .searchSection {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* === 🗓️ CALENDARIO === */
+  .calendarWrapper {
+    margin-top: 1rem;
+  }
+  
+  /* === 🎯 ESTADOS === */
+  .estado {
+    font-weight: bold;
+    padding: 0.3rem 0.6rem;
+    border-bottom: 3px solid;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+  
+  .estado.pendiente {
+    color: #e18a00;
+    border-color: #e18a00;
+  }
+  
+  .estado.aprobado {
+    color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .estado.perdido {
+    color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  /* === 👤 OTROS === */
+  .adminBadge {
+    color: red;
+    margin-left: 0.5rem;
+    font-weight: bold;
+  }
