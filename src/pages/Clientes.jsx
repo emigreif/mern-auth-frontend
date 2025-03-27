@@ -1,6 +1,6 @@
 // src/pages/Clientes.jsx
 import React, { useState, useEffect } from "react";
-import styles from "../styles/pages/Clientes.module.css";
+import styles from "../styles/pages/GlobalStylePages.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/ModalBase.jsx";
 import ModalNuevoCliente from "../components/ModalNuevoCliente.jsx";

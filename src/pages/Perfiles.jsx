@@ -1,7 +1,7 @@
 // src/pages/Perfiles.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/Perfiles.module.css";
+import styles from "../styles/pages/GlobalStylePages.css";
 
 /**
  * Página "Perfiles"

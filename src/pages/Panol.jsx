@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/Panol.module.css";
+import styles from "../styles/pages/GlobalStylePages.css";
 
 // Modales base
 import ModalHerramienta from "../components/ModalHerramienta.jsx";

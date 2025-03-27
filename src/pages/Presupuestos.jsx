@@ -1,7 +1,7 @@
 // src/pages/Presupuestos.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/Presupuestos.module.css";
+import styles from "../styles/pages/GlobalStylePages.css";
 import ModalPresupuesto from "../components/ModalPresupuesto.jsx";
 import ModalObra from "../components/ModalObra.jsx";
 

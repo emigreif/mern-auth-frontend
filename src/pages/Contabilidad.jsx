@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { Link, Outlet } from "react-router-dom";
 import ModalMovimientoContable from "../components/ModalMovimientoContable.jsx";
-import styles from "../styles/pages/Contabilidad.module.css";
-
+import styles from "../styles/pages/GlobalStylePages.css";
 export default function Contabilidad() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";

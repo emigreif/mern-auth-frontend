@@ -1,9 +1,8 @@
 // src/pages/Obras.jsx
 import React, { useState, useEffect } from "react";
-import styles from "../styles/pages/Obras.module.css";
+import styles from "../styles/pages/GlobalStylePages.css";
 import { useAuth } from "../context/AuthContext.jsx";
 
-// Se asume que hay un modal para crear/editar obra
 import ModalObra from "../components/ModalObra.jsx";
 
 /**

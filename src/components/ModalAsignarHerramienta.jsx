@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
-import styles from "../styles/modals/GlobalModal:module.css";
+import styles from "../styles/modals/GlobalModal.module.css";
 
 export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId, token, API_URL, onSuccess }) {
   const [estado, setEstado] = useState("en obra");

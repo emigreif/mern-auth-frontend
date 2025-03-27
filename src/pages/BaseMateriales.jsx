@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ModalBase from "../components/ModalBase";
-import styles from "../styles/pages/BaseMateriales.module.css";
+import styles from "../styles/pages/GlobalStylePages.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/general";
 

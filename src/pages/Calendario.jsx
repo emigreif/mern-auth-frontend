@@ -3,8 +3,7 @@ import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/Calendario.module.css";
-
+import styles from "../styles/pages/GlobalStylePages.css";
 /**
  * Página "Calendario"
  * - Muestra eventos en FullCalendar

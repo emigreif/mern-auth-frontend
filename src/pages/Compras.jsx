@@ -1,6 +1,6 @@
 // src/pages/Compras.jsx
 import React, { useEffect, useState } from "react";
-import styles from "../styles/pages/Compras.module.css";
+import styles from "../styles/pages/GlobalStylePages.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalCompra from "../components/ModalCompra.jsx";
 import ModalIngresoMaterial from "../components/ModalIngresoMaterial.jsx";

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/ModalBase.jsx";
 import ModalMovimientoContable from "../components/ModalMovimientoContable.jsx";
-import styles from "../styles/pages/Proveedores.module.css";
+import styles from "../styles/pages/GlobalStylePages.css";
 
 export default function Proveedores() {
   const { token } = useAuth();

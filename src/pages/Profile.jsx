@@ -1,14 +1,7 @@
 // src/pages/Profile.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/Profile.module.css";
-
-/**
- * Página "Profile"
- * - Muestra datos del usuario
- * - Permite actualizar nombre, apellido
- * - Permite cambiar contraseña (requiere contraseña actual y nueva)
- */
+import styles from "../styles/pages/GlobalStylePages.css";
 const Profile = () => {
   const { user, token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -17,8 +10,8 @@ const Profile = () => {
     firstName: "",
     lastName: "",
     email: "",
-    password: "",      // contraseña actual
-    newPassword: ""    // contraseña nueva
+    password: "", // contraseña actual
+    newPassword: "", // contraseña nueva
   });
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -32,7 +25,7 @@ const Profile = () => {
         lastName: user.lastName || "",
         email: user.email || "",
         password: "",
-        newPassword: ""
+        newPassword: "",
       });
     }
   }, [user]);
@@ -52,9 +45,9 @@ const Profile = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
       const data = await res.json();
 
@@ -118,12 +111,7 @@ const Profile = () => {
         {/* Email (solo lectura si no deseas permitir cambiarlo) */}
         <div className={styles.formGroup}>
           <label>Email (no editable)</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            disabled
-          />
+          <input type="email" name="email" value={formData.email} disabled />
         </div>
 
         {/* Contraseña actual */}

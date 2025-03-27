@@ -1,9 +1,7 @@
 // src/pages/Nomina.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/Nomina.module.css";
-
-// Ejemplo: un modal + un componente para crear empleado
+import styles from "../styles/pages/GlobalStylePages.css";
 import ModalBase from "../components/ModalBase.jsx";
 import ModalNuevoEmpleado from "../components/ModalNuevoEmpleado.jsx";
 

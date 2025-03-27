@@ -1,6 +1,5 @@
 // src/pages/Planner.jsx
-import React from "react";
-import styles from "../styles/pages/Planner.module.css";
+import React from "react";import styles from "../styles/pages/GlobalStylePages.css";
 
 /**
  * Página "Planner"
