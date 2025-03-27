@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx"; // Ajusta ruta
 import * as XLSX from "xlsx";
-import styles from "../styles/modals/ModalCompra.module.css";
+import styles from "../styles/modals/GlobalModal:module.css";
 import ModalBase from "./ModalBase.jsx";
 import ModalNuevoProveedor from "./ModalNuevoProveedor.jsx"; // Modal para crear proveedor
 
