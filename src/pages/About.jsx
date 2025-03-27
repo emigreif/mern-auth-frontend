@@ -1,17 +1,11 @@
 // src/pages/About.jsx
 import React from "react";
-import styles from "../styles/pages/About.module.css";
+import styles from "../styles/pages/Info.module.css";
 
-/**
- * Página "About" mejorada
- * Incluye una sección "hero" arriba, y luego un contenedor con el contenido.
- */
 const About = () => {
   return (
-    <div>
- 
-      {/* Contenido principal */}
-      <div className={styles.pageContainer}>
+  
+       <div className={styles.pageContainer}>
         <section className={styles.section}>
         <h1 className={styles.heroTitle}>Greif Software Solutions</h1>
        
@@ -125,7 +119,6 @@ const About = () => {
           </ul>
         </section>
 
-      </div>
     </div>
   );
 };
