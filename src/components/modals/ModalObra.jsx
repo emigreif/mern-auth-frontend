@@ -1,14 +1,14 @@
 // src/components/modals/modalObra.jsx
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
 import ModalNuevoCliente from "./ModalNuevoCliente.jsx";
 import ModalImportarPerfilesOV from "./ModalImportarPerfilesOV.jsx";
 import ModalImportarVidriosOV from "./ModalImportarVidriosOV.jsx";
 import ModalImportarAccesoriosOV from "./ModalImportarAccesoriosOV.jsx";
 import ModalImportarTipologiasOV from "./ModalImportarTipologiasOV.jsx";
-import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import Button from "../Button.jsx";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalObra({ obra, onClose, onSaved }) {
   const { token } = useAuth();

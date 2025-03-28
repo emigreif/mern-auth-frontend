@@ -1,9 +1,9 @@
 // src/components/modals/modalUbicaciones.jsx
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import Button from "../Button.jsx";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 

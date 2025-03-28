@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
 import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalAsignarAccesorio({ isOpen, onClose, accesorios = [], obras = [], API_URL, token, onSuccess }) {
   const [tab, setTab] = useState("manual");
