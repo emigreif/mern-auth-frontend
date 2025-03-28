@@ -1,6 +1,6 @@
 // src/components/modals/modalBase.jsx
 import React from "react";
-import Button from "../Button.jsx";
+import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
 const ModalBase = ({ isOpen, onClose, title, children }) => {

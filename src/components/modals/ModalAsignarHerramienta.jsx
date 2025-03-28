@@ -1,7 +1,7 @@
 // src/components/modals/modalAsignarHerramienta.jsx
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./Button.jsx";
+import Button from "./ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId, token, API_URL, onSuccess }) {

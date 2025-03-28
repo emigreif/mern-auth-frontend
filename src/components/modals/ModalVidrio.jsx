@@ -1,7 +1,7 @@
 // src/components/modals/modalVidrio.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
-import Button from "../Button.jsx";
+import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave }) {

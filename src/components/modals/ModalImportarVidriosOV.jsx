@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
-import Button from "../Button.jsx";
+import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 import { useAuth } from "../../context/AuthContext.jsx";
 
