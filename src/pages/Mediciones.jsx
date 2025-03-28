@@ -1,12 +1,13 @@
+// src/pages/Mediciones.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import styles from "../styles/pages/GlobalStylePages.module.css";
-// Modales específicos
 import ModalUbicaciones from "../components/ModalUbicaciones.jsx";
 import ModalImportarTipologiasOV from "../components/ModalImportarTipologiasOV.jsx";
 import ModalAsignacion from "../components/ModalAsignacion.jsx";
 import ModalPlanillaMedicion from "../components/ModalPlanillaMedicion.jsx";
 import ModalReporteMedicion from "../components/ModalReporteMedicion.jsx";
+import Button from "../components/Button.jsx";
+import styles from "../styles/pages/GlobalStylePages.module.css";
 
 const Mediciones = () => {
   const { token } = useAuth();
@@ -16,7 +17,7 @@ const Mediciones = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Estados para abrir/cerrar modales
+  // Estados para modales y obra seleccionada
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
   const [modalUbicacionesOpen, setModalUbicacionesOpen] = useState(false);
   const [modalTipologiasOpen, setModalTipologiasOpen] = useState(false);
@@ -25,13 +26,14 @@ const Mediciones = () => {
   const [modalReporteOpen, setModalReporteOpen] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
-    fetchObras();
+    if (token) {
+      fetchObras();
+    }
   }, [token]);
 
   const fetchObras = async () => {
-    setErrorMsg("");
     setLoading(true);
+    setErrorMsg("");
     try {
       const res = await fetch(`${API_URL}/api/obras`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -67,6 +69,8 @@ const Mediciones = () => {
       case "reporte":
         setModalReporteOpen(true);
         break;
+      default:
+        break;
     }
   };
 
@@ -75,16 +79,15 @@ const Mediciones = () => {
       <div className={styles.header}>
         <h1>Mediciones</h1>
       </div>
-
+      
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {loading && <div className={styles.spinner}>Cargando obras...</div>}
-
       {!loading && obras.length === 0 && !errorMsg && (
         <div className={styles.noData}>No hay obras para mostrar</div>
       )}
-
+      
       {!loading && obras.length > 0 && (
-        <table className={styles.obrasTable}>
+        <table className={styles.tableBase}>
           <thead>
             <tr>
               <th>Código Obra</th>
@@ -97,22 +100,22 @@ const Mediciones = () => {
               <tr key={obra._id}>
                 <td>{obra.codigoObra}</td>
                 <td>{obra.nombre}</td>
-                <td className={styles.actionsTd}>
-                  <button onClick={() => abrirModal("ubicaciones", obra)}>
+                <td>
+                  <Button onClick={() => abrirModal("ubicaciones", obra)}>
                     📍 Ubicaciones
-                  </button>
-                  <button onClick={() => abrirModal("tipologias", obra)}>
+                  </Button>
+                  <Button onClick={() => abrirModal("tipologias", obra)}>
                     🧱 Tipologías
-                  </button>
-                  <button onClick={() => abrirModal("asignacion", obra)}>
+                  </Button>
+                  <Button onClick={() => abrirModal("asignacion", obra)}>
                     🧩 Asignación
-                  </button>
-                  <button onClick={() => abrirModal("planilla", obra)}>
+                  </Button>
+                  <Button onClick={() => abrirModal("planilla", obra)}>
                     📄 Planilla
-                  </button>
-                  <button onClick={() => abrirModal("reporte", obra)}>
+                  </Button>
+                  <Button onClick={() => abrirModal("reporte", obra)}>
                     📊 Reporte
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -120,14 +123,12 @@ const Mediciones = () => {
         </table>
       )}
 
-      {/* Modales */}
       {modalUbicacionesOpen && obraSeleccionada && (
         <ModalUbicaciones
           obra={obraSeleccionada}
           onClose={() => setModalUbicacionesOpen(false)}
         />
       )}
-
       {modalTipologiasOpen && obraSeleccionada && (
         <ModalImportarTipologiasOV
           obra={obraSeleccionada}
@@ -137,21 +138,18 @@ const Mediciones = () => {
           onSaved={fetchObras}
         />
       )}
-
       {modalAsignacionOpen && obraSeleccionada && (
         <ModalAsignacion
           obra={obraSeleccionada}
           onClose={() => setModalAsignacionOpen(false)}
         />
       )}
-
       {modalPlanillaOpen && obraSeleccionada && (
         <ModalPlanillaMedicion
           obra={obraSeleccionada}
           onClose={() => setModalPlanillaOpen(false)}
         />
       )}
-
       {modalReporteOpen && obraSeleccionada && (
         <ModalReporteMedicion
           obra={obraSeleccionada}

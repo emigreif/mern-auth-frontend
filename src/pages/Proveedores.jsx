@@ -1,9 +1,9 @@
 // src/pages/Proveedores.jsx
-
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/ModalBase.jsx";
 import ModalMovimientoContable from "../components/ModalMovimientoContable.jsx";
+import Button from "../components/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 export default function Proveedores() {
@@ -17,7 +17,6 @@ export default function Proveedores() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentProvId, setCurrentProvId] = useState(null);
-
   const [showModalMovimiento, setShowModalMovimiento] = useState(false);
   const [proveedorForMovimiento, setProveedorForMovimiento] = useState(null);
 
@@ -29,9 +28,7 @@ export default function Proveedores() {
     whatsapp: "",
     rubro: [],
   };
-
   const [formProv, setFormProv] = useState(initialFormProv);
-
   const rubrosPosibles = [
     "Vidrio",
     "Perfiles",
@@ -100,16 +97,6 @@ export default function Proveedores() {
       setErrorMsg("Nombre y dirección son obligatorios");
       return;
     }
-
-    const newProv = {
-      nombre: formProv.nombre,
-      direccion: formProv.direccion,
-      telefono: formProv.telefono,
-      whatsapp: formProv.whatsapp,
-      emails: formProv.emails.filter((e) => e.trim() !== ""),
-      rubro: formProv.rubro,
-    };
-
     try {
       const res = await fetch(`${API_URL}/api/proveedores`, {
         method: "POST",
@@ -117,7 +104,7 @@ export default function Proveedores() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(newProv),
+        body: JSON.stringify(formProv),
       });
       const data = await res.json();
       setProveedores((prev) => [...prev, data]);
@@ -134,16 +121,10 @@ export default function Proveedores() {
       setErrorMsg("Nombre y dirección son obligatorios");
       return;
     }
-
     const updatedProv = {
-      nombre: formProv.nombre,
-      direccion: formProv.direccion,
-      telefono: formProv.telefono,
-      whatsapp: formProv.whatsapp,
+      ...formProv,
       emails: formProv.emails.filter((e) => e.trim() !== ""),
-      rubro: formProv.rubro,
     };
-
     try {
       const res = await fetch(`${API_URL}/api/proveedores/${currentProvId}`, {
         method: "PUT",
@@ -207,38 +188,54 @@ export default function Proveedores() {
 
   return (
     <div className={styles.pageContainer}>
-      <h1>Proveedores</h1>
-      <button onClick={handleOpenModalForCreate}>➕ Agregar Proveedor</button>
-
+      <div className={styles.header}>
+        <h1>Proveedores</h1>
+        <Button onClick={handleOpenModalForCreate}>➕ Agregar Proveedor</Button>
+      </div>
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {loading && <p>Cargando proveedores...</p>}
-
       <div className={styles.proveedoresGrid}>
         {proveedores.map((prov) => (
-          <div key={prov._id} className={styles.proveedorCard}>
-            <h2>{prov.nombre}</h2>
-            <p>Saldo: ${prov.saldo?.toFixed(2) || 0}</p>
-            <p>Dirección: {prov.direccion}</p>
-            <p>Tel: {prov.telefono}</p>
-            <p>WhatsApp: {prov.whatsapp}</p>
-            {prov.rubro?.length > 0 && <p>Rubros: {prov.rubro.join(", ")}</p>}
-            {prov.emails?.length > 0 && <p>Emails: {prov.emails.join(", ")}</p>}
-
-            <div className={styles.actions}>
-              <button onClick={() => handleOpenModalForEdit(prov)}>
-                ✏️ Editar
-              </button>
-              <button onClick={() => handleDeleteProveedor(prov._id)}>
-                ❌ Eliminar
-              </button>
-              <button onClick={() => handleOpenMovimientoProveedor(prov)}>
-                ➕ Movimiento
-              </button>
+          <div key={prov._id}>
+            <div className={styles.header}>
+              <h1>{prov.nombre}</h1>
+              <h2>Saldo: ${prov.saldo?.toFixed(2) || 0}</h2>
             </div>
+            <h3>
+              {prov.rubro?.length > 0 && <p>Rubros: {prov.rubro.join(", ")}</p>}
+            </h3>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "50px" }}>
+              <p>Dirección: {prov.direccion}</p>
+              <p>Tel: {prov.telefono}</p>
+              <p>WhatsApp: {prov.whatsapp}</p>
+
+              {prov.emails?.length > 0 && (
+                <p>Emails: {prov.emails.join(", ")}</p>
+              )}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "10px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button onClick={() => handleOpenModalForEdit(prov)}>
+                ✏️ Editar
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => handleDeleteProveedor(prov._id)}
+              >
+                ❌ Eliminar
+              </Button>
+            </div>
+            <div style={{ borderTop: "1px solid #ccc", margin: "20px" }}></div>
           </div>
         ))}
       </div>
-
       {isModalOpen && (
         <ModalBase
           isOpen={isModalOpen}
@@ -258,7 +255,6 @@ export default function Proveedores() {
               }
               required
             />
-
             <label>Dirección</label>
             <input
               type="text"
@@ -269,7 +265,6 @@ export default function Proveedores() {
               }
               required
             />
-
             <label>Teléfono</label>
             <input
               type="text"
@@ -279,7 +274,6 @@ export default function Proveedores() {
                 setFormProv({ ...formProv, telefono: e.target.value })
               }
             />
-
             <label>WhatsApp</label>
             <input
               type="text"
@@ -289,27 +283,39 @@ export default function Proveedores() {
                 setFormProv({ ...formProv, whatsapp: e.target.value })
               }
             />
-
             <label>Emails</label>
             {formProv.emails.map((email, i) => (
-              <div key={i}>
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  gap: "0.5rem",
+                  marginBottom: "0.5rem",
+                }}
+              >
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => handleEmailChange(i, e.target.value)}
                 />
-                <button type="button" onClick={() => handleRemoveEmail(i)}>
+                <Button
+                  variant="danger"
+                  type="button"
+                  onClick={() => handleRemoveEmail(i)}
+                >
                   X
-                </button>
+                </Button>
               </div>
             ))}
-            <button type="button" onClick={handleAddEmail}>
+            <Button type="button" onClick={handleAddEmail}>
               + Añadir Email
-            </button>
-
+            </Button>
             <label>Rubros</label>
             {rubrosPosibles.map((r) => (
-              <label key={r}>
+              <label
+                key={r}
+                style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
+              >
                 <input
                   type="checkbox"
                   checked={formProv.rubro.includes(r)}
@@ -318,17 +324,19 @@ export default function Proveedores() {
                 {r}
               </label>
             ))}
-
             <div>
-              <button type="submit">Guardar</button>
-              <button type="button" onClick={handleCloseModal}>
+              <Button type="submit">Guardar</Button>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={handleCloseModal}
+              >
                 Cancelar
-              </button>
+              </Button>
             </div>
           </form>
         </ModalBase>
       )}
-
       {showModalMovimiento && proveedorForMovimiento && (
         <ModalMovimientoContable
           mode="create"

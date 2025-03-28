@@ -2,26 +2,19 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/ModalBase.jsx";
+import Button from "../components/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
-/**
- * Página "Reportes"
- * - GET /api/reportes => lista de reportes
- * - POST /api/reportes => crear un reporte
- * - Muestra spinner, error, no data
- */
-const Reportes = () => {
+export default function Reportes() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [reportes, setReportes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [nuevoReporte, setNuevoReporte] = useState({
     categoria: "",
     descripcion: ""
   });
-
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -36,9 +29,7 @@ const Reportes = () => {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/reportes`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) {
         const dataErr = await res.json();
@@ -64,8 +55,8 @@ const Reportes = () => {
       const res = await fetch(`${API_URL}/api/reportes`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(nuevoReporte)
       });
@@ -85,18 +76,16 @@ const Reportes = () => {
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Reportes</h1>
-        <button className={styles.addBtn} onClick={() => setIsModalOpen(true)}>
+        <Button onClick={() => setIsModalOpen(true)}>
           + Agregar Reporte
-        </button>
+        </Button>
       </div>
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {loading && <div className={styles.spinner}>Cargando reportes...</div>}
-
       {!loading && reportes.length === 0 && !errorMsg && (
         <div className={styles.noData}>No hay reportes para mostrar</div>
       )}
-
       {!loading && reportes.length > 0 && (
         <div className={styles.list}>
           {reportes.map((r) => (
@@ -114,17 +103,11 @@ const Reportes = () => {
         </div>
       )}
 
-      {/* Modal para crear un reporte */}
       {isModalOpen && (
-        <ModalBase
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title="Agregar Reporte"
-        >
-          <form onSubmit={handleCreateReporte}>
-            {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-
-            <div className="form-group">
+        <ModalBase isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Agregar Reporte">
+          <form onSubmit={handleCreateReporte} className={styles.formBase}>
+            {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+            <div className={styles.formGroup}>
               <label>Categoría</label>
               <input
                 type="text"
@@ -133,8 +116,7 @@ const Reportes = () => {
                 required
               />
             </div>
-
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label>Descripción</label>
               <textarea
                 name="descripcion"
@@ -142,24 +124,15 @@ const Reportes = () => {
                 required
               />
             </div>
-
-            <div className="form-actions" style={{ marginTop: "1rem" }}>
-              <button type="submit" className="btn">
-                Guardar
-              </button>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => setIsModalOpen(false)}
-              >
+            <div className={styles.actions} style={{ marginTop: "1rem" }}>
+              <Button type="submit">Guardar</Button>
+              <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>
                 Cancelar
-              </button>
+              </Button>
             </div>
           </form>
         </ModalBase>
       )}
     </div>
   );
-};
-
-export default Reportes;
+}

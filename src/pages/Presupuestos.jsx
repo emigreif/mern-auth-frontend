@@ -4,12 +4,12 @@ import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import ModalPresupuesto from "../components/ModalPresupuesto.jsx";
 import ModalObra from "../components/ModalObra.jsx";
+import Button from "../components/Button.jsx";
 
 export default function Presupuestos() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Estados principales
   const [presupuestos, setPresupuestos] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
@@ -38,7 +38,8 @@ export default function Presupuestos() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al obtener presupuestos");
-      setPresupuestos(await res.json());
+      const data = await res.json();
+      setPresupuestos(data);
     } catch (error) {
       setErrorMsg(error.message);
     } finally {
@@ -52,7 +53,8 @@ export default function Presupuestos() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al obtener clientes");
-      setClientes(await res.json());
+      const data = await res.json();
+      setClientes(data);
     } catch (error) {
       console.error("Error al cargar clientes:", error);
     }
@@ -77,7 +79,8 @@ export default function Presupuestos() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro que deseas eliminar este presupuesto?")) return;
+    if (!window.confirm("¿Seguro que deseas eliminar este presupuesto?"))
+      return;
     try {
       const res = await fetch(`${API_URL}/api/presupuestos/${id}`, {
         method: "DELETE",
@@ -90,17 +93,12 @@ export default function Presupuestos() {
     }
   };
 
-  const handleCreateCliente = async () => {
-    setIsClienteModalOpen(false);
-    fetchClientes();
-  };
-
   const handlePasarAObra = (pres) => {
     setObraForm({
       nombre: pres.nombreObra || "",
       cliente: pres.cliente?._id || "",
       direccion: pres.direccion || "",
-      fechaEntrega: pres.fechaEntrega || "", // ✅ Ahora se carga correctamente
+      fechaEntrega: pres.fechaEntrega || "",
     });
     setIsObraModalOpen(true);
   };
@@ -109,23 +107,21 @@ export default function Presupuestos() {
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Presupuestos</h1>
-        <button className={styles.newPresupuestoBtn} onClick={handleOpenCreate}>
-          + Nuevo Presupuesto
-        </button>
+        <Button onClick={handleOpenCreate}>+ Nuevo Presupuesto</Button>
       </div>
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-      {loading && <div className={styles.spinner}>Cargando presupuestos...</div>}
-
+      {loading && (
+        <div className={styles.spinner}>Cargando presupuestos...</div>
+      )}
       {!loading && presupuestos.length === 0 && !errorMsg && (
         <div className={styles.noData}>No hay presupuestos para mostrar</div>
       )}
-
       {!loading && presupuestos.length > 0 && (
-        <div className={styles.presupuestosList}>
+        <div>
           {presupuestos.map((pres) => (
-            <div key={pres._id} className={styles.presupuestoCard}>
-              <div className={styles.presupuestoHeader}>
+            <div key={pres._id}>
+              <div className={styles.header}>
                 <h2>
                   {pres.idPresupuesto ? `#${pres.idPresupuesto} - ` : ""}
                   {pres.nombreObra}
@@ -134,53 +130,64 @@ export default function Presupuestos() {
                   {pres.estado}
                 </span>
               </div>
-
-              <div className={styles.presupuestoInfo}>
-                <p><strong>Cliente:</strong> {pres.cliente?.nombre || "Sin cliente"}</p>
-                <p><strong>Dirección:</strong> {pres.direccion}</p>
-                <p><strong>Fecha Entrega:</strong> {pres.fechaEntrega ? new Date(pres.fechaEntrega).toLocaleDateString() : "N/D"}</p>
-                <p><strong>Total Presupuestado:</strong> ${pres.totalPresupuestado || 0}</p>
-              </div>
-
-              <div className={styles.presupuestoFooter}>
-                <button className={styles.actionBtn} onClick={() => handleOpenEdit(pres)}>✏️ Editar</button>
-                <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => handleDelete(pres._id)}>🗑️ Eliminar</button>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "50px" }}>
+                <p>
+                  <strong>Cliente:</strong>{" "}
+                  {pres.cliente?.nombre || "Sin cliente"}
+                </p>
+                <p>
+                  <strong>Dirección:</strong> {pres.direccion}
+                </p>
                 
+                <p>
+                  <strong>Total Presupuestado:</strong> $
+                  {pres.totalPresupuestado || 0}
+                </p>
+                <p>
+                  <strong>Fecha Entrega:</strong>{" "}
+                  {pres.fechaEntrega
+                    ? new Date(pres.fechaEntrega).toLocaleDateString()
+                    : "N/D"}
+                </p>
+                
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "flex-end" }}>
+
+                <Button onClick={() => handleOpenEdit(pres)}>✏️ Editar</Button>
+                <Button variant="danger" onClick={() => handleDelete(pres._id)}>
+                  🗑️ Eliminar
+                </Button>
                 {pres.estado === "aprobado" && (
-                  <button className={styles.pasarObraBtn} onClick={() => handlePasarAObra(pres)}>
+                  <Button onClick={() => handlePasarAObra(pres)}>
                     ➡️ Pasar a Obras
-                  </button>
+                  </Button>
                 )}
               </div>
+              <div style={{ borderTop: "1px solid #ccc", margin: "20px" }}></div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Modal para crear/editar presupuesto */}
       {isPresupuestoModalOpen && (
         <ModalPresupuesto
           editingPresupuesto={editingPresupuesto}
           onClose={handleCloseModal}
           onSaved={handleCloseModal}
-          clientes={clientes} 
-          onAddCliente={() => setIsClienteModalOpen(true)} // ✅ Llamar modal de nuevo cliente
+          clientes={clientes}
+          onAddCliente={() => setIsClienteModalOpen(true)}
         />
       )}
-
-{isObraModalOpen && obraForm && (
-  <ModalObra
-    obra={obraForm} // ✅ Ahora pasamos obraForm, que sí está definido
-    onClose={() => setIsObraModalOpen(false)}
-    onSaved={() => {
-      setIsObraModalOpen(false);
-      fetchPresupuestos(); // 🔄 Recargar lista si se guarda
-    }}
-  />
-)}
-
-
-   
+      {isObraModalOpen && obraForm && (
+        <ModalObra
+          obra={obraForm}
+          onClose={() => setIsObraModalOpen(false)}
+          onSaved={() => {
+            setIsObraModalOpen(false);
+            fetchPresupuestos();
+          }}
+        />
+      )}
     </div>
   );
 }

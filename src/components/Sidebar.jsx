@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
   faFileInvoiceDollar,
-  faUser,
+  faUsers,
   faShoppingCart,
   faTruck,
   faClipboardList,
@@ -40,6 +40,7 @@ const Sidebar = ({ expanded, setExpanded }) => {
     { name: "Calendario", route: "/calendario", icon: faCalendarAlt },
     { name: "Contabilidad", route: "/contabilidad", icon: faCalculator },
     { name: "Mediciones", route: "/mediciones", icon: faRulerCombined },
+    { name: "Nomina", route: "/Nomina", icon: faUsers },
     { name: "Reportes", route: "/reportes", icon: faChartBar },
     { name: "Configuración", route: "/configuracion", icon: faCog }
   ];

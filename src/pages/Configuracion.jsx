@@ -1,6 +1,8 @@
+// src/pages/Configuracion/Configuracion.jsx
 import React, { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
+import Button from "../components/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 export default function Configuracion() {
@@ -12,6 +14,7 @@ export default function Configuracion() {
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 1. Cargar configuración inicial
   useEffect(() => {
     if (token) {
       fetchConfig();
@@ -34,13 +37,13 @@ export default function Configuracion() {
     }
   };
 
+  // 2. Guardar configuración
   const handleSave = async () => {
     if (!config) return;
     try {
       setErrorMsg("");
       setSuccessMsg("");
       setLoading(true);
-
       const res = await fetch(`${API_URL}/api/configuracion`, {
         method: "PUT",
         headers: {
@@ -53,7 +56,6 @@ export default function Configuracion() {
         }),
       });
       if (!res.ok) throw new Error("Error al actualizar configuración");
-
       const data = await res.json();
       setConfig(data);
       setSuccessMsg("Configuración actualizada con éxito");
@@ -64,6 +66,7 @@ export default function Configuracion() {
     }
   };
 
+  // 3. Manejo de impuestos
   const handleImpuestoChange = (index, field, value) => {
     if (!config) return;
     const newImpuestos = [...config.impuestos];
@@ -75,7 +78,10 @@ export default function Configuracion() {
     if (!config) return;
     setConfig({
       ...config,
-      impuestos: [...config.impuestos, { codigo: "", descripcion: "", porcentaje: 0 }],
+      impuestos: [
+        ...config.impuestos,
+        { codigo: "", descripcion: "", porcentaje: 0 },
+      ],
     });
   };
 
@@ -86,6 +92,7 @@ export default function Configuracion() {
     setConfig({ ...config, impuestos: newImpuestos });
   };
 
+  // 4. Manejo de índices de actualización
   const handleIndiceChange = (index, field, value) => {
     if (!config) return;
     const newIndices = [...config.indicesActualizacion];
@@ -97,7 +104,10 @@ export default function Configuracion() {
     if (!config) return;
     setConfig({
       ...config,
-      indicesActualizacion: [...config.indicesActualizacion, { codigo: "", descripcion: "", valorActual: 0 }],
+      indicesActualizacion: [
+        ...config.indicesActualizacion,
+        { codigo: "", descripcion: "", valorActual: 0 },
+      ],
     });
   };
 
@@ -110,99 +120,148 @@ export default function Configuracion() {
 
   return (
     <div className={styles.pageContainer}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h1>Configuración</h1>
-        <nav className={styles.nav}>
-          <Link to="profile" className={styles.navLink}>Mi Perfil</Link>
-          <Link to="perfiles" className={styles.navLink}>Perfiles</Link>
+        <nav style={{ marginBottom: "1rem" }}>
+          <Link to="profile" style={{ marginRight: "1rem" }}>
+            Mi Perfil
+          </Link>
+          <Link to="perfiles">Perfiles</Link>
         </nav>
-      </header>
-
-      <main className={styles.mainContent}>
-        <Outlet />
-        {loading && <p className={styles.spinner}>Cargando configuración...</p>}
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-        {successMsg && <p className={styles.success}>{successMsg}</p>}
-        {!loading && config && (
-          <div className={styles.configSection}>
-            <h2>Impuestos</h2>
+      </div>
+      <Outlet />
+      {loading && <p style={{ margin: "1rem 0" }}>Cargando configuración...</p>}
+      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+      {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
+      {!loading && config && (
+        <div>
+          <div className={styles.header}>
+            {" "}
+            <h2>Impuestos</h2>{" "}
+            <Button onClick={addImpuesto} style={{ marginTop: "0.5rem" }}>
+              + Agregar Impuesto
+            </Button>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
             {config.impuestos.map((imp, i) => (
-              <div key={i} className={styles.configItem}>
-                <label className={styles.label}>Código:</label>
+              <div
+                key={i}
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "0.5rem",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                <label style={{ display: "block" }}>Código:</label>
                 <input
                   type="text"
                   value={imp.codigo}
-                  onChange={(e) => handleImpuestoChange(i, "codigo", e.target.value)}
-                  className={styles.input}
+                  onChange={(e) =>
+                    handleImpuestoChange(i, "codigo", e.target.value)
+                  }
                 />
-                <label className={styles.label}>Descripción:</label>
+                <label style={{ display: "block", marginTop: "0.3rem" }}>
+                  Descripción:
+                </label>
                 <input
                   type="text"
                   value={imp.descripcion || ""}
-                  onChange={(e) => handleImpuestoChange(i, "descripcion", e.target.value)}
-                  className={styles.input}
+                  onChange={(e) =>
+                    handleImpuestoChange(i, "descripcion", e.target.value)
+                  }
                 />
-                <label className={styles.label}>Porcentaje:</label>
+                <label style={{ display: "block", marginTop: "0.3rem" }}>
+                  Porcentaje:
+                </label>
                 <input
                   type="number"
                   value={imp.porcentaje}
-                  onChange={(e) => handleImpuestoChange(i, "porcentaje", parseFloat(e.target.value))}
-                  className={styles.input}
+                  onChange={(e) =>
+                    handleImpuestoChange(
+                      i,
+                      "porcentaje",
+                      parseFloat(e.target.value)
+                    )
+                  }
                 />
-                <button
-                  className={`${styles.btn} ${styles.deleteBtn}`}
+                <Button
+                  variant="danger"
                   onClick={() => removeImpuesto(i)}
+                  style={{ marginLeft: "1rem" }}
                 >
                   Eliminar
-                </button>
+                </Button>
               </div>
             ))}
-            <button className={`${styles.btn} ${styles.addBtn}`} onClick={addImpuesto}>
-              + Agregar Impuesto
-            </button>
-
-            <h2>Índices de Actualización</h2>
+          </div>
+          <div className={styles.header}>
+            <h2 style={{ marginTop: "2rem" }}>Índices de Actualización</h2>
+            <Button onClick={addIndice} style={{ marginTop: "0.5rem" }}>
+              + Agregar Índice
+            </Button>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {" "}
             {config.indicesActualizacion.map((ind, i) => (
-              <div key={i} className={styles.configItem}>
-                <label className={styles.label}>Código:</label>
+              <div
+                key={i}
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "0.5rem",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                <label style={{ display: "block" }}>Código:</label>
                 <input
                   type="text"
                   value={ind.codigo}
-                  onChange={(e) => handleIndiceChange(i, "codigo", e.target.value)}
-                  className={styles.input}
+                  onChange={(e) =>
+                    handleIndiceChange(i, "codigo", e.target.value)
+                  }
                 />
-                <label className={styles.label}>Descripción:</label>
+                <label style={{ display: "block", marginTop: "0.3rem" }}>
+                  Descripción:
+                </label>
                 <input
                   type="text"
                   value={ind.descripcion || ""}
-                  onChange={(e) => handleIndiceChange(i, "descripcion", e.target.value)}
-                  className={styles.input}
+                  onChange={(e) =>
+                    handleIndiceChange(i, "descripcion", e.target.value)
+                  }
                 />
-                <label className={styles.label}>Valor Actual:</label>
+                <label style={{ display: "block", marginTop: "0.3rem" }}>
+                  Valor Actual:
+                </label>
                 <input
                   type="number"
                   value={ind.valorActual}
-                  onChange={(e) => handleIndiceChange(i, "valorActual", parseFloat(e.target.value))}
-                  className={styles.input}
+                  onChange={(e) =>
+                    handleIndiceChange(
+                      i,
+                      "valorActual",
+                      parseFloat(e.target.value)
+                    )
+                  }
                 />
-                <button
-                  className={`${styles.btn} ${styles.deleteBtn}`}
+                <Button
+                  variant="danger"
                   onClick={() => removeIndice(i)}
+                  style={{ marginLeft: "1rem" }}
                 >
                   Eliminar
-                </button>
+                </Button>
               </div>
-            ))}
-            <button className={`${styles.btn} ${styles.addBtn}`} onClick={addIndice}>
-              + Agregar Índice
-            </button>
-
-            <button className={`${styles.btn} ${styles.saveBtn}`} onClick={handleSave}>
-              Guardar Configuración
-            </button>
+            ))}{" "}
           </div>
-        )}
-      </main>
+
+          <Button
+            onClick={handleSave}
+            style={{ marginTop: "1rem", backgroundColor: "#00aa63" }}
+          >
+            Guardar Configuración
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

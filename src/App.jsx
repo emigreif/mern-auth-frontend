@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate
+  Navigate,
 } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
 
@@ -79,9 +79,9 @@ function ProtectedRoutes() {
           <Route path="/mediciones" element={<Mediciones />} />
           <Route path="/compras" element={<Compras />} />
           <Route path="/reportes" element={<Reportes />} />
-          <Route path="/contabilidad" element={<Contabilidad />}>
-            <Route path="nomina" element={<Nomina />} />
-          </Route>
+          <Route path="/contabilidad" element={<Contabilidad />} />
+          <Route path="/nomina" element={<Nomina />} />
+
           <Route path="/configuracion" element={<Configuracion />}>
             <Route path="profile" element={<Profile />} />
             <Route path="perfiles" element={<Perfiles />} />
@@ -98,7 +98,9 @@ function AppLayout() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div style={{ textAlign: "center", marginTop: "2rem" }}>Cargando...</div>;
+    return (
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>Cargando...</div>
+    );
   }
 
   return user ? <ProtectedRoutes /> : <PublicRoutes />;

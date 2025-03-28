@@ -2,21 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
+import Button from "../components/Button.jsx";
 
-/**
- * Página "Perfiles"
- * - GET /api/perfiles => lista de perfiles
- * - Crear / Editar => POST / PUT /api/perfiles
- * - Eliminar => DELETE /api/perfiles/:id
- * - Muestra spinner, error, no data
- * - Maneja permisos (admin, obras, clientes, etc.)
- */
 const Perfiles = () => {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [perfiles, setPerfiles] = useState([]);
-  const [editingId, setEditingId] = useState(null); // ID del perfil que se está editando
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     nombre: "",
     password: "",
@@ -32,7 +25,6 @@ const Perfiles = () => {
       admin: false
     }
   });
-
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -63,9 +55,8 @@ const Perfiles = () => {
     }
   };
 
-  // Manejo de form
   const handleInputChange = (e) => {
-    const { name, type, checked, value } = e.target;
+    const { name, value, type, checked } = e.target;
     if (name.startsWith("permisos.")) {
       const subfield = name.split(".")[1];
       setFormData((prev) => ({
@@ -132,13 +123,10 @@ const Perfiles = () => {
     e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
-
-    // Validaciones mínimas
     if (!formData.nombre.trim()) {
       setErrorMsg("El campo 'nombre' es obligatorio.");
       return;
     }
-
     try {
       let url = `${API_URL}/api/perfiles`;
       let method = "POST";
@@ -146,11 +134,7 @@ const Perfiles = () => {
         url = `${API_URL}/api/perfiles`;
         method = "PUT";
       }
-
-      const body = editingId
-        ? { id: editingId, ...formData }
-        : { ...formData };
-
+      const body = editingId ? { id: editingId, ...formData } : { ...formData };
       const res = await fetch(url, {
         method,
         headers: {
@@ -180,14 +164,12 @@ const Perfiles = () => {
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
-
       {loading && <div className={styles.spinner}>Cargando perfiles...</div>}
 
       {!loading && perfiles.length === 0 && !errorMsg && (
         <div className={styles.noData}>No hay perfiles para mostrar</div>
       )}
 
-      {/* Lista de perfiles */}
       <div className={styles.list}>
         {perfiles.map((p) => (
           <div key={p._id} className={styles.profileCard}>
@@ -195,21 +177,15 @@ const Perfiles = () => {
             {p.permisos?.admin && <span className={styles.adminBadge}>[ADMIN]</span>}
             <p>Password: {p.password}</p>
             <div className={styles.actions}>
-              <button className={styles.btn} onClick={() => handleEditClick(p)}>
-                Editar
-              </button>
-              <button
-                className={`${styles.btn} ${styles.deleteBtn}`}
-                onClick={() => handleDelete(p._id)}
-              >
+              <Button onClick={() => handleEditClick(p)}>Editar</Button>
+              <Button variant="danger" onClick={() => handleDelete(p._id)}>
                 Eliminar
-              </button>
+              </Button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Form crear/editar */}
       <div className={styles.formSection}>
         <h2>{editingId ? "Editar Perfil" : "Crear Perfil"}</h2>
         <form onSubmit={handleSave}>
@@ -223,7 +199,6 @@ const Perfiles = () => {
               required
             />
           </div>
-
           <div className={styles.formGroup}>
             <label>Contraseña (del perfil)</label>
             <input
@@ -233,7 +208,6 @@ const Perfiles = () => {
               onChange={handleInputChange}
             />
           </div>
-
           <div>
             <h3>Permisos</h3>
             <div className={styles.permissionsContainer}>
@@ -250,20 +224,14 @@ const Perfiles = () => {
               ))}
             </div>
           </div>
-
-          <button className={styles.saveBtn} type="submit">
-            {editingId ? "Actualizar" : "Guardar"}
-          </button>
-          {editingId && (
-            <button
-              type="button"
-              className={styles.btn}
-              style={{ marginLeft: "1rem", backgroundColor: "#666" }}
-              onClick={handleCancelEdit}
-            >
-              Cancelar
-            </button>
-          )}
+          <div className={styles.actions}>
+            <Button type="submit">{editingId ? "Actualizar" : "Guardar"}</Button>
+            {editingId && (
+              <Button variant="secondary" type="button" onClick={handleCancelEdit}>
+                Cancelar
+              </Button>
+            )}
+          </div>
         </form>
       </div>
     </div>

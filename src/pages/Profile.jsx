@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
+import Button from "../components/Button.jsx";
+
 const Profile = () => {
   const { user, token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -10,14 +12,14 @@ const Profile = () => {
     firstName: "",
     lastName: "",
     email: "",
-    password: "", // contraseña actual
-    newPassword: "", // contraseña nueva
+    password: "",
+    newPassword: "",
   });
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Al montar, si hay user, llenamos form
+  // Al montar, si hay user, llenamos el formulario
   useEffect(() => {
     if (user) {
       setFormData({
@@ -31,7 +33,7 @@ const Profile = () => {
   }, [user]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleUpdateProfile = async (e) => {
@@ -39,26 +41,21 @@ const Profile = () => {
     setErrorMsg("");
     setSuccessMsg("");
     setLoading(true);
-
     try {
       const res = await fetch(`${API_URL}/api/user/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.message || "Error al actualizar perfil");
       }
-
-      // Asume que el backend retorna { message, user } o { user } con datos actualizados
       setSuccessMsg(data.message || "Perfil actualizado correctamente");
-      // Podrías refrescar `user` en AuthContext si tu backend lo retorna
-      // E.g. setUser(data.user) => si tu AuthContext lo permite
+      // Aquí podrías actualizar el contexto de usuario si lo deseas.
     } catch (error) {
       setErrorMsg(error.message);
     } finally {
@@ -83,66 +80,32 @@ const Profile = () => {
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {successMsg && <p className={styles.success}>{successMsg}</p>}
 
-      <form onSubmit={handleUpdateProfile}>
-        {/* Nombre */}
+      <form onSubmit={handleUpdateProfile} className={styles.formBase}>
         <div className={styles.formGroup}>
           <label>Nombre</label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            disabled={loading}
-          />
+          <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} disabled={loading} />
         </div>
-
-        {/* Apellido */}
         <div className={styles.formGroup}>
           <label>Apellido</label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            disabled={loading}
-          />
+          <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} disabled={loading} />
         </div>
-
-        {/* Email (solo lectura si no deseas permitir cambiarlo) */}
         <div className={styles.formGroup}>
           <label>Email (no editable)</label>
           <input type="email" name="email" value={formData.email} disabled />
         </div>
-
-        {/* Contraseña actual */}
         <div className={styles.formGroup}>
           <label>Contraseña Actual</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Sólo si cambias la contraseña"
-            value={formData.password}
-            onChange={handleChange}
-            disabled={loading}
-          />
+          <input type="password" name="password" placeholder="Sólo si cambias la contraseña" value={formData.password} onChange={handleChange} disabled={loading} />
         </div>
-
-        {/* Nueva Contraseña */}
         <div className={styles.formGroup}>
           <label>Nueva Contraseña</label>
-          <input
-            type="password"
-            name="newPassword"
-            placeholder="Sólo si cambias la contraseña"
-            value={formData.newPassword}
-            onChange={handleChange}
-            disabled={loading}
-          />
+          <input type="password" name="newPassword" placeholder="Sólo si cambias la contraseña" value={formData.newPassword} onChange={handleChange} disabled={loading} />
         </div>
-
-        <button className={styles.saveBtn} type="submit" disabled={loading}>
-          {loading ? "Actualizando..." : "Actualizar"}
-        </button>
+        <div className={styles.actions}>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Actualizando..." : "Actualizar"}
+          </Button>
+        </div>
       </form>
     </div>
   );

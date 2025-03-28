@@ -4,14 +4,8 @@ import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalCompra from "../components/ModalCompra.jsx";
 import ModalIngresoMaterial from "../components/ModalIngresoMaterial.jsx";
+import Button from "../components/Button.jsx";
 
-/**
- * Página "Compras"
- * - Lista de compras filtradas por tipo (aluminio, vidrios, accesorios, todas)
- * - Botón para crear nueva compra => ModalCompra
- * - Botón "Ingreso" => ModalIngresoMaterial
- * - Anular => marca la compra como "anulado"
- */
 export default function Compras() {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -35,8 +29,6 @@ export default function Compras() {
     setLoading(true);
     try {
       let url = `${API_URL}/api/compras/${tipo}`;
-      // "todas" => GET /api/compras/todas
-      // "aluminio" => GET /api/compras/aluminio, etc.
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -85,9 +77,6 @@ export default function Compras() {
     try {
       const c = compras.find((x) => x._id === compraId);
       if (!c) return;
-
-      // DELETE /api/compras/:tipo/:id
-      // Se asume que anula la compra
       const url = `${API_URL}/api/compras/${c.tipo}/${compraId}`;
       const res = await fetch(url, {
         method: "DELETE",
@@ -103,14 +92,11 @@ export default function Compras() {
     }
   };
 
-  // Semáforo (opcional)
   const getSemaforo = (compra) => {
     if (compra.estado === "anulado") return "🔴 Anulado";
     if (compra.estado === "completado") return "🟢 Completado";
-
     if (!compra.fechaEstimadaEntrega) return "🟡 Pendiente";
-    const diasRestantes =
-      (new Date(compra.fechaEstimadaEntrega) - new Date()) / (1000 * 60 * 60 * 24);
+    const diasRestantes = (new Date(compra.fechaEstimadaEntrega) - new Date()) / (1000 * 60 * 60 * 24);
     if (diasRestantes < 0) return "🔴 Vencido";
     if (diasRestantes < 3) return "🟠 Próximo";
     return "🟡 Pendiente";
@@ -120,27 +106,23 @@ export default function Compras() {
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Portal de Compras</h1>
-        <div className={styles.filters}>
-          <select
-            className={styles.filterSelect}
-            value={tipo}
-            onChange={(e) => setTipo(e.target.value)}
-          >
+        <Button onClick={handleOpenCreate} className={styles.newCompraBtn}>
+            + Nueva Compra
+          </Button>
+     
+      </div>
+      <div className={styles.filters}>
+          <select className={styles.filterSelect} value={tipo} onChange={(e) => setTipo(e.target.value)}>
             <option value="todas">Todas</option>
             <option value="aluminio">Aluminio</option>
             <option value="vidrios">Vidrios</option>
             <option value="accesorios">Accesorios</option>
           </select>
-          <button className={styles.newCompraBtn} onClick={handleOpenCreate}>
-            + Nueva Compra
-          </button>
+        
         </div>
-      </div>
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-
       {loading && <div className={styles.spinner}>Cargando compras...</div>}
-
       {!loading && compras.length === 0 && !errorMsg && (
         <div className={styles.noData}>No hay compras para mostrar</div>
       )}
@@ -172,24 +154,11 @@ export default function Compras() {
                 <td>
                   {c.estado !== "anulado" && c.estado !== "completado" && (
                     <>
-                      <button
-                        className={styles.actionsBtn}
-                        onClick={() => handleOpenEdit(c)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className={styles.actionsBtn}
-                        onClick={() => handleOpenIngreso(c)}
-                      >
-                        Ingreso
-                      </button>
-                      <button
-                        className={`${styles.actionsBtn} ${styles.anularBtn}`}
-                        onClick={() => handleAnular(c._id)}
-                      >
+                      <Button onClick={() => handleOpenEdit(c)}>✏️ Editar</Button>
+                      <Button onClick={() => handleOpenIngreso(c)}>Ingreso</Button>
+                      <Button variant="danger" onClick={() => handleAnular(c._id)}>
                         Anular
-                      </button>
+                      </Button>
                     </>
                   )}
                 </td>
@@ -199,22 +168,12 @@ export default function Compras() {
         </table>
       )}
 
-      {/* Modal de Nueva/Editar Compra */}
       {isModalOpen && (
-        <ModalCompra
-          editingCompra={editingCompra}
-          onClose={handleCloseModal}
-          onSaved={handleCloseModal}
-        />
+        <ModalCompra editingCompra={editingCompra} onClose={handleCloseModal} onSaved={handleCloseModal} />
       )}
 
-      {/* Modal de Ingreso de Material */}
       {isIngresoModalOpen && (
-        <ModalIngresoMaterial
-          compra={editingCompra}
-          onClose={handleCloseIngreso}
-          onSaved={handleCloseIngreso}
-        />
+        <ModalIngresoMaterial compra={editingCompra} onClose={handleCloseIngreso} onSaved={handleCloseIngreso} />
       )}
     </div>
   );
