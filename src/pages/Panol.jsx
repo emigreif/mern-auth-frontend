@@ -2,18 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-<<<<<<< HEAD
-// Modales de creación/edición
-import ModalHerramienta from "../components/ModalHerramienta.jsx";
-import ModalPerfil from "../components/ModalPerfil.jsx";
-import ModalVidrio from "../components/ModalVidrio.jsx";
-import ModalAccesorio from "../components/ModalAccesorio.jsx";
-
-// Modales de asignación
-import ModalAsignarPerfil from "../components/ModalAsignarPerfil.jsx";
-import ModalAsignarAccesorio from "../components/ModalAsignarAccesorio.jsx";
-import ModalAsignarVidrio from "../components/ModalAsignarVidrio.jsx";
-=======
 // Modales base
 import ModalHerramienta from "../components/modals/ModalHerramienta.jsx";
 import ModalPerfil from "../components/modals/ModalPerfil.jsx";
@@ -24,7 +12,6 @@ import ModalAccesorio from "../components/modals/ModalAccesorio.jsx";
 import ModalAsignarPerfil from "../components/modals/ModalAsignarPerfil.jsx";
 import ModalAsignarAccesorio from "../components/modals/ModalAsignarAccesorio.jsx";
 import ModalAsignarVidrio from "../components/modals/ModalAsignarVidrio.jsx";
->>>>>>> 4135c04878fb04c67acfe6e52fa7fa9677d03149
 
 // Componentes UI
 import Button from "../components/Button.jsx";
