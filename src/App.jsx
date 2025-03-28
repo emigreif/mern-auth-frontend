@@ -15,7 +15,7 @@ import Planner from "./pages/Planner.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
-import BaseMateriales from "./pages/BaseMateriales.jsx"; // 🔹 Ahora está en rutas protegidas
+import BaseMateriales from "./pages/BaseMateriales.jsx"; 
 
 // Páginas protegidas
 import Obras from "./pages/Obras.jsx";
