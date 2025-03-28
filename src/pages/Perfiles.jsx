@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 
 const Perfiles = () => {
   const { token } = useAuth();

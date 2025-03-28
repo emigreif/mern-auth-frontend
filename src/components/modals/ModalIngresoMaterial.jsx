@@ -1,9 +1,9 @@
-// src/components/ModalIngresoMaterial.jsx
+// src/components/modals/modalIngresoMaterial.jsx
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import Button from "../ui/Button.jsx";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
   const { token } = useAuth();

@@ -1,9 +1,9 @@
-// src/components/ModalNuevoCliente.jsx
+// src/components/modals/modalNuevoCliente.jsx
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import Button from "../ui/Button.jsx";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalNuevoCliente({ onCreated, onClose }) {
   const { token } = useAuth();

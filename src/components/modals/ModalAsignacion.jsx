@@ -1,9 +1,9 @@
-// src/components/ModalAsignacion.jsx
+// src/components/modals/modalAsignacion.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import Button from "./ui/Button.jsx";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalAsignacion({ obra, onClose }) {
   const { token } = useAuth();

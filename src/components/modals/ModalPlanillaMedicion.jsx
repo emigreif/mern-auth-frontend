@@ -1,9 +1,9 @@
-// src/components/ModalPlanillaMedicion.jsx
+// src/components/modals/modalPlanillaMedicion.jsx
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import Button from "../ui/Button.jsx";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalPlanillaMedicion({ obra, onClose }) {
   const { token } = useAuth();

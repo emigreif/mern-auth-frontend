@@ -1,9 +1,9 @@
 // src/pages/Proveedores.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import ModalBase from "../components/ModalBase.jsx";
-import ModalMovimientoContable from "../components/ModalMovimientoContable.jsx";
-import Button from "../components/Button.jsx";
+import ModalBase from "../components/modals/ModalBase.jsx";
+import ModalMovimientoContable from "../components/modals/ModalMovimientoContable.jsx";
+import Button from "../components/ui/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 export default function Proveedores() {

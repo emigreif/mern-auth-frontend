@@ -1,8 +1,8 @@
-// src/components/ModalPerfil.jsx
+// src/components/modals/modalPerfil.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import Button from "../ui/Button.jsx";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalPerfil({ isOpen, onClose, perfilData = {}, onSave }) {
   const [formData, setFormData] = useState({

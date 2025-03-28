@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useAuth } from "../context/AuthContext.jsx";
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 const Calendario = () => {

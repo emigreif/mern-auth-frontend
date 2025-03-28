@@ -1,12 +1,12 @@
 // src/pages/Mediciones.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import ModalUbicaciones from "../components/ModalUbicaciones.jsx";
-import ModalImportarTipologiasOV from "../components/ModalImportarTipologiasOV.jsx";
-import ModalAsignacion from "../components/ModalAsignacion.jsx";
-import ModalPlanillaMedicion from "../components/ModalPlanillaMedicion.jsx";
-import ModalReporteMedicion from "../components/ModalReporteMedicion.jsx";
-import Button from "../components/Button.jsx";
+import ModalUbicaciones from "../components/modals/ModalUbicaciones.jsx";
+import ModalImportarTipologiasOV from "../components/modals/ModalImportarTipologiasOV.jsx";
+import ModalAsignacion from "../components/modals/ModalAsignacion.jsx";
+import ModalPlanillaMedicion from "../components/modals/ModalPlanillaMedicion.jsx";
+import ModalReporteMedicion from "../components/modals/ModalReporteMedicion.jsx";
+import Button from "../components/ui/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 const Mediciones = () => {

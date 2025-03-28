@@ -1,9 +1,9 @@
-// src/components/ModalPresupuesto.jsx
+// src/components/modals/modalPresupuesto.jsx
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./Button.jsx";
-import styles from "../styles/modals/GlobalModal.module.css";
+import Button from "../ui/Button.jsx";
+import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalPresupuesto({ editingPresupuesto, onClose, onSaved, clientes, onAddCliente }) {
   const { token } = useAuth();

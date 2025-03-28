@@ -1,0 +1,9 @@
+.searchInput {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    width: 100%;
+    max-width: 300px;
+  }
+  

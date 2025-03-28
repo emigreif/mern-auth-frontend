@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
-import ModalCompra from "../components/ModalCompra.jsx";
-import ModalIngresoMaterial from "../components/ModalIngresoMaterial.jsx";
-import Button from "../components/Button.jsx";
+import ModalCompra from "../components/modals/ModalCompra.jsx";
+import ModalIngresoMaterial from "../components/modals/ModalIngresoMaterial.jsx";
+import Button from "../components/ui/Button.jsx";
 
 export default function Compras() {
   const { token } = useAuth();
