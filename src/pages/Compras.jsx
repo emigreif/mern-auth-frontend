@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
-import ModalCompra from "../components/ModalCompra.jsx";
-import ModalIngresoMaterial from "../components/ModalIngresoMaterial.jsx";
+import ModalCompra from "../components/modals/modalCompra.jsx";
+import ModalIngresoMaterial from "../components/modals/modalIngresoMaterial.jsx";
 import Button from "../components/Button.jsx";
 
 export default function Compras() {

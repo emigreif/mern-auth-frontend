@@ -1,4 +1,4 @@
-// src/components/ModalImportarTipologiasOV.jsx
+// src/components/modals/modalImportarTipologiasOV.jsx
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";

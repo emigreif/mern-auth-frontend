@@ -1,4 +1,4 @@
-// src/components/ModalAsignarPerfil.jsx
+// src/components/modals/modalAsignarPerfil.jsx
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";

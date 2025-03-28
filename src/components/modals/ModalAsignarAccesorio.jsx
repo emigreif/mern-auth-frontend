@@ -1,4 +1,4 @@
-// src/components/ModalAsignarAccesorio.jsx
+// src/components/modals/modalAsignarAccesorio.jsx
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
-import ModalNuevoCliente from "../components/ModalNuevoCliente.jsx";
+import ModalNuevoCliente from "../components/modals/modalNuevoCliente.jsx";
 import Button from "../components/Button.jsx";
 
 const Clientes = () => {

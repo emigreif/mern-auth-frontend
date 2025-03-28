@@ -1,4 +1,4 @@
-// src/components/ModalNuevoEmpleado.jsx
+// src/components/modals/modalNuevoEmpleado.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";

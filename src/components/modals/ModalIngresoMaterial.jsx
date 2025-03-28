@@ -1,4 +1,4 @@
-// src/components/ModalIngresoMaterial.jsx
+// src/components/modals/modalIngresoMaterial.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";

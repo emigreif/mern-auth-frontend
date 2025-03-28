@@ -1,4 +1,4 @@
-// src/components/ModalPerfil.jsx
+// src/components/modals/modalPerfil.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Button from "./Button.jsx";

@@ -1,4 +1,4 @@
-// src/components/ModalBase.jsx
+// src/components/modals/modalBase.jsx
 import React from "react";
 import Button from "./Button.jsx";
 import styles from "../styles/modals/GlobalModal.module.css";

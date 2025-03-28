@@ -1,4 +1,4 @@
-// src/components/ModalAsignarVidrio.jsx
+// src/components/modals/modalAsignarVidrio.jsx
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";

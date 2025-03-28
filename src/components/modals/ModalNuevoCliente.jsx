@@ -1,4 +1,4 @@
-// src/components/ModalNuevoCliente.jsx
+// src/components/modals/modalNuevoCliente.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";

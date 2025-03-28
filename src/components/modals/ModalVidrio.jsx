@@ -1,4 +1,4 @@
-// src/components/ModalVidrio.jsx
+// src/components/modals/modalVidrio.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Button from "./Button.jsx";

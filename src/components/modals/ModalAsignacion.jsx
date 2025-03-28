@@ -1,4 +1,4 @@
-// src/components/ModalAsignacion.jsx
+// src/components/modals/modalAsignacion.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";

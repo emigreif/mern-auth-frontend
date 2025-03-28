@@ -1,4 +1,4 @@
-// src/components/ModalImportarVidriosOV.jsx
+// src/components/modals/modalImportarPerfilesOV.jsx
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
@@ -8,22 +8,21 @@ import { useAuth } from "../context/AuthContext.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
+export default function ModalImportarPerfilesOV({ obra, onClose, onCreated }) {
   const { token } = useAuth();
 
-  const [vidrios, setVidrios] = useState([]);
+  const [perfiles, setPerfiles] = useState([]);
   const [nuevo, setNuevo] = useState({
+    codigo: "",
     descripcion: "",
-    tipo: "simple",
-    ancho: 0,
-    alto: 0,
+    color: "",
     cantidad: 1,
-    tipologia: ""
+    largo: 0,
+    pesoxmetro: 0
   });
   const [archivoExcel, setArchivoExcel] = useState(null);
   const [search, setSearch] = useState("");
 
-  // Manejo de archivo Excel
   const handleArchivo = (e) => setArchivoExcel(e.target.files[0]);
 
   const leerExcel = () => {
@@ -37,63 +36,68 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
       const json = XLSX.utils.sheet_to_json(sheet, { range: 10 });
       const filas = json
         .map((row) => ({
+          codigo: row["Código"]?.toString().trim() || "",
           descripcion: row["Descripción"]?.toString().trim() || "",
-          tipo: row["Tipo"]?.toString().trim().toLowerCase() || "simple",
-          ancho: Number(row["Ancho"]) || 0,
-          alto: Number(row["Alto"]) || 0,
+          color: row["Color"]?.toString().trim() || "",
           cantidad: Number(row["Cantidad"]) || 0,
-          tipologia: row["Tipología"]?.toString().trim() || ""
+          largo: Number(row["Largo"]) || 0,
+          pesoxmetro: Number(row["Peso x metro"]) || 0
         }))
-        .filter((v) => v.descripcion && v.ancho > 0 && v.alto > 0 && v.cantidad > 0);
-      setVidrios([...vidrios, ...filas]);
+        .filter((p) => p.codigo && p.cantidad > 0 && p.largo > 0);
+      setPerfiles([...perfiles, ...filas]);
     };
     reader.readAsArrayBuffer(archivoExcel);
   };
 
   const agregarManual = () => {
-    const { descripcion, tipo, ancho, alto, cantidad, tipologia } = nuevo;
-    if (!descripcion || !ancho || !alto || !cantidad)
-      return alert("Campos obligatorios incompletos");
-    setVidrios([
-      ...vidrios,
-      {
-        descripcion: descripcion.trim(),
-        tipo: tipo || "simple",
-        ancho: Number(ancho),
-        alto: Number(alto),
-        cantidad: Number(cantidad),
-        tipologia: tipologia.trim()
-      }
-    ]);
-    setNuevo({ descripcion: "", tipo: "simple", ancho: 0, alto: 0, cantidad: 1, tipologia: "" });
+    const { codigo, descripcion, color, cantidad, largo, pesoxmetro } = nuevo;
+    if (!codigo || !descripcion || cantidad <= 0 || largo <= 0)
+      return alert("Completa los campos obligatorios");
+    const perfil = {
+      codigo: codigo.trim(),
+      descripcion: descripcion.trim(),
+      color: color.trim(),
+      cantidad: Number(cantidad),
+      largo: Number(largo),
+      pesoxmetro: Number(pesoxmetro)
+    };
+    setPerfiles([...perfiles, perfil]);
+    setNuevo({
+      codigo: "",
+      descripcion: "",
+      color: "",
+      cantidad: 1,
+      largo: 0,
+      pesoxmetro: 0
+    });
   };
 
   const guardar = async () => {
-    if (!vidrios.length) return alert("No hay vidrios para guardar");
+    if (!perfiles.length) return alert("No hay perfiles para guardar");
     try {
-      const res = await fetch(`${API_URL}/api/obras/${obra._id}/vidrios-ov`, {
+      const res = await fetch(`${API_URL}/api/obras/${obra._id}/perfiles-ov`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ vidrios })
+        body: JSON.stringify({ perfiles })
       });
-      if (!res.ok) throw new Error("Error al guardar vidrios");
+      if (!res.ok) throw new Error("Error al guardar perfiles");
       if (onCreated) onCreated();
       onClose();
     } catch (err) {
       console.error("Error:", err);
-      alert("Error al guardar vidrios");
+      alert("Error al guardar perfiles");
     }
   };
 
-  const vidriosFiltrados = vidrios.filter((v) =>
-    JSON.stringify(v).toLowerCase().includes(search.toLowerCase())
+  const perfilesFiltrados = perfiles.filter((p) =>
+    JSON.stringify(p).toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <ModalBase isOpen={true} onClose={onClose} title="Importar Vidrios OV">
+    <ModalBase isOpen={true} onClose={onClose} title="Importar Perfiles OV">
       <div className={styles.container}>
         {/* Sección Excel */}
         <section className={styles.section}>
@@ -110,30 +114,21 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
           <div className={styles.form}>
             <input
               type="text"
+              placeholder="Código"
+              value={nuevo.codigo}
+              onChange={(e) => setNuevo({ ...nuevo, codigo: e.target.value })}
+            />
+            <input
+              type="text"
               placeholder="Descripción"
               value={nuevo.descripcion}
               onChange={(e) => setNuevo({ ...nuevo, descripcion: e.target.value })}
             />
-            <select
-              value={nuevo.tipo}
-              onChange={(e) => setNuevo({ ...nuevo, tipo: e.target.value })}
-            >
-              <option value="simple">Simple</option>
-              <option value="dvh">DVH</option>
-              <option value="tvh">TVH</option>
-              <option value="laminado">Laminado</option>
-            </select>
             <input
-              type="number"
-              placeholder="Ancho"
-              value={nuevo.ancho}
-              onChange={(e) => setNuevo({ ...nuevo, ancho: e.target.value })}
-            />
-            <input
-              type="number"
-              placeholder="Alto"
-              value={nuevo.alto}
-              onChange={(e) => setNuevo({ ...nuevo, alto: e.target.value })}
+              type="text"
+              placeholder="Color"
+              value={nuevo.color}
+              onChange={(e) => setNuevo({ ...nuevo, color: e.target.value })}
             />
             <input
               type="number"
@@ -142,10 +137,16 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
               onChange={(e) => setNuevo({ ...nuevo, cantidad: e.target.value })}
             />
             <input
-              type="text"
-              placeholder="Tipología"
-              value={nuevo.tipologia}
-              onChange={(e) => setNuevo({ ...nuevo, tipologia: e.target.value })}
+              type="number"
+              placeholder="Largo (mm)"
+              value={nuevo.largo}
+              onChange={(e) => setNuevo({ ...nuevo, largo: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="Peso x metro (kg)"
+              value={nuevo.pesoxmetro}
+              onChange={(e) => setNuevo({ ...nuevo, pesoxmetro: e.target.value })}
             />
             <Button onClick={agregarManual}>➕ Agregar</Button>
           </div>
@@ -155,18 +156,18 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
 
         {/* Sección Lista */}
         <section className={styles.section}>
-          <h3>3. Lista de Vidrios</h3>
+          <h3>3. Lista de Perfiles</h3>
           <input
             type="text"
-            placeholder="Buscar..."
+            placeholder="Buscar por código, descripción, color, etc."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className={styles.searchInput}
           />
           <ul className={styles.list}>
-            {vidriosFiltrados.map((v, i) => (
+            {perfilesFiltrados.map((p, i) => (
               <li key={i}>
-                {v.descripcion} ({v.ancho}x{v.alto}) - {v.tipo} - {v.cantidad}u {v.tipologia && `- ${v.tipologia}`}
+                {p.codigo} - {p.descripcion} - {p.color} - {p.cantidad}u - {p.largo}mm - {p.pesoxmetro}kg/m
               </li>
             ))}
           </ul>
@@ -176,8 +177,8 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
 
         {/* Sección Guardar */}
         <section className={styles.section}>
-          <Button onClick={guardar} disabled={vidrios.length === 0}>
-            💾 Guardar Vidrios
+          <Button onClick={guardar} disabled={perfiles.length === 0}>
+            💾 Guardar Perfiles
           </Button>
         </section>
       </div>

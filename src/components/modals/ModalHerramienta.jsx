@@ -1,4 +1,4 @@
-// src/components/ModalHerramienta.jsx
+// src/components/modals/modalHerramienta.jsx
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Button from "./Button.jsx";

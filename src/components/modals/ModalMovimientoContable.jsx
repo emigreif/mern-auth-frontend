@@ -1,4 +1,4 @@
-// src/components/ModalMovimientoContable.jsx
+// src/components/modals/modalMovimientoContable.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";

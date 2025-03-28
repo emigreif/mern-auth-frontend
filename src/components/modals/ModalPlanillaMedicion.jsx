@@ -1,4 +1,4 @@
-// src/components/ModalPlanillaMedicion.jsx
+// src/components/modals/modalPlanillaMedicion.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";

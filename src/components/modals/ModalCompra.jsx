@@ -1,4 +1,4 @@
-// src/components/ModalCompra.jsx
+// src/components/modals/modalCompra.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import * as XLSX from "xlsx";
