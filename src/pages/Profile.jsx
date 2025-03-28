@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import Button from "../components/ui/Button.jsx";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { user, token } = useAuth();
@@ -33,7 +34,7 @@ const Profile = () => {
   }, [user]);
 
   const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleUpdateProfile = async (e) => {
@@ -46,7 +47,7 @@ const Profile = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -75,19 +76,38 @@ const Profile = () => {
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Mi Perfil</h1>
+        <div style={{ display: "flex", flexWrap: "wrap",color: "gray", gap: "50px" }}>
+        <h3>
+          <Link to="/configuracion" > Configuración </Link>
+        </h3>
+        <h3>
+          <Link to="/perfiles">Perfiles</Link>
+        </h3>
       </div>
-
+      </div>
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {successMsg && <p className={styles.success}>{successMsg}</p>}
 
       <form onSubmit={handleUpdateProfile} className={styles.formBase}>
         <div className={styles.formGroup}>
           <label>Nombre</label>
-          <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} disabled={loading} />
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+            disabled={loading}
+          />
         </div>
         <div className={styles.formGroup}>
           <label>Apellido</label>
-          <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} disabled={loading} />
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+            disabled={loading}
+          />
         </div>
         <div className={styles.formGroup}>
           <label>Email (no editable)</label>
@@ -95,11 +115,25 @@ const Profile = () => {
         </div>
         <div className={styles.formGroup}>
           <label>Contraseña Actual</label>
-          <input type="password" name="password" placeholder="Sólo si cambias la contraseña" value={formData.password} onChange={handleChange} disabled={loading} />
+          <input
+            type="password"
+            name="password"
+            placeholder="Sólo si cambias la contraseña"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={loading}
+          />
         </div>
         <div className={styles.formGroup}>
           <label>Nueva Contraseña</label>
-          <input type="password" name="newPassword" placeholder="Sólo si cambias la contraseña" value={formData.newPassword} onChange={handleChange} disabled={loading} />
+          <input
+            type="password"
+            name="newPassword"
+            placeholder="Sólo si cambias la contraseña"
+            value={formData.newPassword}
+            onChange={handleChange}
+            disabled={loading}
+          />
         </div>
         <div className={styles.actions}>
           <Button type="submit" disabled={loading}>

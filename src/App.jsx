@@ -15,7 +15,7 @@ import Planner from "./pages/Planner.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
-import BaseMateriales from "./pages/BaseMateriales.jsx"; 
+import BaseMateriales from "./pages/BaseMateriales.jsx";
 
 // Páginas protegidas
 import Obras from "./pages/Obras.jsx";
@@ -81,11 +81,9 @@ function ProtectedRoutes() {
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/contabilidad" element={<Contabilidad />} />
           <Route path="/nomina" element={<Nomina />} />
-
-          <Route path="/configuracion" element={<Configuracion />}>
-            <Route path="profile" element={<Profile />} />
-            <Route path="perfiles" element={<Perfiles />} />
-          </Route>
+          <Route path="/configuracion" element={<Configuracion />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/perfiles" element={<Perfiles />} />
           <Route path="*" element={<Navigate to="/obras" />} />
         </Routes>
       </div>

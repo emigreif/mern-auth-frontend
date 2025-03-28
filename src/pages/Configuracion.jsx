@@ -122,12 +122,17 @@ export default function Configuracion() {
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Configuración</h1>
-        <nav style={{ marginBottom: "1rem" }}>
-          <Link to="profile" style={{ marginRight: "1rem" }}>
-            Mi Perfil
-          </Link>
-          <Link to="perfiles">Perfiles</Link>
-        </nav>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            color: "gray",
+            gap: "50px",
+          }}
+        >
+         <h3> <Link to="/profile">Mi Perfil</Link></h3>
+         <h3>  <Link to="/perfiles">Perfiles</Link></h3>
+        </div>
       </div>
       <Outlet />
       {loading && <p style={{ margin: "1rem 0" }}>Cargando configuración...</p>}
