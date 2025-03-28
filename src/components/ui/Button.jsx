@@ -1,4 +1,4 @@
-// src/components/Button.jsx
+// src/components/ui/Button.jsx
 import React from "react";
 import styles from "../styles/components/Buttons.module.css";
 
