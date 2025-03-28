@@ -6,7 +6,7 @@ import ModalImportarTipologiasOV from "../components/modals/modalImportarTipolog
 import ModalAsignacion from "../components/modals/modalAsignacion.jsx";
 import ModalPlanillaMedicion from "../components/modals/modalPlanillaMedicion.jsx";
 import ModalReporteMedicion from "../components/modals/modalReporteMedicion.jsx";
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 const Mediciones = () => {

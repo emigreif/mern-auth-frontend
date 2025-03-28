@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalNuevoCliente from "../components/modals/modalNuevoCliente.jsx";
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 
 const Clientes = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";

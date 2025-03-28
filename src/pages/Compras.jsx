@@ -4,7 +4,7 @@ import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalCompra from "../components/modals/modalCompra.jsx";
 import ModalIngresoMaterial from "../components/modals/modalIngresoMaterial.jsx";
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 
 export default function Compras() {
   const { token } = useAuth();

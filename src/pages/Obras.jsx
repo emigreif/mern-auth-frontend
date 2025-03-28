@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalObra from "../components/modals/modalObra.jsx";
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 
 export default function Obras() {
   const { token } = useAuth();

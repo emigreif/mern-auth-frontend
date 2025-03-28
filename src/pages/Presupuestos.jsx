@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import ModalPresupuesto from "../components/modals/modalPresupuesto.jsx";
 import ModalObra from "../components/modals/modalObra.jsx";
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 
 export default function Presupuestos() {
   const { token } = useAuth();

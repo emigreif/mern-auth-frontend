@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/modals/modalBase.jsx";
 import ModalMovimientoContable from "../components/modals/modalMovimientoContable.jsx";
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 export default function Proveedores() {
