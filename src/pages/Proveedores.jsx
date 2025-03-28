@@ -1,8 +1,8 @@
 // src/pages/Proveedores.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import ModalBase from "../components/modals/modalBase.jsx";
-import ModalMovimientoContable from "../components/modals/modalMovimientoContable.jsx";
+import ModalBase from "../components/modals/ModalBase.jsx";
+import ModalMovimientoContable from "../components/modals/ModalMovimientoContable.jsx";
 import Button from "../components/ui/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 

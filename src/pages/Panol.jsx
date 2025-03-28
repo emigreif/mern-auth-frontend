@@ -3,15 +3,15 @@ import { useAuth } from "../context/AuthContext.jsx";
 import globalStyles from "../styles/pages/GlobalStylePages.module.css";
 
 // Modales base
-import ModalHerramienta from "../components/modals/modalHerramienta.jsx";
-import ModalPerfil from "../components/modals/modalPerfil.jsx";
-import ModalVidrio from "../components/modals/modalVidrio.jsx";
-import ModalAccesorio from "../components/modals/modalAccesorio.jsx";
+import ModalHerramienta from "../components/modals/ModalHerramienta.jsx";
+import ModalPerfil from "../components/modals/ModalPerfil.jsx";
+import ModalVidrio from "../components/modals/ModalVidrio.jsx";
+import ModalAccesorio from "../components/modals/ModalAccesorio.jsx";
 
 // Nuevos modales de asignación
-import ModalAsignarPerfil from "../components/modals/modalAsignarPerfil.jsx";
-import ModalAsignarAccesorio from "../components/modals/modalAsignarAccesorio.jsx";
-import ModalAsignarVidrio from "../components/modals/modalAsignarVidrio.jsx";
+import ModalAsignarPerfil from "../components/modals/ModalAsignarPerfil.jsx";
+import ModalAsignarAccesorio from "../components/modals/ModalAsignarAccesorio.jsx";
+import ModalAsignarVidrio from "../components/modals/ModalAsignarVidrio.jsx";
 
 // Importamos el módulo de estilos exclusivo para Panol
 import panolStyles from "../styles/pages/Panol.module.css";

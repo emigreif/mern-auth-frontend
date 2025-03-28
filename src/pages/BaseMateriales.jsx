@@ -1,6 +1,6 @@
 // src/pages/BaseMateriales.jsx
 import React, { useState, useEffect } from "react";
-import ModalBase from "../components/modals/modalBase";
+import ModalBase from "../components/modals/ModalBase";
 import Button from "../components/ui/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 

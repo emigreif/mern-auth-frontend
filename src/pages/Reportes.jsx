@@ -1,7 +1,7 @@
 // src/pages/Reportes.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import ModalBase from "../components/modals/modalBase.jsx";
+import ModalBase from "../components/modals/ModalBase.jsx";
 import Button from "../components/ui/Button.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
