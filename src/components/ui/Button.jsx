@@ -1,6 +1,6 @@
 // src/components/ui/Button.jsx
 import React from "react";
-import styles from "../styles/components/Buttons.module.css";
+import styles from "../../styles/components/Buttons.module.css";
 
 const Button = ({ variant = "primary", children, className = "", ...props }) => {
   let btnClass = styles.btn; // Valor por defecto: primario

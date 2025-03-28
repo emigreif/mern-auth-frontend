@@ -14,7 +14,7 @@ import ModalAsignarAccesorio from "../components/modals/ModalAsignarAccesorio.js
 import ModalAsignarVidrio from "../components/modals/ModalAsignarVidrio.jsx";
 
 // Componentes UI
-import Button from "../components/Button.jsx";
+import Button from "../components/ui/Button.jsx";
 
 import globalStyles from "../styles/pages/GlobalStylePages.module.css";
 import styles from "../styles/pages/Panol.module.css";

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
-import Button from "./ui/Button.jsx";
+import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obras = [], API_URL, token, onSuccess }) {

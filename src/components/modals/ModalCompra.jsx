@@ -1,10 +1,10 @@
 // src/components/modals/modalCompra.jsx
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
 import ModalNuevoProveedor from "./ModalNuevoProveedor.jsx";
-import Button from "./ui/Button.jsx";
+import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalCompra({ editingCompra, onClose, onSaved }) {
