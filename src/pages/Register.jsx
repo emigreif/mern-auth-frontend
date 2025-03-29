@@ -3,12 +3,8 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/pages/Register.module.css";
+import Button from "../components/ui/Button";
 
-/**
- * Página "Register"
- * - POST /api/auth/register => crea un nuevo usuario
- * - Maneja contraseñas, validaciones, spinner, error
- */
 const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -25,38 +21,35 @@ const Register = () => {
     cantidadUsuarios: 1,
     direccion: "",
     localidad: "",
-    codigoPostal: ""
+    codigoPostal: "",
   });
 
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    if (type === "number") {
-      setFormData({ ...formData, [name]: parseInt(value) || 0 });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
 
-    // Validación de contraseñas
     if (formData.password !== formData.repeatPassword) {
       setErrorMsg("Las contraseñas no coinciden");
+      alert("Las contraseñas no coinciden");
       return;
     }
 
     setLoading(true);
     try {
       await register(formData);
-      // Si el register es exitoso, redirige
-      navigate("/obras"); // o la ruta protegida que desees
+      alert("Usuario registrado correctamente");
+      navigate("/login");
     } catch (error) {
-      setErrorMsg(error.message || "Error al registrar usuario");
+      alert(error.message);
+      setErrorMsg(error.message);
     } finally {
       setLoading(false);
     }
@@ -185,9 +178,9 @@ const Register = () => {
               />
             </div>
 
-            <button className={styles.submitBtn} type="submit" disabled={loading}>
-              {loading ? "Creando cuenta..." : "Crear cuenta"}
-            </button>
+            <Button type="submit" disabled={loading}>
+          {loading ? "Registrando..." : "Registrarse"}
+        </Button>
           </form>
         </div>
       </div>
