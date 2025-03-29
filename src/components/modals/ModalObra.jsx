@@ -177,12 +177,39 @@ export default function ModalObra({ obra, onClose, onSaved }) {
             <input type="number" name="importeSinFactura" placeholder="Sin factura" value={form.importeSinFactura} onChange={handleChange} />
             <input type="number" value={form.importeTotal} readOnly />
           </div>
+           {/* Botones para importar materiales OV */}
+           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            <button type="button" onClick={() => setModalPerfilesOpen(true)}>📦 Perfiles OV</button>
+            <button type="button" onClick={() => setModalVidriosOpen(true)}>🪟 Vidrios OV</button>
+            <button type="button" onClick={() => setModalAccesoriosOpen(true)}>🔩 Accesorios OV</button>
+            <button type="button" onClick={() => setModalTipologiasOpen(true)}>🧱 Tipologías OV</button>
+          </div>
+
+          <label>Observaciones</label>
+          <textarea name="observaciones" value={form.observaciones} onChange={handleChange} />
+
+          
+          
           <div className={styles.flexRowEnd}>
+          
             <Button type="submit">Guardar</Button>
             <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
           </div>
         </form>
       </ModalBase>
+      {/* Modales para materiales OV */}
+      {modalPerfilesOpen && (
+        <ModalImportarPerfilesOV obra={obra} onClose={() => setModalPerfilesOpen(false)} />
+      )}
+      {modalVidriosOpen && (
+        <ModalImportarVidriosOV obra={obra} onClose={() => setModalVidriosOpen(false)} />
+      )}
+      {modalAccesoriosOpen && (
+        <ModalImportarAccesoriosOV obra={obra} onClose={() => setModalAccesoriosOpen(false)} />
+      )}
+      {modalTipologiasOpen && (
+        <ModalImportarTipologiasOV obra={obra} onClose={() => setModalTipologiasOpen(false)} />
+      )}
 
       {isClienteModalOpen && (
         <ModalNuevoCliente
