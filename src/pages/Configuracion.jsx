@@ -130,8 +130,14 @@ export default function Configuracion() {
             gap: "50px",
           }}
         >
-         <h3> <Link to="/profile">Mi Perfil</Link></h3>
-         <h3>  <Link to="/perfiles">Perfiles</Link></h3>
+          <h3>
+            {" "}
+            <Link to="/profile">Mi Perfil</Link>
+          </h3>
+          <h3>
+            {" "}
+            <Link to="/perfiles">Perfiles</Link>
+          </h3>
         </div>
       </div>
       <Outlet />
