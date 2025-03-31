@@ -1,6 +1,6 @@
 // src/components/ui/Table.jsx
 import React from "react";
-import styles from "../styles/components/Table.module.css";
+import styles from "../../styles/components/Table.module.css";
 
 export default function Table({ headers = [], data = [], renderRow }) {
   if (!data.length) return <p className={styles.noData}>No hay resultados</p>;
