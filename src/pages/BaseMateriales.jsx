@@ -436,7 +436,7 @@ const BaseMateriales = () => {
       {tab === "perfiles" && (
         <div>
           <Button onClick={() => setModalPerfilesOpen(true)}>+ Agregar Perfil</Button>
-          <Button onClick={() => setModalImportarOpen("perfiles")}>Importar Excel</Button>
+          <Button onClick={() => setModalImportarOpen(true)}>Importar Excel</Button>
           <ul>
             {perfiles.map((p) => (
               <li key={p._id}>{p.codigo} - {p.descripcion} - {p.extrusora}</li>

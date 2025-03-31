@@ -1,7 +1,7 @@
 // src/components/PerfilSelector.jsx
 import React from "react";
-import ModalBase from "./ModalBase.jsx";
-import Button from "../ui/Button.jsx";
+import ModalBase from "../components/modals/ModalBase.jsx"
+import Button from "./ui/Button.jsx";
 
 const PerfilSelector = ({ isOpen, onClose, perfiles = [], onSelectPerfil }) => {
   if (!isOpen) return null;
