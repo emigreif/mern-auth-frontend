@@ -1,276 +1,160 @@
-// src/pages/Panol.jsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-// Modales base
-import ModalHerramienta from "../components/modals/ModalHerramienta.jsx";
-import ModalPerfil from "../components/modals/ModalPerfil.jsx";
-import ModalVidrio from "../components/modals/ModalVidrio.jsx";
-import ModalAccesorio from "../components/modals/ModalAccesorio.jsx";
-
-// Nuevos modales de asignación
-import ModalAsignarPerfil from "../components/modals/ModalAsignarPerfil.jsx";
-import ModalAsignarAccesorio from "../components/modals/ModalAsignarAccesorio.jsx";
-import ModalAsignarVidrio from "../components/modals/ModalAsignarVidrio.jsx";
-
-// Componentes UI
+// UI Components
 import Button from "../components/ui/Button.jsx";
+import SearchBar from "../components/ui/SearchBar.jsx";
+import Table from "../components/ui/Table.jsx";
+import List from "../components/ui/List.jsx";
 
-import globalStyles from "../styles/pages/GlobalStylePages.module.css";
-import styles from "../styles/pages/Panol.module.css";
+// Modales
+import ModalAsignarPerfil from "../components/modals/ModalAsignarPerfil.jsx";
+import ModalAsignarVidrio from "../components/modals/ModalAsignarVidrio.jsx";
+import ModalAsignarAccesorio from "../components/modals/ModalAsignarAccesorio.jsx";
+import ModalAsignarHerramienta from "../components/modals/ModalAsignarHerramienta.jsx";
+import ModalIngresoMaterial from "../components/modals/ModalIngresoMaterial.jsx";
 
-export default function Panol() {
+const Panol = () => {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  const [tab, setTab] = useState("herramientas");
-  const [search, setSearch] = useState("");
-  const [editingItem, setEditingItem] = useState(null);
+  const [materiales, setMateriales] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const [herramientas, setHerramientas] = useState([]);
-  const [perfiles, setPerfiles] = useState([]);
-  const [vidrios, setVidrios] = useState([]);
-  const [accesorios, setAccesorios] = useState([]);
-  const [obras, setObras] = useState([]);
+  // Estados de modales
+  const [modalIngresoOpen, setModalIngresoOpen] = useState(false);
+  const [modalPerfilOpen, setModalPerfilOpen] = useState(false);
+  const [modalVidrioOpen, setModalVidrioOpen] = useState(false);
+  const [modalAccesorioOpen, setModalAccesorioOpen] = useState(false);
+  const [modalHerramientaOpen, setModalHerramientaOpen] = useState(false);
 
-  const [modals, setModals] = useState({
-    herramienta: false,
-    perfil: false,
-    vidrio: false,
-    accesorio: false,
-    asignarPerfil: false,
-    asignarAccesorio: false,
-    asignarVidrio: false,
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const fetchData = async () => {
+  const fetchMateriales = async () => {
     try {
-      setLoading(true);
-      setErrorMsg("");
-      const res = await fetch(`${API_URL}/api/panol`, {
+      const res = await fetch(`${API_URL}/api/materiales`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      setHerramientas(data.herramientas || []);
-      setPerfiles(data.perfiles || []);
-      setVidrios(data.vidrios || []);
-      setAccesorios(data.accesorios || []);
-    } catch {
-      setErrorMsg("Error al obtener datos del pañol");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchObras = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/obras`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setObras(data || []);
-    } catch {
-      console.error("Error al obtener obras");
+      setMateriales(data);
+      setFiltered(data);
+    } catch (error) {
+      console.error("Error al cargar materiales", error);
     }
   };
 
   useEffect(() => {
-    if (token) {
-      fetchData();
-      fetchObras();
-    }
+    if (token) fetchMateriales();
   }, [token]);
 
-  const filteredList = (list) =>
-    list.filter((item) =>
-      JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
-    );
-
-  const openModal = (type, item = null) => {
-    setEditingItem(item);
-    setModals((prev) => ({ ...prev, [type]: true }));
-  };
-
-  const closeAllModals = () => {
-    setEditingItem(null);
-    setModals({
-      herramienta: false,
-      perfil: false,
-      vidrio: false,
-      accesorio: false,
-      asignarPerfil: false,
-      asignarAccesorio: false,
-      asignarVidrio: false,
-    });
-    fetchData();
-  };
-
-  const renderTableData = () => {
-    switch (tab) {
-      case "herramientas":
-        return filteredList(herramientas);
-      case "perfiles":
-        return filteredList(perfiles);
-      case "vidrios":
-        return filteredList(vidrios);
-      case "accesorios":
-        return filteredList(accesorios);
-      default:
-        return [];
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFiltered(materiales);
+    } else {
+      setFiltered(
+        materiales.filter((mat) =>
+          mat.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
     }
-  };
-
-  const renderFields = () => {
-    switch (tab) {
-      case "herramientas":
-        return ["marca", "modelo", "estado"];
-      case "perfiles":
-      case "accesorios":
-        return ["codigo", "descripcion", "color", "cantidad"];
-      case "vidrios":
-        return ["tipo", "ancho", "alto", "cantidad"];
-      default:
-        return [];
-    }
-  };
+  }, [searchTerm, materiales]);
 
   return (
-    <div className={globalStyles.pageContainer}>
-      <div className={globalStyles.header}>
-        <h1>Pañol</h1>
-      </div>
-
-      {errorMsg && <p className={globalStyles.error}>{errorMsg}</p>}
-      {loading && <p>Cargando datos...</p>}
-
-      <div className={styles.tabs}>
-        {["herramientas", "perfiles", "vidrios", "accesorios"].map((t) => (
-          <button
-            key={t}
-            className={`${styles.tabBtn} ${tab === t ? styles.active : ""}`}
-            onClick={() => setTab(t)}
-          >
-            {t.charAt(0).toUpperCase() + t.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      <div className={styles.searchSection}>
-        <input
-          type="text"
-          className={styles.searchInput}
-          placeholder={`Buscar ${tab}...`}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+    <div style={{ padding: "2rem", background: "#fff" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "1rem",
+          marginBottom: "1rem",
+        }}
+      >
+        <SearchBar
+          placeholder="Buscar materiales..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Button onClick={() => openModal(tab)}>+ Agregar {tab}</Button>
-        {tab !== "herramientas" && (
-          <Button
-            variant="secondary"
-            onClick={() => {
-              if (tab === "perfiles") setModals({ ...modals, asignarPerfil: true });
-              else if (tab === "accesorios") setModals({ ...modals, asignarAccesorio: true });
-              else if (tab === "vidrios") setModals({ ...modals, asignarVidrio: true });
-            }}
-          >
-            ➡️ Asignar a Obra
+
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <Button onClick={() => setModalIngresoOpen(true)}>
+            ➕ Ingreso de Material
           </Button>
-        )}
+          <Button onClick={() => setModalPerfilOpen(true)}>
+            🧱 Asignar Perfil
+          </Button>
+          <Button onClick={() => setModalVidrioOpen(true)}>
+            🪟 Asignar Vidrio
+          </Button>
+          <Button onClick={() => setModalAccesorioOpen(true)}>
+            🔩 Asignar Accesorio
+          </Button>
+          <Button onClick={() => setModalHerramientaOpen(true)}>
+            🛠️ Asignar Herramienta
+          </Button>
+        </div>
       </div>
 
-      <table className={styles.tableBase}>
-        <thead>
-          <tr>
-            {renderFields().map((field) => (
-              <th key={field}>{field.toUpperCase()}</th>
-            ))}
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {renderTableData().map((item) => (
-            <tr key={item._id}>
-              {renderFields().map((field) => (
-                <td key={field}>{item[field]}</td>
-              ))}
-              <td>
-                <Button onClick={() => openModal(tab, item)}>✏️ Editar</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Modales dinámicos */}
-      {modals.herramienta && (
-        <ModalHerramienta
-          herramienta={editingItem}
-          onClose={closeAllModals}
-          onSaved={closeAllModals}
-        />
-      )}
-      {modals.perfil && (
-        <ModalPerfil
-          isOpen
-          perfilData={editingItem}
-          onClose={closeAllModals}
-          onSave={closeAllModals}
-        />
-      )}
-      {modals.vidrio && (
-        <ModalVidrio
-          isOpen
-          vidrioData={editingItem}
-          onClose={closeAllModals}
-          onSave={closeAllModals}
-        />
-      )}
-      {modals.accesorio && (
-        <ModalAccesorio
-          isOpen
-          accesorioData={editingItem}
-          onClose={closeAllModals}
-          onSave={closeAllModals}
+      {/* Resultado */}
+      {filtered.length === 0 ? (
+        <List items={[]} emptyText="No hay materiales disponibles." />
+      ) : (
+        <Table
+          headers={["Nombre", "Tipo", "Stock", "Unidad"]}
+          data={filtered.map((mat) => [
+            mat.nombre,
+            mat.tipo,
+            mat.stock,
+            mat.unidad,
+          ])}
         />
       )}
 
-      {/* Modales de asignación */}
-      {modals.asignarPerfil && (
+      {/* Modales */}
+      {modalIngresoOpen && (
+        <ModalIngresoMaterial
+          isOpen={modalIngresoOpen}
+          onClose={() => setModalIngresoOpen(false)}
+          onSaved={fetchMateriales}
+        />
+      )}
+      {modalPerfilOpen && (
         <ModalAsignarPerfil
-          isOpen
-          perfiles={perfiles}
-          obras={obras}
+          isOpen={modalPerfilOpen}
+          onClose={() => setModalPerfilOpen(false)}
+          onSave={fetchMateriales}
           token={token}
           API_URL={API_URL}
-          onClose={closeAllModals}
-          onSuccess={closeAllModals}
         />
       )}
-      {modals.asignarAccesorio && (
-        <ModalAsignarAccesorio
-          isOpen
-          accesorios={accesorios}
-          obras={obras}
-          token={token}
-          API_URL={API_URL}
-          onClose={closeAllModals}
-          onSuccess={closeAllModals}
-        />
-      )}
-      {modals.asignarVidrio && (
+      {modalVidrioOpen && (
         <ModalAsignarVidrio
-          isOpen
-          vidrios={vidrios}
-          obras={obras}
+          isOpen={modalVidrioOpen}
+          onClose={() => setModalVidrioOpen(false)}
+          onSave={fetchMateriales}
           token={token}
           API_URL={API_URL}
-          onClose={closeAllModals}
-          onSuccess={closeAllModals}
+        />
+      )}
+      {modalAccesorioOpen && (
+        <ModalAsignarAccesorio
+          isOpen={modalAccesorioOpen}
+          onClose={() => setModalAccesorioOpen(false)}
+          onSave={fetchMateriales}
+          token={token}
+          API_URL={API_URL}
+        />
+      )}
+      {modalHerramientaOpen && (
+        <ModalAsignarHerramienta
+          isOpen={modalHerramientaOpen}
+          onClose={() => setModalHerramientaOpen(false)}
+          onSave={fetchMateriales}
+          token={token}
+          API_URL={API_URL}
         />
       )}
     </div>
   );
-}
+};
+
+export default Panol;
