@@ -1,33 +1,21 @@
-// src/components/modals/modalIngresoMaterial.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
-export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
+export default function ModalIngresoMaterial({ isOpen, onClose, onSaved }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Número de remito y lista de items a ingresar
-  const [numeroRemito, setNumeroRemito] = useState("");
-  const [items, setItems] = useState([]);
+  const [tipo, setTipo] = useState("perfil");
+  const [formData, setFormData] = useState({});
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Maneja el cambio en la cantidad ingresada para cada ítem
-  const handleChangeCantidad = (itemId, val) => {
-    const cantidad = parseFloat(val) || 0;
-    setItems((prev) => {
-      const existingIndex = prev.findIndex((x) => x.itemId === itemId);
-      if (existingIndex >= 0) {
-        const newArr = [...prev];
-        newArr[existingIndex].cantidadIngresada = cantidad;
-        return newArr;
-      } else {
-        return [...prev, { itemId, cantidadIngresada: cantidad }];
-      }
-    });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -36,77 +24,94 @@ export default function ModalIngresoMaterial({ compra, onClose, onSaved }) {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/compras/ingreso/${compra._id}`, {
+      const res = await fetch(`${API_URL}/api/panol/${tipo}s`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ numeroRemito, items })
+        body: JSON.stringify(formData),
       });
+
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Error al ingresar material");
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Error al ingresar material");
       }
-      await res.json();
+
       setLoading(false);
       onSaved();
-    } catch (error) {
-      setErrorMsg(error.message);
+    } catch (err) {
+      setErrorMsg(err.message);
       setLoading(false);
     }
   };
 
   return (
-    <ModalBase isOpen={true} onClose={onClose} title={`Ingreso de Material - OC #${compra.numeroOC}`}>
+    <ModalBase isOpen={isOpen} onClose={onClose} title="Ingreso Manual de Material">
       <form onSubmit={handleSubmit} className={styles.modalForm}>
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-        {loading && <p className={styles.loading}>Guardando...</p>}
 
-        <div className={styles.remitoGroup}>
-          <label>Número de Remito</label>
-          <input
-            type="text"
-            value={numeroRemito}
-            onChange={(e) => setNumeroRemito(e.target.value)}
-          />
+        <div className={styles.formGroup}>
+          <label>Tipo de material</label>
+          <select name="tipo" value={tipo} onChange={(e) => setTipo(e.target.value)}>
+            <option value="perfil">Perfil</option>
+            <option value="vidrio">Vidrio</option>
+            <option value="accesorio">Accesorio</option>
+            <option value="herramienta">Herramienta</option>
+          </select>
         </div>
 
-        <div className={styles.itemsList}>
-          {compra.tipo === "aluminio" &&
-            compra.pedido.map((p) => (
-              <div key={p._id} className={styles.itemRow}>
-                <span>{p.codigo} - {p.descripcion}</span>
-                <input
-                  type="number"
-                  placeholder="Cantidad a ingresar"
-                  onChange={(e) => handleChangeCantidad(p._id, e.target.value)}
-                />
-              </div>
-            ))}
-          {compra.tipo === "vidrios" &&
-            compra.vidrios.map((v) => (
-              <div key={v._id} className={styles.itemRow}>
-                <span>{v.codigo} - {v.descripcion}</span>
-                <input
-                  type="number"
-                  placeholder="Cantidad a ingresar"
-                  onChange={(e) => handleChangeCantidad(v._id, e.target.value)}
-                />
-              </div>
-            ))}
-          {compra.tipo === "accesorios" &&
-            compra.accesorios.map((a) => (
-              <div key={a._id} className={styles.itemRow}>
-                <span>{a.codigo} - {a.descripcion}</span>
-                <input
-                  type="number"
-                  placeholder="Cantidad a ingresar"
-                  onChange={(e) => handleChangeCantidad(a._id, e.target.value)}
-                />
-              </div>
-            ))}
-        </div>
+        {/* Campos específicos */}
+        {tipo === "perfil" && (
+          <>
+            <input name="codigo" placeholder="Código" onChange={handleChange} required />
+            <input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
+            <input name="color" placeholder="Color" onChange={handleChange} required />
+            <input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
+            <input name="largo" type="number" placeholder="Largo (mm)" onChange={handleChange} required />
+            <input name="pesoxmetro" type="number" placeholder="Peso x metro" onChange={handleChange} required />
+          </>
+        )}
+
+        {tipo === "vidrio" && (
+          <>
+            <input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
+            <input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
+            <input name="ancho" type="number" placeholder="Ancho (mm)" onChange={handleChange} required />
+            <input name="alto" type="number" placeholder="Alto (mm)" onChange={handleChange} required />
+            <select name="tipoVidrio" onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))}>
+              <option value="simple">Simple</option>
+              <option value="dvh">DVH</option>
+              <option value="tvh">TVH</option>
+              <option value="laminado">Laminado</option>
+            </select>
+          </>
+        )}
+
+        {tipo === "accesorio" && (
+          <>
+            <input name="codigo" placeholder="Código" onChange={handleChange} required />
+            <input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
+            <input name="color" placeholder="Color" onChange={handleChange} required />
+            <input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
+            <input name="unidad" placeholder="Unidad (u/ml)" onChange={handleChange} defaultValue="u" />
+            <input name="tipoAccesorio" placeholder="Tipo (tornillos, felpas...)" onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))} required />
+          </>
+        )}
+
+        {tipo === "herramienta" && (
+          <>
+            <input name="marca" placeholder="Marca" onChange={handleChange} required />
+            <input name="modelo" placeholder="Modelo" onChange={handleChange} required />
+            <input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
+            <input name="numeroSerie" placeholder="Número de Serie" onChange={handleChange} required />
+            <select name="estado" onChange={handleChange} defaultValue="en taller">
+              <option value="en taller">En taller</option>
+              <option value="en obra">En obra</option>
+              <option value="en reparación">En reparación</option>
+            </select>
+          </>
+        )}
 
         <div className={styles.actions}>
           <Button type="submit" disabled={loading}>Guardar</Button>

@@ -1,33 +1,42 @@
 // src/components/ui/Table.jsx
-
-import React from "react";
+import React, { useState } from "react";
 import styles from "../../styles/components/Table.module.css";
 
-export default function Table({ headers = {}, data = [], renderRow, onSort, sortConfig }) {
-  if (!data.length) return <p className={styles.noData}>No hay resultados</p>;
+export default function Table({ headers = [], children, onSort, sortConfig }) {
+  const [hoveredCol, setHoveredCol] = useState(null);
 
-  const keys = Object.keys(headers);
+  // Soporta headers como string o { key, label }
+  const normalizeHeader = (header) =>
+    typeof header === "string" ? { key: header, label: header } : header;
+
+  const normalizedHeaders = headers.map(normalizeHeader);
+
+  const getSortIcon = (key) => {
+    if (!sortConfig || sortConfig.key !== key) return "↕";
+    return sortConfig.direction === "asc" ? "▲" : "▼";
+  };
 
   return (
     <table className={styles.table}>
       <thead>
         <tr>
-          {keys.map((key) => (
-            <th key={key} onClick={() => onSort(key)} style={{ cursor: "pointer" }}>
-              {headers[key]}
-              {sortConfig?.key === key && (
-                sortConfig.direction === "asc" ? " 🔼" : " 🔽"
-              )}
+          {normalizedHeaders.map(({ key, label }) => (
+            <th
+              key={key}
+              onClick={() => key !== "acciones" && onSort?.(key)}
+              onMouseEnter={() => setHoveredCol(key)}
+              onMouseLeave={() => setHoveredCol(null)}
+              style={{ cursor: key !== "acciones" ? "pointer" : "default" }}
+            >
+              {label}
+              {hoveredCol === key || sortConfig?.key === key ? (
+                <span style={{ marginLeft: 5 }}>{getSortIcon(key)}</span>
+              ) : null}
             </th>
           ))}
-          <th>Acciones</th>
         </tr>
       </thead>
-      <tbody>
-        {data.map((item, idx) => (
-          <tr key={item._id || idx}>{renderRow(item)}</tr>
-        ))}
-      </tbody>
+      <tbody>{children}</tbody>
     </table>
   );
 }

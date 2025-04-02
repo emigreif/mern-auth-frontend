@@ -19,6 +19,7 @@ import BaseMateriales from "./pages/BaseMateriales.jsx";
 
 // Páginas protegidas
 import Obras from "./pages/Obras.jsx";
+import Clientes from "./pages/Clientes.jsx";
 import Presupuestos from "./pages/Presupuestos.jsx";
 import Proveedores from "./pages/Proveedores.jsx";
 import Panol from "./pages/Panol.jsx";
@@ -71,7 +72,8 @@ function ProtectedRoutes() {
         }`}
       >
         <Routes>
-          <Route path="/obras" element={<Obras />} />
+        <Route path="/obras" element={<Obras />} />
+        <Route path="/clientes" element={<Clientes />} />
           <Route path="/presupuestos" element={<Presupuestos />} />
           <Route path="/proveedores" element={<Proveedores />} />
           <Route path="/panol" element={<Panol />} />

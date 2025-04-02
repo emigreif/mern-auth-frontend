@@ -33,6 +33,7 @@ const Sidebar = ({ expanded, setExpanded }) => {
 
   const menuItems = [
     { name: "Obras", route: "/obras", icon: faBuilding },
+    { name: "Clientes", route: "/clientes", icon: faBuilding },
     { name: "Presupuestos", route: "/presupuestos", icon: faFileInvoiceDollar },
     { name: "Proveedores", route: "/proveedores", icon: faTruck },
     { name: "Compras", route: "/compras", icon: faShoppingCart },

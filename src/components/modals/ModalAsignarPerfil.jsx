@@ -1,235 +1,112 @@
-// src/components/modals/modalAsignarPerfil.jsx
 import React, { useEffect, useState } from "react";
-import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
-export default function ModalAsignarPerfil({ isOpen, onClose, perfiles = [], obras = [], API_URL, token, onSuccess }) {
-  const [tab, setTab] = useState("manual");
-  const [obraSeleccionada, setObraSeleccionada] = useState("");
-  const [lineas, setLineas] = useState([{ codigo: "", color: "", cantidad: 0 }]);
-  const [errores, setErrores] = useState([]);
-  const [resultado, setResultado] = useState(null);
-  const [excelFile, setExcelFile] = useState(null);
-  const [excelRows, setExcelRows] = useState([]);
+export default function ModalAsignarPerfil({ isOpen, onClose, onSave, token, API_URL }) {
+  const [obras, setObras] = useState([]);
+  const [perfilId, setPerfilId] = useState("");
+  const [obraId, setObraId] = useState("");
+  const [cantidad, setCantidad] = useState(1);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isOpen) resetForm();
+    if (!isOpen) return;
+
+    const fetchObras = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/obras`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setObras(data || []);
+      } catch (error) {
+        console.error("Error al cargar obras:", error);
+      }
+    };
+
+    fetchObras();
   }, [isOpen]);
 
-  const resetForm = () => {
-    setTab("manual");
-    setLineas([{ codigo: "", color: "", cantidad: 0 }]);
-    setErrores([]);
-    setResultado(null);
-    setObraSeleccionada("");
-    setExcelFile(null);
-    setExcelRows([]);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
 
-  const agregarLinea = () => {
-    setLineas([...lineas, { codigo: "", color: "", cantidad: 0 }]);
-  };
-
-  const quitarLinea = (i) => {
-    const nuevas = [...lineas];
-    nuevas.splice(i, 1);
-    setLineas(nuevas);
-  };
-
-  const handleLineaChange = (i, field, value) => {
-    const nuevas = [...lineas];
-    nuevas[i][field] = field === "cantidad" ? parseInt(value, 10) || 0 : value;
-    setLineas(nuevas);
-  };
-
-  const validarStock = (codigo, color, cantidad) => {
-    const perfil = perfiles.find((p) => p.codigo === codigo && p.color === color);
-    if (!perfil) return "No encontrado";
-    if (perfil.cantidad < cantidad) return `Solo ${perfil.cantidad} en stock`;
-    return null;
-  };
-
-  const handleAsignarManual = async () => {
-    const erroresTemp = [];
-    if (!obraSeleccionada) {
-      setErrores(["Debes seleccionar una obra"]);
+    if (!perfilId || !obraId || cantidad <= 0) {
+      setErrorMsg("Todos los campos son obligatorios y la cantidad debe ser mayor a 0.");
       return;
     }
-    lineas.forEach((l, idx) => {
-      if (!l.codigo || !l.color || l.cantidad <= 0) {
-        erroresTemp.push(`Línea ${idx + 1}: campos inválidos`);
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/obras/asignar-perfil`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          perfil: perfilId,
+          obra: obraId,
+          cantidad
+        })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Error al asignar perfil");
       }
-      const errorStock = validarStock(l.codigo, l.color, l.cantidad);
-      if (errorStock) erroresTemp.push(`Línea ${idx + 1}: ${errorStock}`);
-    });
-    if (erroresTemp.length > 0) {
-      setErrores(erroresTemp);
-      return;
-    }
-    try {
-      const res = await fetch(`${API_URL}/api/panol/perfiles/asignar-manual`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ obra: obraSeleccionada, items: lineas })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      setResultado(data);
-      onSuccess?.();
-    } catch (err) {
-      setErrores([err.message]);
-    }
-  };
 
-  const handleExcelChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setExcelFile(file);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const data = new Uint8Array(event.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, { range: 11 });
-      setExcelRows(rows);
-    };
-    reader.readAsArrayBuffer(file);
-  };
-
-  const handleAsignarDesdeExcel = async () => {
-    if (!obraSeleccionada) {
-      setErrores(["Selecciona una obra antes de importar."]);
-      return;
-    }
-    try {
-      const res = await fetch(`${API_URL}/api/panol/perfiles/asignar-excel`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ obra: obraSeleccionada, items: excelRows })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      setResultado(data);
-      onSuccess?.();
-    } catch (err) {
-      setErrores([err.message]);
+      onSave();
+      onClose();
+    } catch (error) {
+      setErrorMsg(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Perfiles a Obra">
-      <div className={styles.tabHeader}>
-        <Button onClick={() => setTab("manual")} className={tab === "manual" ? styles.active : ""}>
-          Carga Manual
-        </Button>
-        <Button onClick={() => setTab("excel")} className={tab === "excel" ? styles.active : ""}>
-          Importar Excel
-        </Button>
-      </div>
+    <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Perfil a Obra">
+      <form onSubmit={handleSubmit} className={styles.modalForm}>
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-      <div className={styles.formGroup}>
-        <label>Obra</label>
-        <select value={obraSeleccionada} onChange={(e) => setObraSeleccionada(e.target.value)}>
-          <option value="">-- Seleccionar Obra --</option>
-          {obras.map((o) => (
-            <option key={o._id} value={o._id}>{o.nombre}</option>
+        <label>ID del Perfil (manual)</label>
+        <input
+          type="text"
+          value={perfilId}
+          onChange={(e) => setPerfilId(e.target.value)}
+          required
+        />
+
+        <label>Seleccionar Obra</label>
+        <select value={obraId} onChange={(e) => setObraId(e.target.value)} required>
+          <option value="">Seleccionar</option>
+          {obras.map((obra) => (
+            <option key={obra._id} value={obra._id}>
+              {obra.nombre}
+            </option>
           ))}
         </select>
-      </div>
 
-      {tab === "manual" && (
-        <>
-          {lineas.map((l, i) => (
-            <div key={i} className={styles.row}>
-              <select value={l.codigo} onChange={(e) => handleLineaChange(i, "codigo", e.target.value)}>
-                <option value="">Código</option>
-                {[...new Set(perfiles.map((p) => p.codigo))].map((code) => (
-                  <option key={code} value={code}>{code}</option>
-                ))}
-              </select>
-              <select value={l.color} onChange={(e) => handleLineaChange(i, "color", e.target.value)}>
-                <option value="">Color</option>
-                {[...new Set(perfiles.map((p) => p.color))].map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-              <input
-                type="number"
-                min={1}
-                placeholder="Cantidad"
-                value={l.cantidad}
-                onChange={(e) => handleLineaChange(i, "cantidad", e.target.value)}
-              />
-              <Button variant="danger" onClick={() => quitarLinea(i)}>
-                ❌
-              </Button>
-            </div>
-          ))}
-          <Button onClick={agregarLinea}>➕ Agregar línea</Button>
-          <Button onClick={handleAsignarManual} className={styles.submitBtn}>
-            Asignar Perfiles
+        <label>Cantidad</label>
+        <input
+          type="number"
+          value={cantidad}
+          onChange={(e) => setCantidad(parseInt(e.target.value))}
+          min={1}
+          required
+        />
+
+        <div className={styles.actions}>
+          <Button type="submit" disabled={loading}>Asignar</Button>
+          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
+            Cancelar
           </Button>
-        </>
-      )}
-
-      {tab === "excel" && (
-        <>
-          <div className={styles.formGroup}>
-            <label>Archivo Excel (.xlsx)</label>
-            <input type="file" accept=".xlsx" onChange={handleExcelChange} />
-          </div>
-          {excelRows.length > 0 && (
-            <>
-              <p>Vista previa:</p>
-              <ul>
-                {excelRows.slice(0, 5).map((row, idx) => (
-                  <li key={idx}>
-                    {row.codigo} - {row.color} - {row.cantidad}
-                  </li>
-                ))}
-              </ul>
-              <Button onClick={handleAsignarDesdeExcel} className={styles.submitBtn}>
-                Asignar desde Excel
-              </Button>
-            </>
-          )}
-        </>
-      )}
-
-      {errores.length > 0 && (
-        <div className={styles.errorBox}>
-          {errores.map((e, idx) => (
-            <p key={idx}>{e}</p>
-          ))}
         </div>
-      )}
-
-      {resultado && (
-        <div className={styles.resultadoBox}>
-          <h4>Resultado:</h4>
-          {resultado.asignados && <p>✅ Asignados: {resultado.asignados.length}</p>}
-          {resultado.faltantes && resultado.faltantes.length > 0 && (
-            <>
-              <p>❌ Faltantes:</p>
-              <ul>
-                {resultado.faltantes.map((f, idx) => (
-                  <li key={idx}>
-                    {f.codigo} - {f.color} (pedidos: {f.cantidad}, stock: {f.stock || 0})
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      )}
+      </form>
     </ModalBase>
   );
 }

@@ -1,11 +1,14 @@
-// src/components/modals/modalHerramienta.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
-export default function ModalHerramienta({ isOpen, onClose, onSave, herramienta = null }) {
-  const [form, setForm] = useState({
+export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
+  const { token } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  const [formData, setFormData] = useState({
     marca: "",
     modelo: "",
     descripcion: "",
@@ -13,100 +16,118 @@ export default function ModalHerramienta({ isOpen, onClose, onSave, herramienta 
     estado: "en taller"
   });
 
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (herramienta) {
-      setForm({
+      setFormData({
         marca: herramienta.marca || "",
         modelo: herramienta.modelo || "",
         descripcion: herramienta.descripcion || "",
         numeroSerie: herramienta.numeroSerie || "",
         estado: herramienta.estado || "en taller"
       });
-    } else {
-      setForm({
-        marca: "",
-        modelo: "",
-        descripcion: "",
-        numeroSerie: "",
-        estado: "en taller"
-      });
     }
   }, [herramienta]);
 
   const handleChange = (e) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(form);
-  };
+    setErrorMsg("");
+    setLoading(true);
 
-  if (!isOpen) return null;
+    try {
+      const url = `${API_URL}/api/panol/herramientas`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Error al guardar la herramienta");
+      }
+
+      onSaved(); // recarga lista
+      onClose(); // cierra modal
+    } catch (error) {
+      console.error("Error:", error);
+      setErrorMsg(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title={herramienta ? "Editar Herramienta" : "Nueva Herramienta"}>
+    <ModalBase
+      isOpen={true}
+      onClose={onClose}
+      title={herramienta ? "Editar Herramienta" : "Agregar Herramienta"}
+    >
       <form onSubmit={handleSubmit} className={styles.modalForm}>
-        <div className={styles.formGroup}>
-          <label>Marca</label>
-          <input type="text" name="marca" value={form.marca} onChange={handleChange} required />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Modelo</label>
-          <input type="text" name="modelo" value={form.modelo} onChange={handleChange} required />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Descripción</label>
-          <input type="text" name="descripcion" value={form.descripcion} onChange={handleChange} required />
-        </div>
-        <div className={styles.formGroup}>
-          <label>N° Serie</label>
-          <input type="text" name="numeroSerie" value={form.numeroSerie} onChange={handleChange} required />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Estado</label>
-          <select name="estado" value={form.estado} onChange={handleChange}>
-            <option value="en taller">En Taller</option>
-            <option value="en obra">En Obra</option>
-            <option value="en reparación">En Reparación</option>
-          </select>
-        </div>
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+
+        <label>Marca</label>
+        <input
+          type="text"
+          name="marca"
+          value={formData.marca}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Modelo</label>
+        <input
+          type="text"
+          name="modelo"
+          value={formData.modelo}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Descripción</label>
+        <input
+          type="text"
+          name="descripcion"
+          value={formData.descripcion}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Número de Serie</label>
+        <input
+          type="text"
+          name="numeroSerie"
+          value={formData.numeroSerie}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Estado</label>
+        <select name="estado" value={formData.estado} onChange={handleChange}>
+          <option value="en taller">En taller</option>
+          <option value="en obra">En obra</option>
+          <option value="en reparación">En reparación</option>
+        </select>
+
         <div className={styles.actions}>
-          <Button type="submit">Guardar</Button>
-          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
+          <Button type="submit" disabled={loading}>
+            Guardar
+          </Button>
+          <Button variant="secondary" onClick={onClose} disabled={loading}>
+            Cancelar
+          </Button>
         </div>
       </form>
-
-      {/* Si existe historial, se muestra */}
-      {herramienta?.historial && herramienta.historial.length > 0 && (
-        <div className={styles.historialSection}>
-          <h3>Historial de Movimientos</h3>
-          <table className={styles.historialTable}>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Estado Anterior</th>
-                <th>Estado Nuevo</th>
-                <th>Obra</th>
-                <th>Responsable</th>
-              </tr>
-            </thead>
-            <tbody>
-              {herramienta.historial
-                .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
-                .map((mov, i) => (
-                  <tr key={i}>
-                    <td>{new Date(mov.fecha).toLocaleDateString()}</td>
-                    <td>{mov.estadoAnterior || "-"}</td>
-                    <td>{mov.estadoNuevo}</td>
-                    <td>{mov.obra?.nombre || "-"}</td>
-                    <td>{mov.responsable?.nombre ? `${mov.responsable.nombre} ${mov.responsable.apellido || ""}` : "-"}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-      )}
     </ModalBase>
   );
 }

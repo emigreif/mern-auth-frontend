@@ -1,114 +1,126 @@
-// src/components/modals/modalAsignarHerramienta.jsx
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
-export default function ModalAsignarHerramienta({ isOpen, onClose, herramientaId, token, API_URL, onSuccess }) {
-  const [estado, setEstado] = useState("en obra");
+export default function ModalAsignarHerramienta({ isOpen, onClose, onSave, token, API_URL }) {
   const [obras, setObras] = useState([]);
-  const [nomina, setNomina] = useState([]);
+  const [empleados, setEmpleados] = useState([]);
+  const [herramienta, setHerramienta] = useState("");
   const [obra, setObra] = useState("");
   const [responsable, setResponsable] = useState("");
-  const [error, setError] = useState("");
+  const [cantidad, setCantidad] = useState(1);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isOpen) return;
-    fetchObras();
-    fetchNomina();
-  }, [isOpen]);
+    const fetchData = async () => {
+      try {
+        const [resObras, resEmp] = await Promise.all([
+          fetch(`${API_URL}/api/obras`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API_URL}/api/employee`, { headers: { Authorization: `Bearer ${token}` } }),
+        ]);
 
-  const fetchObras = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/obras`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setObras(data);
-    } catch (err) {
-      setError("Error al cargar obras");
-    }
-  };
+        const dataObras = await resObras.json();
+        const dataEmp = await resEmp.json();
 
-  const fetchNomina = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/nomina`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setNomina(data);
-    } catch (err) {
-      setError("Error al cargar nómina");
-    }
-  };
+        setObras(dataObras || []);
+        setEmpleados(dataEmp || []);
+      } catch (error) {
+        console.error("Error al cargar obras o empleados:", error);
+      }
+    };
+
+    if (isOpen) fetchData();
+  }, [isOpen, token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setErrorMsg("");
+
+    if (!herramienta || !obra || !responsable || cantidad <= 0) {
+      setErrorMsg("Todos los campos son obligatorios y la cantidad debe ser mayor a 0.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/panol/herramientas/${herramientaId}/movimiento`, {
+      const res = await fetch(`${API_URL}/api/obras/asignar-herramienta`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ estado, obra, responsable }),
+        body: JSON.stringify({
+          herramienta,
+          obra,
+          responsable,
+          cantidad
+        })
       });
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.message || "Error al asignar");
+        throw new Error(errData.message || "Error al asignar herramienta");
       }
 
-      onSuccess();
+      onSave();
       onClose();
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      setErrorMsg(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Herramienta">
-      <form onSubmit={handleSubmit} className={styles.formBase}>
-        {error && <p className={styles.error}>{error}</p>}
+      <form onSubmit={handleSubmit} className={styles.modalForm}>
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-        <div className={styles.formGroup}>
-          <label>Estado</label>
-          <select value={estado} onChange={(e) => setEstado(e.target.value)}>
-            <option value="en obra">En Obra</option>
-            <option value="en taller">En Taller</option>
-            <option value="en reparación">En Reparación</option>
-          </select>
-        </div>
+        <label>Herramienta (nombre o ID)</label>
+        <input
+          value={herramienta}
+          onChange={(e) => setHerramienta(e.target.value)}
+          required
+        />
 
-        <div className={styles.formGroup}>
-          <label>Obra</label>
-          <select value={obra} onChange={(e) => setObra(e.target.value)} required>
-            <option value="">-- Seleccionar Obra --</option>
-            {obras.map((o) => (
-              <option key={o._id} value={o._id}>
-                {o.nombre}
-              </option>
-            ))}
-          </select>
-        </div>
+        <label>Obra</label>
+        <select value={obra} onChange={(e) => setObra(e.target.value)} required>
+          <option value="">Seleccionar obra</option>
+          {obras.map((o) => (
+            <option key={o._id} value={o._id}>
+              {o.nombre}
+            </option>
+          ))}
+        </select>
 
-        <div className={styles.formGroup}>
-          <label>Responsable</label>
-          <select value={responsable} onChange={(e) => setResponsable(e.target.value)} required>
-            <option value="">-- Seleccionar Responsable --</option>
-            {nomina.map((n) => (
-              <option key={n._id} value={n._id}>
-                {n.nombre} {n.apellido}
-              </option>
-            ))}
-          </select>
-        </div>
+        <label>Responsable</label>
+        <select value={responsable} onChange={(e) => setResponsable(e.target.value)} required>
+          <option value="">Seleccionar empleado</option>
+          {empleados.map((emp) => (
+            <option key={emp._id} value={emp._id}>
+              {emp.nombre} {emp.apellido}
+            </option>
+          ))}
+        </select>
+
+        <label>Cantidad</label>
+        <input
+          type="number"
+          value={cantidad}
+          onChange={(e) => setCantidad(parseInt(e.target.value))}
+          min={1}
+          required
+        />
 
         <div className={styles.actions}>
-          <Button type="submit">Asignar</Button>
-          <Button variant="secondary" type="button" onClick={onClose}>
+          <Button type="submit" disabled={loading}>
+            Asignar
+          </Button>
+          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
             Cancelar
           </Button>
         </div>

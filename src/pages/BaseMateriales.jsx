@@ -65,7 +65,9 @@ const BaseMateriales = () => {
   };
 
   const handleGuardar = async (tipo, datos) => {
-    const url = `${API_URL}/api/general/${tipo}${modoEdicion ? `/${itemSeleccionado._id}` : ""}`;
+    const url = `${API_URL}/api/general/${tipo}${
+      modoEdicion ? `/${itemSeleccionado._id}` : ""
+    }`;
     const method = modoEdicion ? "PUT" : "POST";
     if (tipo === "proveedores") {
       datos.emails = datos.emails?.split(",").map((e) => e.trim()) || [];
@@ -74,7 +76,7 @@ const BaseMateriales = () => {
       datos.rubro = datos.rubro?.split(",").map((r) => r.trim()) || [];
       datos.marcas = datos.marcas?.split(",").map((m) => m.trim()) || [];
     }
-    
+
     await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
@@ -96,10 +98,13 @@ const BaseMateriales = () => {
     const formData = new FormData();
     formData.append("file", archivoImportado);
 
-    const res = await fetch(`${API_URL}/api/general/${modalImportarTipo}/importar`, {
-      method: "POST",
-      body: formData,
-    });
+    const res = await fetch(
+      `${API_URL}/api/general/${modalImportarTipo}/importar`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     const data = await res.json();
     setMensaje(data.message || "Importado con éxito");
@@ -110,22 +115,40 @@ const BaseMateriales = () => {
 
   const getSetter = (tipo) => {
     switch (tipo) {
-      case "perfiles": return setPerfiles;
-      case "vidrios": return setVidrios;
-      case "camaras": return setCamaras;
-      case "accesorios": return setAccesorios;
-      case "proveedores": return setProveedores;
-      default: return () => {};
+      case "perfiles":
+        return setPerfiles;
+      case "vidrios":
+        return setVidrios;
+      case "camaras":
+        return setCamaras;
+      case "accesorios":
+        return setAccesorios;
+      case "proveedores":
+        return setProveedores;
+      default:
+        return () => {};
     }
   };
 
   const dataMap = { perfiles, vidrios, camaras, accesorios, proveedores };
 
   const headersMap = {
-    perfiles: { codigo: "Código", descripcion: "Descripción", extrusora: "Extrusora", linea: "Línea" },
+    perfiles: {
+      codigo: "Código",
+      descripcion: "Descripción",
+      extrusora: "Extrusora",
+      linea: "Línea",
+      largo: "Largo (mm)",
+      peso: "Peso x metro",
+    },
     vidrios: { descripcion: "Descripción", espesor: "Espesor" },
     camaras: { descripcion: "Descripción", espesor: "Espesor" },
-    accesorios: { codigo: "Código", descripcion: "Descripción", color: "Color", tipo: "Tipo" },
+    accesorios: {
+      codigo: "Código",
+      descripcion: "Descripción",
+      color: "Color",
+      tipo: "Tipo",
+    },
     proveedores: {
       nombre: "Nombre",
       direccion: "Dirección",
@@ -168,50 +191,101 @@ const BaseMateriales = () => {
     <div className={styles.pageContainer}>
       <h1>Base de Datos General</h1>
 
-      <nav style={{ display: "flex", gap: "30px", fontWeight: "bold", marginBottom: "20px" }}>
-        {["perfiles", "vidrios", "camaras", "accesorios", "proveedores"].map((tipo) => (
-          <div key={tipo} style={{ cursor: "pointer" }} onClick={() => setTab(tipo)}>
-            {tipo.toUpperCase()}
-          </div>
-        ))}
+      <nav
+        style={{
+          display: "flex",
+          gap: "30px",
+          fontWeight: "bold",
+          marginBottom: "20px",
+        }}
+      >
+        {["perfiles", "vidrios", "camaras", "accesorios", "proveedores"].map(
+          (tipo) => (
+            <div
+              key={tipo}
+              style={{
+                cursor: "pointer",
+                color: tab === tipo ? "black" : "gray",
+              }}
+              onClick={() => setTab(tipo)}
+            >
+              {tipo.toUpperCase()}
+            </div>
+          )
+        )}
       </nav>
 
       <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
         <Button onClick={() => abrirModal(tab)}>+ Agregar</Button>
-        <Button onClick={() => setModalImportarTipo(tab)}>Importar Excel</Button>
-        <SearchBar value={busqueda} onChange={setBusqueda} placeholder={`Buscar ${tab}...`} />
+        <Button onClick={() => setModalImportarTipo(tab)}>
+          Importar Excel
+        </Button>
+        <SearchBar
+          value={busqueda}
+          onChange={setBusqueda}
+          placeholder={`Buscar ${tab}...`}
+        />
       </div>
-
       <Table
-        headers={headersMap[tab]}
-        data={sortedData}
-        renderRow={(item) => (
-          <>
-            {Object.keys(headersMap[tab]).map((key) => (
-              <td key={key}>
-                {Array.isArray(item[key]) ? item[key].join(", ") : item[key] ?? ""}
-              </td>
-            ))}
-            <td>
-              <Button variant="secondary" onClick={() => abrirModal(tab, item)}>Editar</Button>
-              <Button variant="danger" onClick={() => handleEliminar(tab, item._id)}>Eliminar</Button>
-            </td>
-          </>
-        )}
-        onSort={ordenarPor}
-        sortConfig={sortConfig}
-      />
+  headers={Object.entries(headersMap[tab])
+    .map(([key, label]) => ({ key, label }))
+    .concat({ key: "acciones", label: "Acciones" })}
+  onSort={ordenarPor}
+  sortConfig={sortConfig}
+>
 
-      <ModalBase isOpen={!!modalTipo} onClose={cerrarModal} title={modoEdicion ? "Editar" : "Agregar"}>
-        <DynamicForm tipo={modalTipo} data={itemSeleccionado} onSubmit={(data) => handleGuardar(modalTipo, data)} />
+        {sortedData.map((item) => (
+          <tr key={item._id}>
+        {Object.entries(headersMap[tab]).map(([key]) => (
+  <td key={key}>
+    {Array.isArray(item[key])
+      ? item[key].join(", ")
+      : item[key] ?? ""}
+  </td>
+))}
+            <td>
+              <Button variant="secondary" onClick={() => abrirModal(tab, item)}>
+                Editar
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => handleEliminar(tab, item._id)}
+              >
+                Eliminar
+              </Button>
+            </td>
+          </tr>
+        ))}
+      </Table>
+
+      <ModalBase
+        isOpen={!!modalTipo}
+        onClose={cerrarModal}
+        title={modoEdicion ? "Editar" : "Agregar"}
+      >
+        <DynamicForm
+          tipo={modalTipo}
+          data={itemSeleccionado}
+          onSubmit={(data) => handleGuardar(modalTipo, data)}
+        />
       </ModalBase>
 
-      <ModalBase isOpen={!!modalImportarTipo} onClose={() => setModalImportarTipo(null)} title={`Importar ${modalImportarTipo}`}>
-        <input type="file" accept=".xlsx" onChange={(e) => setArchivoImportado(e.target.files[0])} />
+      <ModalBase
+        isOpen={!!modalImportarTipo}
+        onClose={() => setModalImportarTipo(null)}
+        title={`Importar ${modalImportarTipo}`}
+      >
+        <input
+          type="file"
+          accept=".xlsx"
+          onChange={(e) => setArchivoImportado(e.target.files[0])}
+        />
         <Button onClick={subirArchivo}>Subir</Button>
       </ModalBase>
 
-      {mensaje && <p style={{ marginTop: "15px", color: "green" }}>{mensaje}</p>}
+      {mensaje && (
+        <p style={{ marginTop: "15px", color: "green" }}>{mensaje}</p>
+      )}
     </div>
   );
 };
@@ -290,7 +364,9 @@ const DynamicForm = ({ tipo, data = {}, onSubmit }) => {
           onChange={handleChange}
         />
       ))}
-      <Button onClick={handleSubmit}>{data?._id ? "Actualizar" : "Guardar"}</Button>
+      <Button onClick={handleSubmit}>
+        {data?._id ? "Actualizar" : "Guardar"}
+      </Button>
     </>
   );
 };

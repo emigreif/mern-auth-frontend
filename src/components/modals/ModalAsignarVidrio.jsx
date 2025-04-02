@@ -1,218 +1,112 @@
-// src/components/modals/modalAsignarVidrio.jsx
-import React, { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
+import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
 
-export default function ModalAsignarVidrio({ isOpen, onClose, obras = [], vidrios = [], API_URL, token, onSuccess }) {
-  const [tab, setTab] = useState("manual");
-  const [obraSeleccionada, setObraSeleccionada] = useState("");
-  const [pedidos, setPedidos] = useState([{ ancho: 0, alto: 0 }]);
-  const [errores, setErrores] = useState([]);
-  const [resultado, setResultado] = useState(null);
-  const [excelRows, setExcelRows] = useState([]);
+export default function ModalAsignarVidrio({ isOpen, onClose, onSave, token, API_URL }) {
+  const [obras, setObras] = useState([]);
+  const [vidrioId, setVidrioId] = useState("");
+  const [obraId, setObraId] = useState("");
+  const [cantidad, setCantidad] = useState(1);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isOpen) resetForm();
+    if (!isOpen) return;
+
+    const fetchObras = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/obras`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setObras(data || []);
+      } catch (error) {
+        console.error("Error al cargar obras:", error);
+      }
+    };
+
+    fetchObras();
   }, [isOpen]);
 
-  const resetForm = () => {
-    setTab("manual");
-    setPedidos([{ ancho: 0, alto: 0 }]);
-    setErrores([]);
-    setResultado(null);
-    setObraSeleccionada("");
-    setExcelRows([]);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
 
-  const agregarLinea = () => {
-    setPedidos([...pedidos, { ancho: 0, alto: 0 }]);
-  };
-
-  const quitarLinea = (i) => {
-    const nuevas = [...pedidos];
-    nuevas.splice(i, 1);
-    setPedidos(nuevas);
-  };
-
-  const handleLineaChange = (i, field, value) => {
-    const nuevas = [...pedidos];
-    nuevas[i][field] = parseInt(value, 10) || 0;
-    setPedidos(nuevas);
-  };
-
-  const handleAsignarManual = async () => {
-    const erroresTemp = [];
-    if (!obraSeleccionada) {
-      setErrores(["Debes seleccionar una obra"]);
+    if (!vidrioId || !obraId || cantidad <= 0) {
+      setErrorMsg("Todos los campos son obligatorios y la cantidad debe ser mayor a 0.");
       return;
     }
-    pedidos.forEach((p, idx) => {
-      if (!p.ancho || !p.alto || p.ancho <= 0 || p.alto <= 0) {
-        erroresTemp.push(`Línea ${idx + 1}: medidas inválidas.`);
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/obras/asignar-vidrio`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          vidrio: vidrioId,
+          obra: obraId,
+          cantidad
+        })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Error al asignar vidrio");
       }
-    });
-    if (erroresTemp.length > 0) {
-      setErrores(erroresTemp);
-      return;
-    }
-    try {
-      const res = await fetch(`${API_URL}/api/panol/vidrios/asignar-manual`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ obra: obraSeleccionada, items: pedidos })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      setResultado(data);
-      onSuccess?.();
-    } catch (err) {
-      setErrores([err.message]);
-    }
-  };
 
-  const handleExcelChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const data = new Uint8Array(event.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, { range: 11 });
-      setExcelRows(rows);
-    };
-    reader.readAsArrayBuffer(file);
-  };
-
-  const handleAsignarDesdeExcel = async () => {
-    if (!obraSeleccionada) {
-      setErrores(["Selecciona una obra antes de importar."]);
-      return;
-    }
-    try {
-      const res = await fetch(`${API_URL}/api/panol/vidrios/asignar-excel`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ obra: obraSeleccionada, items: excelRows })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      setResultado(data);
-      onSuccess?.();
-    } catch (err) {
-      setErrores([err.message]);
+      onSave();
+      onClose();
+    } catch (error) {
+      setErrorMsg(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Vidrios a Obra">
-      <div className={styles.tabHeader}>
-        <Button onClick={() => setTab("manual")} className={tab === "manual" ? styles.active : ""}>
-          Carga Manual
-        </Button>
-        <Button onClick={() => setTab("excel")} className={tab === "excel" ? styles.active : ""}>
-          Importar Excel
-        </Button>
-      </div>
+    <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Vidrio a Obra">
+      <form onSubmit={handleSubmit} className={styles.modalForm}>
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-      <div className={styles.formGroup}>
-        <label>Obra</label>
-        <select value={obraSeleccionada} onChange={(e) => setObraSeleccionada(e.target.value)}>
-          <option value="">-- Seleccionar Obra --</option>
-          {obras.map((o) => (
-            <option key={o._id} value={o._id}>{o.nombre}</option>
+        <label>ID del Vidrio (manual)</label>
+        <input
+          type="text"
+          value={vidrioId}
+          onChange={(e) => setVidrioId(e.target.value)}
+          required
+        />
+
+        <label>Seleccionar Obra</label>
+        <select value={obraId} onChange={(e) => setObraId(e.target.value)} required>
+          <option value="">Seleccionar</option>
+          {obras.map((obra) => (
+            <option key={obra._id} value={obra._id}>
+              {obra.nombre}
+            </option>
           ))}
         </select>
-      </div>
 
-      {tab === "manual" && (
-        <>
-          {pedidos.map((p, i) => (
-            <div key={i} className={styles.row}>
-              <input
-                type="number"
-                min={1}
-                placeholder="Ancho (mm)"
-                value={p.ancho}
-                onChange={(e) => handleLineaChange(i, "ancho", e.target.value)}
-              />
-              <input
-                type="number"
-                min={1}
-                placeholder="Alto (mm)"
-                value={p.alto}
-                onChange={(e) => handleLineaChange(i, "alto", e.target.value)}
-              />
-              <Button variant="danger" onClick={() => quitarLinea(i)}>
-                ❌
-              </Button>
-            </div>
-          ))}
-          <Button onClick={agregarLinea}>➕ Agregar línea</Button>
-          <Button className={styles.submitBtn} onClick={handleAsignarManual}>
-            Asignar Vidrios
+        <label>Cantidad</label>
+        <input
+          type="number"
+          value={cantidad}
+          onChange={(e) => setCantidad(parseInt(e.target.value))}
+          min={1}
+          required
+        />
+
+        <div className={styles.actions}>
+          <Button type="submit" disabled={loading}>Asignar</Button>
+          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
+            Cancelar
           </Button>
-        </>
-      )}
-
-      {tab === "excel" && (
-        <>
-          <div className={styles.formGroup}>
-            <label>Archivo Excel (.xlsx)</label>
-            <input type="file" accept=".xlsx" onChange={handleExcelChange} />
-          </div>
-          {excelRows.length > 0 && (
-            <>
-              <p>Vista previa:</p>
-              <ul>
-                {excelRows.slice(0, 5).map((row, idx) => (
-                  <li key={idx}>
-                    {row.ancho} mm x {row.alto} mm
-                  </li>
-                ))}
-              </ul>
-              <Button className={styles.submitBtn} onClick={handleAsignarDesdeExcel}>
-                Asignar desde Excel
-              </Button>
-            </>
-          )}
-        </>
-      )}
-
-      {errores.length > 0 && (
-        <div className={styles.errorBox}>
-          {errores.map((e, idx) => (
-            <p key={idx}>{e}</p>
-          ))}
         </div>
-      )}
-
-      {resultado && (
-        <div className={styles.resultadoBox}>
-          <h4>Resultado:</h4>
-          {resultado.asignados && <p>✅ Asignados: {resultado.asignados.length}</p>}
-          {resultado.faltantes && resultado.faltantes.length > 0 && (
-            <>
-              <p>❌ Faltantes:</p>
-              <ul>
-                {resultado.faltantes.map((f, idx) => (
-                  <li key={idx}>
-                    {f.ancho} mm x {f.alto} mm {f.motivo && `(${f.motivo})`}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      )}
+      </form>
     </ModalBase>
   );
 }

@@ -4,6 +4,8 @@ import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalObra from "../components/modals/ModalObra.jsx";
 import Button from "../components/ui/Button.jsx";
+import Table from "../components/ui/Table.jsx";
+import SearchBar from "../components/ui/SearchBar.jsx";
 
 export default function Obras() {
   const { token } = useAuth();
@@ -13,9 +15,11 @@ export default function Obras() {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Para modal de creación/edición
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingObra, setEditingObra] = useState(null);
+
+  const [busqueda, setBusqueda] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   useEffect(() => {
     if (token) {
@@ -28,7 +32,7 @@ export default function Obras() {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/obras`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
         const errData = await res.json();
@@ -65,7 +69,7 @@ export default function Obras() {
     try {
       const res = await fetch(`${API_URL}/api/obras/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
         const errData = await res.json();
@@ -77,13 +81,44 @@ export default function Obras() {
     }
   };
 
+  const ordenarPor = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const filteredObras = obras.filter((obra) =>
+    Object.values(obra).some((val) =>
+      String(val ?? "").toLowerCase().includes(busqueda.toLowerCase())
+    )
+  );
+
+  const sortedObras = [...filteredObras].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+    const aVal = a[sortConfig.key];
+    const bVal = b[sortConfig.key];
+    const aStr = String(aVal ?? "");
+    const bStr = String(bVal ?? "");
+    return sortConfig.direction === "asc"
+      ? aStr.localeCompare(bStr)
+      : bStr.localeCompare(aStr);
+  });
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Obras</h1>
-        <Button onClick={handleOpenCreate} className={styles.newObraBtn}>
-          + Agregar Obra
-        </Button>
+        <Button onClick={handleOpenCreate}>+ Agregar Obra</Button>
+      </div>
+
+      <div style={{ marginBottom: "10px", maxWidth: "300px" }}>
+        <SearchBar
+          value={busqueda}
+          onChange={setBusqueda}
+          placeholder="Buscar obras..."
+        />
       </div>
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
@@ -92,38 +127,41 @@ export default function Obras() {
         <div className={styles.noData}>No hay obras para mostrar</div>
       )}
 
-      {!loading && obras.length > 0 && (
-        <table className={styles.obrasTable}>
-          <thead>
-            <tr>
-              <th>Código Obra</th>
-              <th>Nombre</th>
-              <th>Dirección</th>
-              <th>Contacto</th>
-              <th>Fecha Entrega</th>
-              <th>Acciones</th>
+      {!loading && filteredObras.length > 0 && (
+        <Table
+          headers={[
+            { key: "codigoObra", label: "Código Obra" },
+            { key: "nombre", label: "Nombre" },
+            { key: "direccion", label: "Dirección" },
+            { key: "contacto", label: "Contacto" },
+            { key: "fechaEntrega", label: "Fecha Entrega" },
+            { key: "acciones", label: "Acciones" },
+          ]}
+          onSort={ordenarPor}
+          sortConfig={sortConfig}
+        >
+          {sortedObras.map((o) => (
+            <tr key={o._id}>
+              <td>{o.codigoObra}</td>
+              <td>{o.nombre}</td>
+              <td>{o.direccion}</td>
+              <td>{o.contacto}</td>
+              <td>{o.fechaEntrega ? new Date(o.fechaEntrega).toLocaleDateString() : ""}</td>
+              <td>
+                <Button onClick={() => handleOpenEdit(o)}>Editar</Button>
+                <Button variant="danger" onClick={() => handleDelete(o._id)}>Eliminar</Button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {obras.map((o) => (
-              <tr key={o._id}>
-                <td>{o.codigoObra}</td>
-                <td>{o.nombre}</td>
-                <td>{o.direccion}</td>
-                <td>{o.contacto}</td>
-                <td>{o.fechaEntrega ? new Date(o.fechaEntrega).toLocaleDateString() : ""}</td>
-                <td>
-                  <Button onClick={() => handleOpenEdit(o)}>Editar</Button>
-                  <Button variant="danger" onClick={() => handleDelete(o._id)}>Eliminar</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </Table>
       )}
 
       {isModalOpen && (
-        <ModalObra obra={editingObra} onClose={handleCloseModal} onSaved={handleCloseModal} />
+        <ModalObra
+          obra={editingObra}
+          onClose={handleCloseModal}
+          onSaved={handleCloseModal}
+        />
       )}
     </div>
   );
