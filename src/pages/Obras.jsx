@@ -97,14 +97,26 @@ export default function Obras() {
 
   const sortedObras = [...filteredObras].sort((a, b) => {
     if (!sortConfig.key) return 0;
-    const aVal = a[sortConfig.key];
-    const bVal = b[sortConfig.key];
-    const aStr = String(aVal ?? "");
-    const bStr = String(bVal ?? "");
+  
+    const key = sortConfig.key;
+    const aVal = a[key];
+    const bVal = b[key];
+  
+    if (key === "fechaEntrega") {
+      const aDate = aVal ? new Date(aVal) : new Date(0);
+      const bDate = bVal ? new Date(bVal) : new Date(0);
+      return sortConfig.direction === "asc"
+        ? aDate - bDate
+        : bDate - aDate;
+    }
+  
+    const aStr = String(aVal ?? "").toLowerCase();
+    const bStr = String(bVal ?? "").toLowerCase();
     return sortConfig.direction === "asc"
       ? aStr.localeCompare(bStr)
       : bStr.localeCompare(aStr);
   });
+  
 
   return (
     <div className={styles.pageContainer}>
