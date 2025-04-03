@@ -1,10 +1,10 @@
-// src/pages/Compras.jsx
 import React, { useEffect, useState } from "react";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalCompra from "../components/modals/ModalCompra.jsx";
 import ModalIngresoMaterial from "../components/modals/ModalIngresoMaterial.jsx";
 import Button from "../components/ui/Button.jsx";
+import Semaforo from "../components/ui/Semaforo.jsx";
 
 export default function Compras() {
   const { token } = useAuth();
@@ -28,7 +28,7 @@ export default function Compras() {
     setErrorMsg("");
     setLoading(true);
     try {
-      let url = `${API_URL}/api/compras/${tipo}`;
+      const url = `${API_URL}/api/compras/${tipo}`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -92,14 +92,17 @@ export default function Compras() {
     }
   };
 
-  const getSemaforo = (compra) => {
-    if (compra.estado === "anulado") return "🔴 Anulado";
-    if (compra.estado === "completado") return "🟢 Completado";
-    if (!compra.fechaEstimadaEntrega) return "🟡 Pendiente";
+  const renderSemaforo = (compra) => {
+    if (compra.estado === "anulado") return <Semaforo estado="rojo" texto="Anulado" />;
+    if (compra.estado === "completado") return <Semaforo estado="verde" texto="Completado" />;
+
+    if (!compra.fechaEstimadaEntrega) return <Semaforo estado="amarillo" texto="Pendiente" />;
+
     const diasRestantes = (new Date(compra.fechaEstimadaEntrega) - new Date()) / (1000 * 60 * 60 * 24);
-    if (diasRestantes < 0) return "🔴 Vencido";
-    if (diasRestantes < 3) return "🟠 Próximo";
-    return "🟡 Pendiente";
+    if (diasRestantes < 0) return <Semaforo estado="rojo" texto="Vencido" />;
+    if (diasRestantes < 3) return <Semaforo estado="naranja" texto="Próximo" />;
+
+    return <Semaforo estado="amarillo" texto="Pendiente" />;
   };
 
   return (
@@ -107,19 +110,22 @@ export default function Compras() {
       <div className={styles.header}>
         <h1>Portal de Compras</h1>
         <Button onClick={handleOpenCreate} className={styles.newCompraBtn}>
-            + Nueva Compra
-          </Button>
-     
+          + Nueva Compra
+        </Button>
       </div>
+
       <div className={styles.filters}>
-          <select className={styles.filterSelect} value={tipo} onChange={(e) => setTipo(e.target.value)}>
-            <option value="todas">Todas</option>
-            <option value="aluminio">Aluminio</option>
-            <option value="vidrios">Vidrios</option>
-            <option value="accesorios">Accesorios</option>
-          </select>
-        
-        </div>
+        <select
+          className={styles.filterSelect}
+          value={tipo}
+          onChange={(e) => setTipo(e.target.value)}
+        >
+          <option value="todas">Todas</option>
+          <option value="aluminio">Aluminio</option>
+          <option value="vidrios">Vidrios</option>
+          <option value="accesorios">Accesorios</option>
+        </select>
+      </div>
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {loading && <div className={styles.spinner}>Cargando compras...</div>}
@@ -150,7 +156,7 @@ export default function Compras() {
                 <td>{c.tipo}</td>
                 <td>{c.proveedor?.nombre}</td>
                 <td>{c.estado}</td>
-                <td>{getSemaforo(c)}</td>
+                <td>{renderSemaforo(c)}</td>
                 <td>
                   {c.estado !== "anulado" && c.estado !== "completado" && (
                     <>
@@ -169,11 +175,19 @@ export default function Compras() {
       )}
 
       {isModalOpen && (
-        <ModalCompra editingCompra={editingCompra} onClose={handleCloseModal} onSaved={handleCloseModal} />
+        <ModalCompra
+          editingCompra={editingCompra}
+          onClose={handleCloseModal}
+          onSaved={handleCloseModal}
+        />
       )}
 
       {isIngresoModalOpen && (
-        <ModalIngresoMaterial compra={editingCompra} onClose={handleCloseIngreso} onSaved={handleCloseIngreso} />
+        <ModalIngresoMaterial
+          compra={editingCompra}
+          onClose={handleCloseIngreso}
+          onSaved={handleCloseIngreso}
+        />
       )}
     </div>
   );

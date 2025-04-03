@@ -1,22 +1,32 @@
 import React from "react";
 import styles from "../../styles/components/Semaforo.module.css";
-import classNames from "classnames";
 
 const Semaforo = ({ estado = "gris", texto = "" }) => {
-  const colorClass = {
-    verde: styles.verde,
-    naranja: styles.naranja,
-    rojo: styles.rojo,
-    blanco: styles.blanco,
-    negro: styles.negro,
-    gris: styles.gris
-  }[estado] || styles.gris;
+  let className = styles.base;
 
-  return (
-    <span className={classNames(styles.base, colorClass)}>
-      {texto}
-    </span>
-  );
+  switch (estado) {
+    case "verde":
+      className += ` ${styles.verde}`;
+      break;
+    case "naranja":
+      className += ` ${styles.naranja}`;
+      break;
+    case "rojo":
+      className += ` ${styles.rojo}`;
+      break;
+    case "blanco":
+      className += ` ${styles.blanco}`;
+      break;
+    case "negro":
+      className += ` ${styles.negro}`;
+      break;
+    case "gris":
+    default:
+      className += ` ${styles.gris}`;
+      break;
+  }
+
+  return <span className={className}>{texto}</span>;
 };
 
 export default Semaforo;
