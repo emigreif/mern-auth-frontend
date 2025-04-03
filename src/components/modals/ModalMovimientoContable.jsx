@@ -1,4 +1,3 @@
-// src/components/modals/modalMovimientoContable.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
@@ -7,6 +6,7 @@ import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalMovimientoContable({
   mode = "create",
+  isOpen = true,
   movimiento = null,
   proveedorId = null,
   clienteId = null,
@@ -48,9 +48,7 @@ export default function ModalMovimientoContable({
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    if (token) {
-      fetchCombos();
-    }
+    if (token) fetchCombos();
   }, [token]);
 
   useEffect(() => {
@@ -177,16 +175,8 @@ export default function ModalMovimientoContable({
         <label>Tipo</label>
         <select name="tipo" value={form.tipo} onChange={handleChange}>
           {[
-            "FACTURA_EMITIDA",
-            "PAGO_RECIBIDO",
-            "EFECTIVO_RECIBIDO",
-            "CHEQUE_RECIBIDO",
-            "TRANSFERENCIA_RECIBIDA",
-            "FACTURA_RECIBIDA",
-            "PAGO_EMITIDO",
-            "EFECTIVO_EMITIDO",
-            "CHEQUE_EMITIDO",
-            "TRANSFERENCIA_EMITIDA"
+            "FACTURA_EMITIDA", "PAGO_RECIBIDO", "EFECTIVO_RECIBIDO", "CHEQUE_RECIBIDO", "TRANSFERENCIA_RECIBIDA",
+            "FACTURA_RECIBIDA", "PAGO_EMITIDO", "EFECTIVO_EMITIDO", "CHEQUE_EMITIDO", "TRANSFERENCIA_EMITIDA"
           ].map(t => (
             <option key={t} value={t}>{t}</option>
           ))}
@@ -229,7 +219,6 @@ export default function ModalMovimientoContable({
             <label>Número Cheque</label>
             <input
               type="text"
-              name="numeroCheque"
               value={form.datosCheque.numeroCheque}
               onChange={(e) =>
                 setForm({ ...form, datosCheque: { ...form.datosCheque, numeroCheque: e.target.value } })
@@ -238,7 +227,6 @@ export default function ModalMovimientoContable({
             <label>Banco</label>
             <input
               type="text"
-              name="banco"
               value={form.datosCheque.banco}
               onChange={(e) =>
                 setForm({ ...form, datosCheque: { ...form.datosCheque, banco: e.target.value } })
@@ -247,7 +235,6 @@ export default function ModalMovimientoContable({
             <label>Fecha Vencimiento</label>
             <input
               type="date"
-              name="fechaVencimiento"
               value={form.datosCheque.fechaVencimiento}
               onChange={(e) =>
                 setForm({ ...form, datosCheque: { ...form.datosCheque, fechaVencimiento: e.target.value } })
@@ -258,7 +245,6 @@ export default function ModalMovimientoContable({
                 <label>Endosado A</label>
                 <input
                   type="text"
-                  name="endosadoA"
                   value={form.datosCheque.endosadoA}
                   onChange={(e) =>
                     setForm({ ...form, datosCheque: { ...form.datosCheque, endosadoA: e.target.value } })
@@ -275,7 +261,6 @@ export default function ModalMovimientoContable({
             <label>Número Comprobante</label>
             <input
               type="text"
-              name="numeroComprobante"
               value={form.datosTransferencia.numeroComprobante}
               onChange={(e) =>
                 setForm({ ...form, datosTransferencia: { ...form.datosTransferencia, numeroComprobante: e.target.value } })
@@ -284,7 +269,6 @@ export default function ModalMovimientoContable({
             <label>Banco Origen</label>
             <input
               type="text"
-              name="bancoOrigen"
               value={form.datosTransferencia.bancoOrigen}
               onChange={(e) =>
                 setForm({ ...form, datosTransferencia: { ...form.datosTransferencia, bancoOrigen: e.target.value } })
@@ -293,7 +277,6 @@ export default function ModalMovimientoContable({
             <label>Banco Destino</label>
             <input
               type="text"
-              name="bancoDestino"
               value={form.datosTransferencia.bancoDestino}
               onChange={(e) =>
                 setForm({ ...form, datosTransferencia: { ...form.datosTransferencia, bancoDestino: e.target.value } })
@@ -318,7 +301,11 @@ export default function ModalMovimientoContable({
                 <option key={o._id} value={o._id}>{o.nombre}</option>
               ))}
             </select>
-            <input type="number" value={p.monto} onChange={(e) => handlePartidaChange(i, "monto", e.target.value)} />
+            <input
+              type="number"
+              value={p.monto}
+              onChange={(e) => handlePartidaChange(i, "monto", e.target.value)}
+            />
             <Button type="button" onClick={() => removePartida(i)}>X</Button>
           </div>
         ))}

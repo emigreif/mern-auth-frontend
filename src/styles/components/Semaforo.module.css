@@ -1,0 +1,40 @@
+.base {
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    display: inline-block;
+    text-transform: uppercase;
+  }
+  
+  .verde {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .naranja {
+    background-color: #fd7e14;
+    color: white;
+  }
+  
+  .rojo {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .blanco {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ccc;
+  }
+  
+  .negro {
+    background-color: black;
+    color: #ccc;
+  }
+  
+  .gris {
+    background-color: #e0e0e0;
+    color: #666;
+  }
+  

@@ -20,6 +20,9 @@ export default function Clientes() {
   const [busqueda, setBusqueda] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
+  const [obrasCliente, setObrasCliente] = useState([]);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+
   useEffect(() => {
     if (token) fetchClientes();
   }, [token]);
@@ -37,6 +40,20 @@ export default function Clientes() {
       setErrorMsg("Error al cargar clientes");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchObrasDelCliente = async (cliente) => {
+    setClienteSeleccionado(cliente);
+    try {
+      const res = await fetch(`${API_URL}/api/obras`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const obras = await res.json();
+      const asociadas = obras.filter((obra) => obra.cliente?._id === cliente._id);
+      setObrasCliente(asociadas);
+    } catch {
+      setObrasCliente([]);
     }
   };
 
@@ -157,6 +174,9 @@ export default function Clientes() {
                 <Button variant="danger" onClick={() => handleDelete(c._id)}>
                   Eliminar
                 </Button>
+                <Button variant="secondary" onClick={() => fetchObrasDelCliente(c)}>
+                  Ver Obras
+                </Button>
               </td>
             </tr>
           ))}
@@ -175,6 +195,27 @@ export default function Clientes() {
             API_URL={API_URL}
             token={token}
           />
+        </ModalBase>
+      )}
+
+      {clienteSeleccionado && (
+        <ModalBase
+          isOpen={true}
+          title={`Obras de ${clienteSeleccionado.nombre} ${clienteSeleccionado.apellido}`}
+          onClose={() => setClienteSeleccionado(null)}
+        >
+          {obrasCliente.length === 0 ? (
+            <p>No hay obras asociadas a este cliente.</p>
+          ) : (
+            <ul>
+              {obrasCliente.map((obra) => (
+                <li key={obra._id}>
+                  <strong>{obra.codigo ? `#${obra.codigo} - ` : ""}</strong>
+                  {obra.nombre}
+                </li>
+              ))}
+            </ul>
+          )}
         </ModalBase>
       )}
     </div>
@@ -231,47 +272,13 @@ function ClienteForm({ cliente, onSuccess, API_URL, token }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      <input
-        name="nombre"
-        value={form.nombre}
-        onChange={handleChange}
-        placeholder="Nombre *"
-      />
-      <input
-        name="apellido"
-        value={form.apellido}
-        onChange={handleChange}
-        placeholder="Apellido *"
-      />
-      <input
-        name="email"
-        value={form.email}
-        onChange={handleChange}
-        placeholder="Email *"
-      />
-      <input
-        name="telefono"
-        value={form.telefono}
-        onChange={handleChange}
-        placeholder="Teléfono"
-      />
-      <input
-        name="calle"
-        value={form.calle}
-        onChange={handleChange}
-        placeholder="Dirección - Calle"
-      />
-      <input
-        name="ciudad"
-        value={form.ciudad}
-        onChange={handleChange}
-        placeholder="Dirección - Ciudad"
-      />
-      <select
-        name="condicionFiscal"
-        value={form.condicionFiscal}
-        onChange={handleChange}
-      >
+      <input name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre *" />
+      <input name="apellido" value={form.apellido} onChange={handleChange} placeholder="Apellido *" />
+      <input name="email" value={form.email} onChange={handleChange} placeholder="Email *" />
+      <input name="telefono" value={form.telefono} onChange={handleChange} placeholder="Teléfono" />
+      <input name="calle" value={form.calle} onChange={handleChange} placeholder="Dirección - Calle" />
+      <input name="ciudad" value={form.ciudad} onChange={handleChange} placeholder="Dirección - Ciudad" />
+      <select name="condicionFiscal" value={form.condicionFiscal} onChange={handleChange}>
         <option value="Consumidor Final">Consumidor Final</option>
         <option value="Responsable Inscripto">Responsable Inscripto</option>
         <option value="Monotributo">Monotributo</option>
