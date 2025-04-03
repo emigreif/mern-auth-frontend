@@ -5,6 +5,7 @@ import ModalCompra from "../components/modals/ModalCompra.jsx";
 import ModalIngresoMaterial from "../components/modals/ModalIngresoMaterial.jsx";
 import Button from "../components/ui/Button.jsx";
 import Semaforo from "../components/ui/Semaforo.jsx";
+import Table from "../components/ui/Table.jsx";
 
 export default function Compras() {
   const { token } = useAuth();
@@ -17,6 +18,7 @@ export default function Compras() {
   const [isIngresoModalOpen, setIsIngresoModalOpen] = useState(false);
   const [editingCompra, setEditingCompra] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   useEffect(() => {
     if (token) {
@@ -105,6 +107,35 @@ export default function Compras() {
     return <Semaforo estado="amarillo" texto="Pendiente" />;
   };
 
+  const ordenarPor = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedCompras = [...compras].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+    const aVal = obtenerValor(a, sortConfig.key);
+    const bVal = obtenerValor(b, sortConfig.key);
+    return sortConfig.direction === "asc"
+      ? aVal.localeCompare(bVal)
+      : bVal.localeCompare(aVal);
+  });
+
+  const obtenerValor = (item, key) => {
+    switch (key) {
+      case "numeroOC": return String(item.numeroOC || "");
+      case "codigoObra": return String(item.obra?.codigoObra || "");
+      case "nombreObra": return String(item.obra?.nombre || "");
+      case "tipo": return String(item.tipo || "");
+      case "proveedor": return String(item.proveedor?.nombre || "");
+      case "estado": return String(item.estado || "");
+      default: return "";
+    }
+  };
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
@@ -129,49 +160,46 @@ export default function Compras() {
 
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {loading && <div className={styles.spinner}>Cargando compras...</div>}
-      {!loading && compras.length === 0 && !errorMsg && (
+      {!loading && sortedCompras.length === 0 && !errorMsg && (
         <div className={styles.noData}>No hay compras para mostrar</div>
       )}
 
-      {!loading && compras.length > 0 && (
-        <table className={styles.tableBase}>
-          <thead>
-            <tr>
-              <th>OC #</th>
-              <th>Cód. Obra</th>
-              <th>Obra</th>
-              <th>Tipo</th>
-              <th>Proveedor</th>
-              <th>Estado</th>
-              <th>Semáforo</th>
-              <th>Acciones</th>
+      {!loading && sortedCompras.length > 0 && (
+        <Table
+          headers={[
+            { key: "numeroOC", label: "OC #" },
+            { key: "codigoObra", label: "Cód. Obra" },
+            { key: "nombreObra", label: "Obra" },
+            { key: "tipo", label: "Tipo" },
+            { key: "proveedor", label: "Proveedor" },
+            { key: "estado", label: "Estado" },
+            { key: "semaforo", label: "Semáforo" },
+            { key: "acciones", label: "Acciones" },
+          ]}
+          onSort={ordenarPor}
+          sortConfig={sortConfig}
+        >
+          {sortedCompras.map((c) => (
+            <tr key={c._id}>
+              <td>{c.numeroOC}</td>
+              <td>{c.obra?.codigoObra}</td>
+              <td>{c.obra?.nombre}</td>
+              <td>{c.tipo}</td>
+              <td>{c.proveedor?.nombre}</td>
+              <td>{c.estado}</td>
+              <td>{renderSemaforo(c)}</td>
+              <td style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                {c.estado !== "anulado" && c.estado !== "completado" && (
+                  <>
+                    <Button onClick={() => handleOpenEdit(c)}>✏️ Editar</Button>
+                    <Button onClick={() => handleOpenIngreso(c)}>Ingreso</Button>
+                    <Button variant="danger" onClick={() => handleAnular(c._id)}>Anular</Button>
+                  </>
+                )}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {compras.map((c) => (
-              <tr key={c._id}>
-                <td>{c.numeroOC}</td>
-                <td>{c.obra?.codigoObra}</td>
-                <td>{c.obra?.nombre}</td>
-                <td>{c.tipo}</td>
-                <td>{c.proveedor?.nombre}</td>
-                <td>{c.estado}</td>
-                <td>{renderSemaforo(c)}</td>
-                <td>
-                  {c.estado !== "anulado" && c.estado !== "completado" && (
-                    <>
-                      <Button onClick={() => handleOpenEdit(c)}>✏️ Editar</Button>
-                      <Button onClick={() => handleOpenIngreso(c)}>Ingreso</Button>
-                      <Button variant="danger" onClick={() => handleAnular(c._id)}>
-                        Anular
-                      </Button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </Table>
       )}
 
       {isModalOpen && (

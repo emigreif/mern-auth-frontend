@@ -7,6 +7,8 @@ import ModalAsignacion from "../components/modals/ModalAsignacion.jsx";
 import ModalPlanillaMedicion from "../components/modals/ModalPlanillaMedicion.jsx";
 import ModalReporteMedicion from "../components/modals/ModalReporteMedicion.jsx";
 import Button from "../components/ui/Button.jsx";
+import Table from "../components/ui/Table.jsx";
+import SearchBar from "../components/ui/SearchBar.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 const Mediciones = () => {
@@ -16,8 +18,8 @@ const Mediciones = () => {
   const [obras, setObras] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
 
-  // Estados para modales y obra seleccionada
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
   const [modalUbicacionesOpen, setModalUbicacionesOpen] = useState(false);
   const [modalTipologiasOpen, setModalTipologiasOpen] = useState(false);
@@ -26,9 +28,7 @@ const Mediciones = () => {
   const [modalReporteOpen, setModalReporteOpen] = useState(false);
 
   useEffect(() => {
-    if (token) {
-      fetchObras();
-    }
+    if (token) fetchObras();
   }, [token]);
 
   const fetchObras = async () => {
@@ -55,72 +55,61 @@ const Mediciones = () => {
     setObraSeleccionada(obra);
     switch (modal) {
       case "ubicaciones":
-        setModalUbicacionesOpen(true);
-        break;
+        setModalUbicacionesOpen(true); break;
       case "tipologias":
-        setModalTipologiasOpen(true);
-        break;
+        setModalTipologiasOpen(true); break;
       case "asignacion":
-        setModalAsignacionOpen(true);
-        break;
+        setModalAsignacionOpen(true); break;
       case "planilla":
-        setModalPlanillaOpen(true);
-        break;
+        setModalPlanillaOpen(true); break;
       case "reporte":
-        setModalReporteOpen(true);
-        break;
+        setModalReporteOpen(true); break;
       default:
         break;
     }
   };
+
+  const filteredObras = obras.filter((obra) =>
+    [obra.nombre, obra.codigoObra]
+      .some(val => val?.toLowerCase().includes(busqueda.toLowerCase()))
+  );
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Mediciones</h1>
       </div>
-      
+
+      <div style={{ marginBottom: 10, maxWidth: 300 }}>
+        <SearchBar
+          value={busqueda}
+          onChange={setBusqueda}
+          placeholder="Buscar obras..."
+        />
+      </div>
+
       {errorMsg && <p className={styles.error}>{errorMsg}</p>}
       {loading && <div className={styles.spinner}>Cargando obras...</div>}
-      {!loading && obras.length === 0 && !errorMsg && (
+      {!loading && filteredObras.length === 0 && !errorMsg && (
         <div className={styles.noData}>No hay obras para mostrar</div>
       )}
-      
-      {!loading && obras.length > 0 && (
-        <table className={styles.tableBase}>
-          <thead>
-            <tr>
-              <th>Código Obra</th>
-              <th>Nombre</th>
-              <th>Acciones</th>
+
+      {!loading && filteredObras.length > 0 && (
+        <Table headers={["Código Obra", "Nombre", "Acciones"]}>
+          {filteredObras.map((obra) => (
+            <tr key={obra._id}>
+              <td>{obra.codigoObra}</td>
+              <td>{obra.nombre}</td>
+              <td style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                <Button onClick={() => abrirModal("ubicaciones", obra)}>📍 Ubicaciones</Button>
+                <Button onClick={() => abrirModal("tipologias", obra)}>🧱 Tipologías</Button>
+                <Button onClick={() => abrirModal("asignacion", obra)}>🧩 Asignación</Button>
+                <Button onClick={() => abrirModal("planilla", obra)}>📄 Planilla</Button>
+                <Button onClick={() => abrirModal("reporte", obra)}>📊 Reporte</Button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {obras.map((obra) => (
-              <tr key={obra._id}>
-                <td>{obra.codigoObra}</td>
-                <td>{obra.nombre}</td>
-                <td>
-                  <Button onClick={() => abrirModal("ubicaciones", obra)}>
-                    📍 Ubicaciones
-                  </Button>
-                  <Button onClick={() => abrirModal("tipologias", obra)}>
-                    🧱 Tipologías
-                  </Button>
-                  <Button onClick={() => abrirModal("asignacion", obra)}>
-                    🧩 Asignación
-                  </Button>
-                  <Button onClick={() => abrirModal("planilla", obra)}>
-                    📄 Planilla
-                  </Button>
-                  <Button onClick={() => abrirModal("reporte", obra)}>
-                    📊 Reporte
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </Table>
       )}
 
       {modalUbicacionesOpen && obraSeleccionada && (

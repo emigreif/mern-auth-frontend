@@ -4,16 +4,17 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
+  faUser,
   faFileInvoiceDollar,
   faUsers,
   faShoppingCart,
   faTruck,
-  faClipboardList,
-  faCalendarAlt,
+  faToolbox,
+  faCalendarDays ,
   faCalculator,
   faChartBar,
   faRulerCombined,
-  faCog,
+  faGear ,
   faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -33,17 +34,17 @@ const Sidebar = ({ expanded, setExpanded }) => {
 
   const menuItems = [
     { name: "Obras", route: "/obras", icon: faBuilding },
-    { name: "Clientes", route: "/clientes", icon: faBuilding },
+    { name: "Clientes", route: "/clientes", icon: faUser  },
     { name: "Presupuestos", route: "/presupuestos", icon: faFileInvoiceDollar },
     { name: "Proveedores", route: "/proveedores", icon: faTruck },
     { name: "Compras", route: "/compras", icon: faShoppingCart },
-    { name: "Pañol", route: "/panol", icon: faClipboardList },
-    { name: "Calendario", route: "/calendario", icon: faCalendarAlt },
+    { name: "Pañol", route: "/panol", icon: faToolbox  },
+    { name: "Calendario", route: "/calendario", icon: faCalendarDays  },
     { name: "Contabilidad", route: "/contabilidad", icon: faCalculator },
     { name: "Mediciones", route: "/mediciones", icon: faRulerCombined },
     { name: "Nomina", route: "/Nomina", icon: faUsers },
     { name: "Reportes", route: "/reportes", icon: faChartBar },
-    { name: "Configuración", route: "/configuracion", icon: faCog }
+    { name: "Configuración", route: "/configuracion", icon: faGear  }
   ];
 
   return (
