@@ -93,14 +93,18 @@ const BaseMateriales = () => {
 
   const subirArchivo = async () => {
     if (!archivoImportado || !modalImportarTipo) return;
+    const tipo = modalImportarTipo; // guardá antes de limpiar
     const formData = new FormData();
     formData.append("file", archivoImportado);
-
+  
     const res = await fetch(
-      `${API_URL}/api/general/${modalImportarTipo}/importar`,
-      { method: "POST", body: formData }
+      `${API_URL}/api/general/${tipo}/importar`,
+      {
+        method: "POST",
+        body: formData,
+      }
     );
-
+  
     const data = await res.json();
     setMensaje(data.message || "Importado con éxito");
     setModalImportarTipo(null);
