@@ -1,180 +1,133 @@
-// src/components/modals/modalNuevoProveedor.jsx
+// src/components/modals/ModalNuevoProveedor.jsx
 import React, { useState } from "react";
-import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
+import MultiSelect from "../ui/MultiSelect.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import styles from "../../styles/components/Form.module.css";
 
-export default function ModalNuevoProveedor({ onCreated, onClose }) {
-  const { token } = useAuth();
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const RUBRO_OPTIONS = ["Vidrio", "Perfiles", "Accesorios", "Compras Generales"];
 
-  const [form, setForm] = useState({
-    nombre: "",
-    direccion: "",
-    telefono: "",
-    whatsapp: "",
-    emails: [""],
-    rubro: []
-  });
+const ModalNuevoProveedor = ({
+  onClose,
+  onSaved,
+  editMode = false,
+  proveedor = null,
+  proveedorId = null,
+  token,
+  apiUrl,
+}) => {
+  const [form, setForm] = useState(() => ({
+    nombre: proveedor?.nombre || "",
+    direccion: proveedor?.direccion || "",
+    emails: proveedor?.emails?.length ? proveedor.emails : [""],
+    telefono: proveedor?.telefono || "",
+    whatsapp: proveedor?.whatsapp || "",
+    rubro: proveedor?.rubro || [],
+  }));
+
   const [errorMsg, setErrorMsg] = useState("");
 
-  const rubrosPosibles = [
-    "Vidrio",
-    "Perfiles",
-    "Accesorios",
-    "Compras Generales",
-    "otro"
-  ];
-
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Manejo de emails (arreglo)
   const handleEmailChange = (index, value) => {
-    const newEmails = [...form.emails];
-    newEmails[index] = value;
-    setForm({ ...form, emails: newEmails });
+    const emails = [...form.emails];
+    emails[index] = value;
+    setForm((prev) => ({ ...prev, emails }));
   };
 
-  const addEmail = () => {
-    setForm({ ...form, emails: [...form.emails, ""] });
+  const handleAddEmail = () => {
+    setForm((prev) => ({ ...prev, emails: [...prev.emails, ""] }));
   };
 
-  const removeEmail = (index) => {
-    const newEmails = [...form.emails];
-    newEmails.splice(index, 1);
-    setForm({ ...form, emails: newEmails });
+  const handleRemoveEmail = (index) => {
+    const emails = [...form.emails];
+    emails.splice(index, 1);
+    setForm((prev) => ({ ...prev, emails }));
   };
 
-  const handleRubroChange = (rubro) => {
-    let newRubro = [...form.rubro];
-    if (newRubro.includes(rubro)) {
-      newRubro = newRubro.filter((r) => r !== rubro);
-    } else {
-      newRubro.push(rubro);
-    }
-    setForm({ ...form, rubro: newRubro });
-  };
-
-  const validate = () => {
-    if (!form.nombre.trim()) return "El nombre del proveedor es obligatorio.";
-    if (!form.direccion.trim()) return "La dirección es obligatoria.";
-    return "";
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMsg("");
-    const err = validate();
-    if (err) {
-      setErrorMsg(err);
+  const handleGuardar = async () => {
+    if (!form.nombre.trim() || !form.direccion.trim()) {
+      setErrorMsg("Nombre y dirección obligatorios");
       return;
     }
+
+    const proveedorPayload = {
+      ...form,
+      emails: form.emails.filter((e) => e.trim() !== ""),
+    };
+
+    const url = editMode
+      ? `${apiUrl}/api/proveedores/${proveedorId}`
+      : `${apiUrl}/api/proveedores`;
+
+    const method = editMode ? "PUT" : "POST";
+
     try {
-      const res = await fetch(`${API_URL}/api/proveedores`, {
-        method: "POST",
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify(proveedorPayload),
       });
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Error al crear proveedor");
-      }
-      await res.json();
-      if (onCreated) onCreated();
+
+      if (!res.ok) throw new Error("Error al guardar proveedor");
+      onSaved?.();
       onClose();
-    } catch (error) {
-      setErrorMsg(error.message);
+    } catch (err) {
+      setErrorMsg(err.message);
     }
   };
 
   return (
-    <ModalBase isOpen={true} onClose={onClose} title="Nuevo Proveedor">
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-      <form onSubmit={handleSubmit} className={styles.formBase}>
-        <div className={styles.formGroup}>
-          <label>Nombre <span>*</span></label>
-          <input
-            type="text"
-            name="nombre"
-            value={form.nombre}
-            onChange={handleChange}
-          />
-        </div>
+    <ModalBase
+      title={editMode ? "Editar Proveedor" : "Nuevo Proveedor"}
+      isOpen={true}
+      onClose={onClose}
+    >
+      <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+        <Input label="Nombre" name="nombre" value={form.nombre} onChange={handleChange} />
+        <Input label="Dirección" name="direccion" value={form.direccion} onChange={handleChange} />
+        <Input label="Teléfono" name="telefono" value={form.telefono} onChange={handleChange} />
+        <Input label="WhatsApp" name="whatsapp" value={form.whatsapp} onChange={handleChange} />
 
-        <div className={styles.formGroup}>
-          <label>Dirección <span>*</span></label>
-          <input
-            type="text"
-            name="direccion"
-            value={form.direccion}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>Teléfono</label>
-          <input
-            type="text"
-            name="telefono"
-            value={form.telefono}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>WhatsApp</label>
-          <input
-            type="text"
-            name="whatsapp"
-            value={form.whatsapp}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>Emails</label>
-          {form.emails.map((email, i) => (
-            <div key={i} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => handleEmailChange(i, e.target.value)}
-              />
-              <Button variant="danger" type="button" onClick={() => removeEmail(i)}>
-                X
-              </Button>
-            </div>
-          ))}
-          <Button type="button" onClick={addEmail}>+ Añadir Email</Button>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>Rubros</label>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-            {rubrosPosibles.map((r) => (
-              <label key={r} style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                <input
-                  type="checkbox"
-                  checked={form.rubro.includes(r)}
-                  onChange={() => handleRubroChange(r)}
-                />
-                {r}
-              </label>
-            ))}
+        {form.emails.map((email, i) => (
+          <div key={i} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+            <Input
+              name={`email-${i}`}
+              type="email"
+              placeholder={`Email ${i + 1}`}
+              value={email}
+              onChange={(e) => handleEmailChange(i, e.target.value)}
+            />
+            <Button variant="danger" type="button" onClick={() => handleRemoveEmail(i)}>X</Button>
           </div>
-        </div>
+        ))}
 
-        <div className={styles.actions}>
-          <Button type="submit">Guardar</Button>
-          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
+        <Button type="button" onClick={handleAddEmail}>+ Email</Button>
+
+        <MultiSelect
+          label="Rubros"
+          name="rubro"
+          value={form.rubro}
+          onChange={(val) => setForm({ ...form, rubro: val })}
+          options={RUBRO_OPTIONS}
+        />
+
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+
+        <div style={{ marginTop: 16, display: "flex", gap: "0.5rem" }}>
+          <Button onClick={handleGuardar}>{editMode ? "Actualizar" : "Guardar"}</Button>
+          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
         </div>
       </form>
     </ModalBase>
   );
-}
+};
+
+export default ModalNuevoProveedor;

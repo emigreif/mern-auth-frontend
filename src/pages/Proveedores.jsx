@@ -1,6 +1,7 @@
+// src/pages/Proveedores.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import ModalBase from "../components/modals/ModalBase.jsx";
+import ModalNuevoProveedor from "../components/modals/ModalNuevoProveedor.jsx";
 import ModalMovimientoContable from "../components/modals/ModalMovimientoContable.jsx";
 import ModalVerMovimientosProveedor from "../components/modals/ModalVerMovimientosProveedor.jsx";
 import Button from "../components/ui/Button.jsx";
@@ -18,26 +19,12 @@ export default function Proveedores() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [currentProvId, setCurrentProvId] = useState(null);
-  const [formProv, setFormProv] = useState(initialForm());
-  const [errorMsg, setErrorMsg] = useState("");
+  const [selectedProv, setSelectedProv] = useState(null);
+  const [selectedProvId, setSelectedProvId] = useState(null);
 
   const [showMovimientoModal, setShowMovimientoModal] = useState(false);
   const [showVerMovimientosModal, setShowVerMovimientosModal] = useState(false);
   const [provMovimiento, setProvMovimiento] = useState(null);
-
-  const rubrosPosibles = ["Vidrio", "Perfiles", "Accesorios", "Compras Generales"];
-
-  function initialForm() {
-    return {
-      nombre: "",
-      direccion: "",
-      emails: [""],
-      telefono: "",
-      whatsapp: "",
-      rubro: [],
-    };
-  }
 
   useEffect(() => {
     if (token) fetchProveedores();
@@ -50,8 +37,8 @@ export default function Proveedores() {
       });
       const data = await res.json();
       setProveedores(Array.isArray(data) ? data : []);
-    } catch (err) {
-      setErrorMsg("Error al cargar proveedores");
+    } catch {
+      alert("Error al cargar proveedores");
     }
   };
 
@@ -80,86 +67,18 @@ export default function Proveedores() {
     setSortConfig({ key, direction });
   };
 
-  const handleAddEmail = () => {
-    setFormProv((prev) => ({ ...prev, emails: [...prev.emails, ""] }));
-  };
-
-  const handleRemoveEmail = (index) => {
-    setFormProv((prev) => {
-      const emails = [...prev.emails];
-      emails.splice(index, 1);
-      return { ...prev, emails };
-    });
-  };
-
-  const handleEmailChange = (index, value) => {
-    setFormProv((prev) => {
-      const emails = [...prev.emails];
-      emails[index] = value;
-      return { ...prev, emails };
-    });
-  };
-
-  const handleRubroChange = (rubro) => {
-    setFormProv((prev) => {
-      const rubros = prev.rubro.includes(rubro)
-        ? prev.rubro.filter((r) => r !== rubro)
-        : [...prev.rubro, rubro];
-      return { ...prev, rubro: rubros };
-    });
-  };
-
   const openCreate = () => {
     setEditMode(false);
-    setFormProv(initialForm());
+    setSelectedProv(null);
+    setSelectedProvId(null);
     setIsModalOpen(true);
   };
 
   const openEdit = (prov) => {
     setEditMode(true);
-    setCurrentProvId(prov._id);
-    setFormProv({
-      nombre: prov.nombre || "",
-      direccion: prov.direccion || "",
-      emails: prov.emails?.length ? prov.emails : [""],
-      telefono: prov.telefono || "",
-      whatsapp: prov.whatsapp || "",
-      rubro: prov.rubro || [],
-    });
+    setSelectedProv(prov);
+    setSelectedProvId(prov._id);
     setIsModalOpen(true);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formProv.nombre.trim() || !formProv.direccion.trim()) {
-      setErrorMsg("Nombre y dirección obligatorios");
-      return;
-    }
-
-    const url = editMode
-      ? `${API_URL}/api/proveedores/${currentProvId}`
-      : `${API_URL}/api/proveedores`;
-    const method = editMode ? "PUT" : "POST";
-
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ...formProv,
-          emails: formProv.emails.filter((e) => e.trim() !== ""),
-        }),
-      });
-      if (!res.ok) throw new Error("Error al guardar");
-      await fetchProveedores();
-      setIsModalOpen(false);
-      setFormProv(initialForm());
-    } catch (err) {
-      setErrorMsg(err.message);
-    }
   };
 
   const handleDelete = async (id) => {
@@ -171,7 +90,7 @@ export default function Proveedores() {
       });
       fetchProveedores();
     } catch {
-      setErrorMsg("Error al eliminar");
+      alert("Error al eliminar");
     }
   };
 
@@ -240,87 +159,15 @@ export default function Proveedores() {
       </Table>
 
       {isModalOpen && (
-        <ModalBase
-          isOpen={true}
-          title={editMode ? "Editar Proveedor" : "Nuevo Proveedor"}
+        <ModalNuevoProveedor
           onClose={() => setIsModalOpen(false)}
-        >
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Nombre"
-              value={formProv.nombre}
-              onChange={(e) =>
-                setFormProv((prev) => ({ ...prev, nombre: e.target.value }))
-              }
-              required
-            />
-            <input
-              type="text"
-              placeholder="Dirección"
-              value={formProv.direccion}
-              onChange={(e) =>
-                setFormProv((prev) => ({ ...prev, direccion: e.target.value }))
-              }
-              required
-            />
-            <input
-              type="text"
-              placeholder="Teléfono"
-              value={formProv.telefono}
-              onChange={(e) =>
-                setFormProv((prev) => ({ ...prev, telefono: e.target.value }))
-              }
-            />
-            <input
-              type="text"
-              placeholder="WhatsApp"
-              value={formProv.whatsapp}
-              onChange={(e) =>
-                setFormProv((prev) => ({ ...prev, whatsapp: e.target.value }))
-              }
-            />
-
-            {formProv.emails.map((email, i) => (
-              <div key={i} style={{ display: "flex", gap: 8 }}>
-                <input
-                  type="email"
-                  value={email}
-                  placeholder={`Email ${i + 1}`}
-                  onChange={(e) => handleEmailChange(i, e.target.value)}
-                />
-                <Button variant="danger" onClick={() => handleRemoveEmail(i)}>
-                  X
-                </Button>
-              </div>
-            ))}
-            <Button onClick={handleAddEmail} type="button">
-              + Email
-            </Button>
-
-            <div style={{ margin: "10px 0" }}>
-              <strong>Rubros:</strong>
-              {rubrosPosibles.map((r) => (
-                <label key={r} style={{ marginLeft: 10 }}>
-                  <input
-                    type="checkbox"
-                    checked={formProv.rubro.includes(r)}
-                    onChange={() => handleRubroChange(r)}
-                  />
-                  {r}
-                </label>
-              ))}
-            </div>
-
-            <div style={{ marginTop: 10 }}>
-              <Button type="submit">Guardar</Button>
-              <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
-                Cancelar
-              </Button>
-            </div>
-            {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-          </form>
-        </ModalBase>
+          onSaved={fetchProveedores}
+          editMode={editMode}
+          proveedor={selectedProv}
+          proveedorId={selectedProvId}
+          token={token}
+          apiUrl={API_URL}
+        />
       )}
 
       {showMovimientoModal && provMovimiento && (
