@@ -22,40 +22,6 @@
   margin-bottom: 1rem;
 }
 
-
-
-/* ======================================================
-   5. TABLAS
-====================================================== */
-.obrasTable,
-.tableBase {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.obrasTable th,
-.obrasTable td,
-.tableBase th,
-.tableBase td {
-  border: 1px solid #ddd;
-  padding: 0.75rem;
-  text-align: left;
-}
-
-.obrasTable th,
-.tableBase th {
-  background-color: #f4f4f4;
-  font-weight: bold;
-}
-
-
-
-/* ======================================================
-   7. FORMULARIOS
-====================================================== */
-
-
 .formGroup input,
 .searchInput,
 .filterInput,
@@ -65,22 +31,12 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
 /* ======================================================
    8. MENSAJES / ESTADOS
 ====================================================== */
 .error {
   color: red;
   margin-bottom: 1rem;
-}
-
-.message {
-  margin-top: 20px;
-  padding: 10px;
-  background: #d4edda;
-  color: #155724;
-  border-left: 5px solid #28a745;
-  border-radius: 5px;
 }
 
 .noData,
@@ -114,83 +70,8 @@
 }
 
 /* ======================================================
-   11. ESTADOS
-====================================================== */
-.estado {
-  font-weight: bold;
-  padding: 0.3rem 0.6rem;
-  border-bottom: 3px solid;
-  border-radius: 4px;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-}
-
-.estado.aprobado {
-  color: #28a745;
-  border-color: #28a745;
-}
-
-.estado.perdido {
-  color: #dc3545;
-  border-color: #dc3545;
-}
-
-.estado.pendiente {
-  color: #e18a00;
-  border-color: #e18a00;
-}
-
-
-/* ======================================================
    13. COMPONENTES ESPECÍFICOS / OTROS
 ====================================================== */
-.existingList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.fila {
-  display: flex;
-  gap: 1rem;
-}
-
-.historialSection {
-  margin-top: 2rem;
-  border-top: 1px solid #ccc;
-  padding-top: 1rem;
-}
-
-.historialTable {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.historialTable th,
-.historialTable td {
-  border: 1px solid #ccc;
-  padding: 0.5rem;
-  text-align: left;
-}
-
-.itemList {
-  list-style-type: none;
-  padding: 0;
-  max-height: 180px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  background-color: white;
-  border-radius: 4px;
-}
-
-.itemsList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
 
 .lista {
   list-style-type: none;
@@ -203,40 +84,9 @@
 }
 
 
-.manualSection {
-  background-color: #f9f9f9;
-  padding: 1rem;
-  border-radius: 6px;
-}
-
-.partidaRow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.remitoGroup {
-  margin-bottom: 1rem;
-}
-
-.resultadoBox {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #f0f8ff;
-  border: 1px solid #8cc;
-  border-radius: 4px;
-}
-
 .row {
   display: flex;
   gap: 0.5rem;
   align-items: center;
   margin-bottom: 0.5rem;
-}
-
-.uploadSection {
-  background-color: #f9f9f9;
-  padding: 1rem;
-  border-radius: 6px;
 }
