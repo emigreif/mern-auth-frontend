@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
-      fetchUser(storedToken);
+     // fetchUser(storedToken);
     }
     setLoading(false);
   }, []);
