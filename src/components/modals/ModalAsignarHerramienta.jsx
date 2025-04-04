@@ -1,8 +1,10 @@
+// src/components/modals/ModalAsignarHerramienta.jsx
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
+import Select from "../ui/Select.jsx";
 import Button from "../ui/Button.jsx";
-import { useAuth } from "../../context/AuthContext.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import ErrorText from "../ui/ErrorText.jsx";
 
 export default function ModalAsignarHerramienta({ isOpen, onClose, onSave, token, API_URL }) {
   const [obras, setObras] = useState([]);
@@ -51,14 +53,9 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, onSave, token
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          herramienta,
-          obra,
-          responsable,
-          cantidad
-        })
+        body: JSON.stringify({ herramienta, obra, responsable, cantidad }),
       });
 
       if (!res.ok) {
@@ -66,7 +63,7 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, onSave, token
         throw new Error(errData.message || "Error al asignar herramienta");
       }
 
-      onSave();
+      onSave?.();
       onClose();
     } catch (error) {
       setErrorMsg(error.message);
@@ -76,53 +73,48 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, onSave, token
   };
 
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Herramienta">
-      <form onSubmit={handleSubmit} className={styles.modalForm}>
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-
-        <label>Herramienta (nombre o ID)</label>
-        <input
+    <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Herramienta a Obra">
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <Input
+          label="Herramienta (nombre o ID)"
           value={herramienta}
           onChange={(e) => setHerramienta(e.target.value)}
           required
         />
 
-        <label>Obra</label>
-        <select value={obra} onChange={(e) => setObra(e.target.value)} required>
-          <option value="">Seleccionar obra</option>
-          {obras.map((o) => (
-            <option key={o._id} value={o._id}>
-              {o.nombre}
-            </option>
-          ))}
-        </select>
-
-        <label>Responsable</label>
-        <select value={responsable} onChange={(e) => setResponsable(e.target.value)} required>
-          <option value="">Seleccionar empleado</option>
-          {empleados.map((emp) => (
-            <option key={emp._id} value={emp._id}>
-              {emp.nombre} {emp.apellido}
-            </option>
-          ))}
-        </select>
-
-        <label>Cantidad</label>
-        <input
-          type="number"
-          value={cantidad}
-          onChange={(e) => setCantidad(parseInt(e.target.value))}
-          min={1}
+        <Select
+          label="Seleccionar Obra"
+          value={obra}
+          onChange={(e) => setObra(e.target.value)}
+          options={obras.map((o) => ({ value: o._id, label: o.nombre }))}
           required
         />
 
-        <div className={styles.actions}>
-          <Button type="submit" disabled={loading}>
-            Asignar
-          </Button>
-          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
-            Cancelar
-          </Button>
+        <Select
+          label="Responsable"
+          value={responsable}
+          onChange={(e) => setResponsable(e.target.value)}
+          options={empleados.map((emp) => ({
+            value: emp._id,
+            label: `${emp.nombre} ${emp.apellido}`,
+          }))}
+          required
+        />
+
+        <Input
+          label="Cantidad"
+          type="number"
+          value={cantidad}
+          min={1}
+          onChange={(e) => setCantidad(parseInt(e.target.value))}
+          required
+        />
+
+        <ErrorText>{errorMsg}</ErrorText>
+
+        <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+          <Button type="submit" disabled={loading}>Asignar</Button>
+          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>Cancelar</Button>
         </div>
       </form>
     </ModalBase>

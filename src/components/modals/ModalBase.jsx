@@ -1,4 +1,4 @@
-// src/components/modals/modalBase.jsx
+// src/components/modals/ModalBase.jsx
 import React from "react";
 import Button from "../ui/Button.jsx";
 import styles from "../../styles/modals/GlobalModal.module.css";
@@ -10,14 +10,26 @@ const ModalBase = ({ isOpen, onClose, title, children }) => {
   const handleContentClick = (e) => e.stopPropagation();
 
   return (
-    <div className={styles.overlay} onClick={handleOverlayClick}>
+    <div
+      className={styles.overlay}
+      onClick={handleOverlayClick}
+      role="dialog"
+      aria-modal="true"
+    >
       <div className={styles.modal} onClick={handleContentClick}>
         <div className={styles.modalContent}>
-          <Button variant="secondary" className={styles.closeBtn} onClick={onClose}>
+          <Button
+            variant="secondary"
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="Cerrar modal"
+          >
             ✖
           </Button>
+
           {title && <h2>{title}</h2>}
-          <div>{children}</div>
+
+          {children}
         </div>
       </div>
     </div>

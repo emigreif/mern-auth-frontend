@@ -1,8 +1,11 @@
+// src/components/modals/ModalHerramienta.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
+import Select from "../ui/Select.jsx";
 import Button from "../ui/Button.jsx";
+import ErrorText from "../ui/ErrorText.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
 
 export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
   const { token } = useAuth();
@@ -13,7 +16,7 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
     modelo: "",
     descripcion: "",
     numeroSerie: "",
-    estado: "en taller"
+    estado: "en taller",
   });
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -26,7 +29,7 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
         modelo: herramienta.modelo || "",
         descripcion: herramienta.descripcion || "",
         numeroSerie: herramienta.numeroSerie || "",
-        estado: herramienta.estado || "en taller"
+        estado: herramienta.estado || "en taller",
       });
     }
   }, [herramienta]);
@@ -42,14 +45,13 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
     setLoading(true);
 
     try {
-      const url = `${API_URL}/api/panol/herramientas`;
-      const res = await fetch(url, {
+      const res = await fetch(`${API_URL}/api/panol/herramientas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (!res.ok) {
@@ -57,8 +59,8 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
         throw new Error(errorData.message || "Error al guardar la herramienta");
       }
 
-      onSaved(); // recarga lista
-      onClose(); // cierra modal
+      onSaved?.();
+      onClose();
     } catch (error) {
       console.error("Error:", error);
       setErrorMsg(error.message);
@@ -73,57 +75,54 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
       onClose={onClose}
       title={herramienta ? "Editar Herramienta" : "Agregar Herramienta"}
     >
-      <form onSubmit={handleSubmit} className={styles.modalForm}>
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-
-        <label>Marca</label>
-        <input
-          type="text"
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <Input
+          label="Marca"
           name="marca"
           value={formData.marca}
           onChange={handleChange}
           required
         />
-
-        <label>Modelo</label>
-        <input
-          type="text"
+        <Input
+          label="Modelo"
           name="modelo"
           value={formData.modelo}
           onChange={handleChange}
           required
         />
-
-        <label>Descripción</label>
-        <input
-          type="text"
+        <Input
+          label="Descripción"
           name="descripcion"
           value={formData.descripcion}
           onChange={handleChange}
           required
         />
-
-        <label>Número de Serie</label>
-        <input
-          type="text"
+        <Input
+          label="Número de Serie"
           name="numeroSerie"
           value={formData.numeroSerie}
           onChange={handleChange}
           required
         />
+        <Select
+          label="Estado"
+          name="estado"
+          value={formData.estado}
+          onChange={handleChange}
+          options={[
+            { value: "en taller", label: "En taller" },
+            { value: "en obra", label: "En obra" },
+            { value: "en reparación", label: "En reparación" },
+          ]}
+        />
 
-        <label>Estado</label>
-        <select name="estado" value={formData.estado} onChange={handleChange}>
-          <option value="en taller">En taller</option>
-          <option value="en obra">En obra</option>
-          <option value="en reparación">En reparación</option>
-        </select>
+        <ErrorText>{errorMsg}</ErrorText>
 
-        <div className={styles.actions}>
+        <div style={{ display: "flex", gap: "1rem" }}>
           <Button type="submit" disabled={loading}>
             Guardar
           </Button>
-          <Button variant="secondary" onClick={onClose} disabled={loading}>
+          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
             Cancelar
           </Button>
         </div>

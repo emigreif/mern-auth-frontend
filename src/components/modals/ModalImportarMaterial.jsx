@@ -1,8 +1,11 @@
+// src/components/modals/ModalImportarMaterial.jsx
 import React, { useState } from "react";
-import ModalBase from "./ModalBase.jsx";
-import Button from "../ui/Button.jsx";
 import * as XLSX from "xlsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
+import Button from "../ui/Button.jsx";
+import ErrorText from "../ui/ErrorText.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL, tipo }) {
   const [items, setItems] = useState([]);
@@ -21,7 +24,7 @@ export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL,
       const rawData = XLSX.utils.sheet_to_json(sheet, {
         header: 1,
         defval: "",
-        range: 10 // empieza desde fila 11 (0-indexed)
+        range: 10, // empieza desde fila 11
       });
 
       const headers = rawData[0];
@@ -43,9 +46,9 @@ export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL,
 
   const handleChange = (index, key, value) => {
     setItems((prev) => {
-      const copy = [...prev];
-      copy[index][key] = value;
-      return copy;
+      const updated = [...prev];
+      updated[index][key] = value;
+      return updated;
     });
   };
 
@@ -63,9 +66,9 @@ export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL,
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(item)
+          body: JSON.stringify(item),
         });
 
         if (!res.ok) {
@@ -85,18 +88,20 @@ export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL,
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title={`Importar ${tipo} desde Excel`}>
-      <div className={styles.modalForm}>
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-        <input type="file" accept=".xlsx, .xls" onChange={handleFile} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <ErrorText>{errorMsg}</ErrorText>
+        <Input type="file" accept=".xlsx, .xls" onChange={handleFile} />
 
         {items.length > 0 && (
           <>
-            <div style={{ maxHeight: "400px", overflow: "auto", marginTop: "1rem" }}>
-              <table className={styles.previewTable}>
+            <div style={{ maxHeight: 400, overflow: "auto", border: "1px solid #ccc", borderRadius: 4 }}>
+              <table style={{ width: "100%", fontSize: "0.9rem", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
                     {Object.keys(items[0]).map((key) => (
-                      <th key={key}>{key.toUpperCase()}</th>
+                      <th key={key} style={{ padding: "0.3rem", borderBottom: "1px solid #ddd", textAlign: "left" }}>
+                        {key.toUpperCase()}
+                      </th>
                     ))}
                     <th>🗑</th>
                   </tr>
@@ -105,15 +110,16 @@ export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL,
                   {items.map((item, idx) => (
                     <tr key={idx}>
                       {Object.keys(item).map((key) => (
-                        <td key={key}>
+                        <td key={key} style={{ padding: "0.3rem", borderBottom: "1px solid #eee" }}>
                           <input
                             value={item[key]}
                             onChange={(e) => handleChange(idx, key, e.target.value)}
+                            style={{ width: "100%", padding: "2px 6px", fontSize: "0.85rem" }}
                           />
                         </td>
                       ))}
                       <td>
-                        <Button onClick={() => handleDelete(idx)} variant="danger">
+                        <Button variant="danger" onClick={() => handleDelete(idx)}>
                           🗑
                         </Button>
                       </td>
@@ -123,7 +129,7 @@ export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL,
               </table>
             </div>
 
-            <div className={styles.actions}>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", marginTop: "1rem" }}>
               <Button onClick={handleImport} disabled={loading}>
                 📤 Importar todo
               </Button>

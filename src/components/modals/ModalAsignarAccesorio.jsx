@@ -1,7 +1,10 @@
+// src/components/modals/ModalAsignarAccesorio.jsx
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
+import Select from "../ui/Select.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import ErrorText from "../ui/ErrorText.jsx";
 
 export default function ModalAsignarAccesorio({ isOpen, onClose, onSave, token, API_URL }) {
   const [obras, setObras] = useState([]);
@@ -45,13 +48,13 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, onSave, token, 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           accesorio: accesorioId,
           obra: obraId,
-          cantidad
-        })
+          cantidad,
+        }),
       });
 
       if (!res.ok) {
@@ -59,7 +62,7 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, onSave, token, 
         throw new Error(errorData.message || "Error al asignar accesorio");
       }
 
-      onSave();
+      onSave?.();
       onClose();
     } catch (error) {
       setErrorMsg(error.message);
@@ -70,37 +73,34 @@ export default function ModalAsignarAccesorio({ isOpen, onClose, onSave, token, 
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Accesorio a Obra">
-      <form onSubmit={handleSubmit} className={styles.modalForm}>
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-
-        <label>ID del Accesorio (manual)</label>
-        <input
-          type="text"
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <Input
+          label="ID del Accesorio (manual)"
           value={accesorioId}
           onChange={(e) => setAccesorioId(e.target.value)}
           required
         />
 
-        <label>Seleccionar Obra</label>
-        <select value={obraId} onChange={(e) => setObraId(e.target.value)} required>
-          <option value="">Seleccionar</option>
-          {obras.map((obra) => (
-            <option key={obra._id} value={obra._id}>
-              {obra.nombre}
-            </option>
-          ))}
-        </select>
-
-        <label>Cantidad</label>
-        <input
-          type="number"
-          value={cantidad}
-          onChange={(e) => setCantidad(parseInt(e.target.value))}
-          min={1}
+        <Select
+          label="Seleccionar Obra"
+          value={obraId}
+          onChange={(e) => setObraId(e.target.value)}
+          options={obras.map((o) => ({ label: o.nombre, value: o._id }))}
           required
         />
 
-        <div className={styles.actions}>
+        <Input
+          label="Cantidad"
+          type="number"
+          value={cantidad}
+          min={1}
+          onChange={(e) => setCantidad(parseInt(e.target.value))}
+          required
+        />
+
+        <ErrorText>{errorMsg}</ErrorText>
+
+        <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
           <Button type="submit" disabled={loading}>Asignar</Button>
           <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
             Cancelar

@@ -1,10 +1,12 @@
-// src/components/modals/modalImportarVidriosOV.jsx
+// src/components/modals/ModalImportarVidriosOV.jsx
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
+import Select from "../ui/Select.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
 import { useAuth } from "../../context/AuthContext.jsx";
+import ErrorText from "../ui/ErrorText.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -12,18 +14,17 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
   const { token } = useAuth();
 
   const [vidrios, setVidrios] = useState([]);
+  const [search, setSearch] = useState("");
   const [nuevo, setNuevo] = useState({
     descripcion: "",
     tipo: "simple",
     ancho: 0,
     alto: 0,
     cantidad: 1,
-    tipologia: ""
+    tipologia: "",
   });
   const [archivoExcel, setArchivoExcel] = useState(null);
-  const [search, setSearch] = useState("");
 
-  // Manejo de archivo Excel
   const handleArchivo = (e) => setArchivoExcel(e.target.files[0]);
 
   const leerExcel = () => {
@@ -33,8 +34,8 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: "array" });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      // Lee desde la fila 11 (index 10)
       const json = XLSX.utils.sheet_to_json(sheet, { range: 10 });
+
       const filas = json
         .map((row) => ({
           descripcion: row["Descripción"]?.toString().trim() || "",
@@ -42,30 +43,42 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
           ancho: Number(row["Ancho"]) || 0,
           alto: Number(row["Alto"]) || 0,
           cantidad: Number(row["Cantidad"]) || 0,
-          tipologia: row["Tipología"]?.toString().trim() || ""
+          tipologia: row["Tipología"]?.toString().trim() || "",
         }))
         .filter((v) => v.descripcion && v.ancho > 0 && v.alto > 0 && v.cantidad > 0);
-      setVidrios([...vidrios, ...filas]);
+
+      setVidrios((prev) => [...prev, ...filas]);
     };
     reader.readAsArrayBuffer(archivoExcel);
   };
 
   const agregarManual = () => {
     const { descripcion, tipo, ancho, alto, cantidad, tipologia } = nuevo;
-    if (!descripcion || !ancho || !alto || !cantidad)
-      return alert("Campos obligatorios incompletos");
-    setVidrios([
-      ...vidrios,
+    if (!descripcion || !ancho || !alto || !cantidad) {
+      alert("Campos obligatorios incompletos");
+      return;
+    }
+
+    setVidrios((prev) => [
+      ...prev,
       {
         descripcion: descripcion.trim(),
-        tipo: tipo || "simple",
+        tipo: tipo.trim(),
         ancho: Number(ancho),
         alto: Number(alto),
         cantidad: Number(cantidad),
-        tipologia: tipologia.trim()
-      }
+        tipologia: tipologia.trim(),
+      },
     ]);
-    setNuevo({ descripcion: "", tipo: "simple", ancho: 0, alto: 0, cantidad: 1, tipologia: "" });
+
+    setNuevo({
+      descripcion: "",
+      tipo: "simple",
+      ancho: 0,
+      alto: 0,
+      cantidad: 1,
+      tipologia: "",
+    });
   };
 
   const guardar = async () => {
@@ -75,12 +88,12 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ vidrios })
+        body: JSON.stringify({ vidrios }),
       });
       if (!res.ok) throw new Error("Error al guardar vidrios");
-      if (onCreated) onCreated();
+      onCreated?.();
       onClose();
     } catch (err) {
       console.error("Error:", err);
@@ -93,93 +106,62 @@ export default function ModalImportarVidriosOV({ obra, onClose, onCreated }) {
   );
 
   return (
-    <ModalBase isOpen={true} onClose={onClose} title="Importar Vidrios OV">
-      <div className={styles.container}>
-        {/* Sección Excel */}
-        <section className={styles.section}>
-          <h3>1. Cargar desde Excel</h3>
-          <input type="file" accept=".xlsx" onChange={handleArchivo} />
+    <ModalBase isOpen={true} onClose={onClose} title={`Importar Vidrios OV - ${obra?.nombre || ""}`}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        {/* Excel */}
+        <div>
+          <h4>1. Cargar desde Excel</h4>
+          <Input type="file" accept=".xlsx" onChange={handleArchivo} />
           <Button onClick={leerExcel}>📥 Leer Excel</Button>
-        </section>
+        </div>
 
         <hr />
 
-        {/* Sección Manual */}
-        <section className={styles.section}>
-          <h3>2. Agregar Manualmente</h3>
-          <div className={styles.form}>
-            <input
-              type="text"
-              placeholder="Descripción"
-              value={nuevo.descripcion}
-              onChange={(e) => setNuevo({ ...nuevo, descripcion: e.target.value })}
-            />
-            <select
+        {/* Manual */}
+        <div>
+          <h4>2. Agregar Manualmente</h4>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.5rem" }}>
+            <Input placeholder="Descripción" value={nuevo.descripcion} onChange={(e) => setNuevo({ ...nuevo, descripcion: e.target.value })} />
+            <Select
               value={nuevo.tipo}
               onChange={(e) => setNuevo({ ...nuevo, tipo: e.target.value })}
-            >
-              <option value="simple">Simple</option>
-              <option value="dvh">DVH</option>
-              <option value="tvh">TVH</option>
-              <option value="laminado">Laminado</option>
-            </select>
-            <input
-              type="number"
-              placeholder="Ancho"
-              value={nuevo.ancho}
-              onChange={(e) => setNuevo({ ...nuevo, ancho: e.target.value })}
+              options={["simple", "dvh", "tvh", "laminado"]}
+              label="Tipo"
             />
-            <input
-              type="number"
-              placeholder="Alto"
-              value={nuevo.alto}
-              onChange={(e) => setNuevo({ ...nuevo, alto: e.target.value })}
-            />
-            <input
-              type="number"
-              placeholder="Cantidad"
-              value={nuevo.cantidad}
-              onChange={(e) => setNuevo({ ...nuevo, cantidad: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Tipología"
-              value={nuevo.tipologia}
-              onChange={(e) => setNuevo({ ...nuevo, tipologia: e.target.value })}
-            />
-            <Button onClick={agregarManual}>➕ Agregar</Button>
+            <Input placeholder="Ancho" type="number" value={nuevo.ancho} onChange={(e) => setNuevo({ ...nuevo, ancho: e.target.value })} />
+            <Input placeholder="Alto" type="number" value={nuevo.alto} onChange={(e) => setNuevo({ ...nuevo, alto: e.target.value })} />
+            <Input placeholder="Cantidad" type="number" value={nuevo.cantidad} onChange={(e) => setNuevo({ ...nuevo, cantidad: e.target.value })} />
+            <Input placeholder="Tipología (opcional)" value={nuevo.tipologia} onChange={(e) => setNuevo({ ...nuevo, tipologia: e.target.value })} />
           </div>
-        </section>
+          <Button onClick={agregarManual}>➕ Agregar</Button>
+        </div>
 
         <hr />
 
-        {/* Sección Lista */}
-        <section className={styles.section}>
-          <h3>3. Lista de Vidrios</h3>
-          <input
-            type="text"
-            placeholder="Buscar..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className={styles.searchInput}
-          />
-          <ul className={styles.list}>
+        {/* Lista */}
+        <div>
+          <h4>3. Lista de Vidrios</h4>
+          <Input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <ul>
             {vidriosFiltrados.map((v, i) => (
               <li key={i}>
                 {v.descripcion} ({v.ancho}x{v.alto}) - {v.tipo} - {v.cantidad}u {v.tipologia && `- ${v.tipologia}`}
               </li>
             ))}
           </ul>
-        </section>
+        </div>
 
         <hr />
 
-        {/* Sección Guardar */}
-        <section className={styles.section}>
+        {/* Guardar */}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
           <Button onClick={guardar} disabled={vidrios.length === 0}>
             💾 Guardar Vidrios
           </Button>
-        </section>
+          <Button variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+        </div>
       </div>
     </ModalBase>
   );

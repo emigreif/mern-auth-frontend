@@ -1,8 +1,11 @@
+// src/components/modals/ModalMovimientoContable.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import Input from "../ui/Input.jsx";
+import Select from "../ui/Select.jsx";
+import ErrorText from "../ui/ErrorText.jsx";
 
 export default function ModalMovimientoContable({
   mode = "create",
@@ -95,7 +98,7 @@ export default function ModalMovimientoContable({
       setObras(obrasData);
       setProveedores(provsData);
       setClientes(clientesData);
-    } catch (err) {
+    } catch {
       setErrorMsg("Error al cargar datos");
     }
   };
@@ -103,23 +106,26 @@ export default function ModalMovimientoContable({
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const val = type === "checkbox" ? checked : value;
-    setForm({ ...form, [name]: val });
+    setForm((prev) => ({ ...prev, [name]: val }));
   };
 
   const handlePartidaChange = (index, field, value) => {
     const updated = [...form.partidasObra];
     updated[index][field] = value;
-    setForm({ ...form, partidasObra: updated });
+    setForm((prev) => ({ ...prev, partidasObra: updated }));
   };
 
   const addPartida = () => {
-    setForm({ ...form, partidasObra: [...form.partidasObra, { obra: "", monto: 0 }] });
+    setForm((prev) => ({
+      ...prev,
+      partidasObra: [...prev.partidasObra, { obra: "", monto: 0 }]
+    }));
   };
 
   const removePartida = (index) => {
     const updated = [...form.partidasObra];
     updated.splice(index, 1);
-    setForm({ ...form, partidasObra: updated });
+    setForm((prev) => ({ ...prev, partidasObra: updated }));
   };
 
   const handleSubmit = async (e) => {
@@ -129,6 +135,7 @@ export default function ModalMovimientoContable({
       setErrorMsg("Fecha y monto válidos son obligatorios");
       return;
     }
+
     const body = {
       ...form,
       monto: parseFloat(form.monto),
@@ -137,14 +144,17 @@ export default function ModalMovimientoContable({
         monto: parseFloat(p.monto || 0)
       }))
     };
+
     if (form.fechaAcreditacion) {
       body.fechaAcreditacion = new Date(form.fechaAcreditacion);
     }
+
     try {
       const url = mode === "edit"
         ? `${API_URL}/api/contabilidad/${movimiento._id}`
         : `${API_URL}/api/contabilidad`;
       const method = mode === "edit" ? "PUT" : "POST";
+
       const res = await fetch(url, {
         method,
         headers: {
@@ -153,104 +163,71 @@ export default function ModalMovimientoContable({
         },
         body: JSON.stringify(body)
       });
+
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.message || "Error al guardar");
       }
-      onSuccess && onSuccess();
+
+      onSuccess?.();
       onClose();
     } catch (err) {
       setErrorMsg(err.message);
     }
   };
 
-  const esCheque = form.tipo === "CHEQUE_EMITIDO" || form.tipo === "CHEQUE_RECIBIDO";
-  const esTransferencia = form.tipo === "TRANSFERENCIA_EMITIDA" || form.tipo === "TRANSFERENCIA_RECIBIDA";
+  const tipos = [
+    "FACTURA_EMITIDA", "PAGO_RECIBIDO", "EFECTIVO_RECIBIDO", "CHEQUE_RECIBIDO", "TRANSFERENCIA_RECIBIDA",
+    "FACTURA_RECIBIDA", "PAGO_EMITIDO", "EFECTIVO_EMITIDO", "CHEQUE_EMITIDO", "TRANSFERENCIA_EMITIDA"
+  ];
+
+  const esCheque = form.tipo.includes("CHEQUE");
+  const esTransferencia = form.tipo.includes("TRANSFERENCIA");
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title={mode === "edit" ? "Editar Movimiento" : "Nuevo Movimiento Contable"}>
-      <form onSubmit={handleSubmit} className={styles.formBase}>
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <ErrorText>{errorMsg}</ErrorText>
 
-        <label>Tipo</label>
-        <select name="tipo" value={form.tipo} onChange={handleChange}>
-          {[
-            "FACTURA_EMITIDA", "PAGO_RECIBIDO", "EFECTIVO_RECIBIDO", "CHEQUE_RECIBIDO", "TRANSFERENCIA_RECIBIDA",
-            "FACTURA_RECIBIDA", "PAGO_EMITIDO", "EFECTIVO_EMITIDO", "CHEQUE_EMITIDO", "TRANSFERENCIA_EMITIDA"
-          ].map(t => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
+        <Select label="Tipo" name="tipo" value={form.tipo} onChange={handleChange} options={tipos} />
+        <Input type="number" label="Monto" name="monto" value={form.monto} onChange={handleChange} required />
+        <Input type="date" label="Fecha" name="fecha" value={form.fecha} onChange={handleChange} required />
+        <label>
+          <input type="checkbox" name="esConFactura" checked={form.esConFactura} onChange={handleChange} />
+          ¿Con factura?
+        </label>
 
-        <label>Monto</label>
-        <input type="number" name="monto" value={form.monto} onChange={handleChange} required />
+        <Select
+          label="Proveedor"
+          name="idProveedor"
+          value={form.idProveedor}
+          onChange={handleChange}
+          options={["", ...proveedores.map(p => ({ label: p.nombre, value: p._id }))]}
+        />
 
-        <label>Fecha</label>
-        <input type="date" name="fecha" value={form.fecha} onChange={handleChange} required />
+        <Select
+          label="Cliente"
+          name="idCliente"
+          value={form.idCliente}
+          onChange={handleChange}
+          options={["", ...clientes.map(c => ({ label: c.nombre, value: c._id }))]}
+        />
 
-        <label>¿Con factura?</label>
-        <input type="checkbox" name="esConFactura" checked={form.esConFactura} onChange={handleChange} />
-
-        <label>Proveedor</label>
-        <select name="idProveedor" value={form.idProveedor} onChange={handleChange}>
-          <option value="">-- Seleccionar --</option>
-          {proveedores.map(p => (
-            <option key={p._id} value={p._id}>{p.nombre}</option>
-          ))}
-        </select>
-
-        <label>Cliente</label>
-        <select name="idCliente" value={form.idCliente} onChange={handleChange}>
-          <option value="">-- Seleccionar --</option>
-          {clientes.map(c => (
-            <option key={c._id} value={c._id}>{c.nombre}</option>
-          ))}
-        </select>
-
-        <label>Descripción</label>
-        <input type="text" name="descripcion" value={form.descripcion} onChange={handleChange} />
-
-        <label>Sub-Índice Factura</label>
-        <input type="text" name="subIndiceFactura" value={form.subIndiceFactura} onChange={handleChange} />
+        <Input label="Descripción" name="descripcion" value={form.descripcion} onChange={handleChange} />
+        <Input label="Sub-Índice Factura" name="subIndiceFactura" value={form.subIndiceFactura} onChange={handleChange} />
 
         {esCheque && (
           <>
             <h4>Datos del Cheque</h4>
-            <label>Número Cheque</label>
-            <input
-              type="text"
-              value={form.datosCheque.numeroCheque}
-              onChange={(e) =>
-                setForm({ ...form, datosCheque: { ...form.datosCheque, numeroCheque: e.target.value } })
-              }
-            />
-            <label>Banco</label>
-            <input
-              type="text"
-              value={form.datosCheque.banco}
-              onChange={(e) =>
-                setForm({ ...form, datosCheque: { ...form.datosCheque, banco: e.target.value } })
-              }
-            />
-            <label>Fecha Vencimiento</label>
-            <input
-              type="date"
-              value={form.datosCheque.fechaVencimiento}
-              onChange={(e) =>
-                setForm({ ...form, datosCheque: { ...form.datosCheque, fechaVencimiento: e.target.value } })
-              }
-            />
+            <Input label="Número Cheque" value={form.datosCheque.numeroCheque} onChange={(e) =>
+              setForm((prev) => ({ ...prev, datosCheque: { ...prev.datosCheque, numeroCheque: e.target.value } }))} />
+            <Input label="Banco" value={form.datosCheque.banco} onChange={(e) =>
+              setForm((prev) => ({ ...prev, datosCheque: { ...prev.datosCheque, banco: e.target.value } }))} />
+            <Input type="date" label="Fecha Vencimiento" value={form.datosCheque.fechaVencimiento} onChange={(e) =>
+              setForm((prev) => ({ ...prev, datosCheque: { ...prev.datosCheque, fechaVencimiento: e.target.value } }))} />
             {form.tipo === "CHEQUE_EMITIDO" && (
-              <>
-                <label>Endosado A</label>
-                <input
-                  type="text"
-                  value={form.datosCheque.endosadoA}
-                  onChange={(e) =>
-                    setForm({ ...form, datosCheque: { ...form.datosCheque, endosadoA: e.target.value } })
-                  }
-                />
-              </>
+              <Input label="Endosado A" value={form.datosCheque.endosadoA} onChange={(e) =>
+                setForm((prev) => ({ ...prev, datosCheque: { ...prev.datosCheque, endosadoA: e.target.value } }))} />
             )}
           </>
         )}
@@ -258,60 +235,37 @@ export default function ModalMovimientoContable({
         {esTransferencia && (
           <>
             <h4>Datos de Transferencia</h4>
-            <label>Número Comprobante</label>
-            <input
-              type="text"
-              value={form.datosTransferencia.numeroComprobante}
-              onChange={(e) =>
-                setForm({ ...form, datosTransferencia: { ...form.datosTransferencia, numeroComprobante: e.target.value } })
-              }
-            />
-            <label>Banco Origen</label>
-            <input
-              type="text"
-              value={form.datosTransferencia.bancoOrigen}
-              onChange={(e) =>
-                setForm({ ...form, datosTransferencia: { ...form.datosTransferencia, bancoOrigen: e.target.value } })
-              }
-            />
-            <label>Banco Destino</label>
-            <input
-              type="text"
-              value={form.datosTransferencia.bancoDestino}
-              onChange={(e) =>
-                setForm({ ...form, datosTransferencia: { ...form.datosTransferencia, bancoDestino: e.target.value } })
-              }
-            />
-            <label>Fecha Acreditación</label>
-            <input
-              type="date"
-              name="fechaAcreditacion"
-              value={form.fechaAcreditacion}
-              onChange={handleChange}
-            />
+            <Input label="Número Comprobante" value={form.datosTransferencia.numeroComprobante} onChange={(e) =>
+              setForm((prev) => ({ ...prev, datosTransferencia: { ...prev.datosTransferencia, numeroComprobante: e.target.value } }))} />
+            <Input label="Banco Origen" value={form.datosTransferencia.bancoOrigen} onChange={(e) =>
+              setForm((prev) => ({ ...prev, datosTransferencia: { ...prev.datosTransferencia, bancoOrigen: e.target.value } }))} />
+            <Input label="Banco Destino" value={form.datosTransferencia.bancoDestino} onChange={(e) =>
+              setForm((prev) => ({ ...prev, datosTransferencia: { ...prev.datosTransferencia, bancoDestino: e.target.value } }))} />
+            <Input type="date" label="Fecha Acreditación" name="fechaAcreditacion" value={form.fechaAcreditacion} onChange={handleChange} />
           </>
         )}
 
         <h4>Partidas por Obra</h4>
         {form.partidasObra.map((p, i) => (
-          <div key={i} className={styles.partidaRow}>
-            <select value={p.obra} onChange={(e) => handlePartidaChange(i, "obra", e.target.value)}>
-              <option value="">-- Seleccionar Obra --</option>
-              {obras.map((o) => (
-                <option key={o._id} value={o._id}>{o.nombre}</option>
-              ))}
-            </select>
-            <input
+          <div key={i} style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+            <Select
+              name={`obra-${i}`}
+              value={p.obra}
+              onChange={(e) => handlePartidaChange(i, "obra", e.target.value)}
+              options={["", ...obras.map(o => ({ label: o.nombre, value: o._id }))]}
+            />
+            <Input
               type="number"
               value={p.monto}
               onChange={(e) => handlePartidaChange(i, "monto", e.target.value)}
+              placeholder="Monto"
             />
             <Button type="button" onClick={() => removePartida(i)}>X</Button>
           </div>
         ))}
         <Button type="button" onClick={addPartida}>+ Agregar Partida</Button>
 
-        <div className={styles.actions}>
+        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
           <Button type="submit">Guardar</Button>
           <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
         </div>

@@ -1,8 +1,11 @@
+// src/components/modals/ModalIngresoMaterial.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
+import Select from "../ui/Select.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import ErrorText from "../ui/ErrorText.jsx";
 
 export default function ModalIngresoMaterial({ isOpen, onClose, onSaved }) {
   const { token } = useAuth();
@@ -38,83 +41,87 @@ export default function ModalIngresoMaterial({ isOpen, onClose, onSaved }) {
         throw new Error(errorData.message || "Error al ingresar material");
       }
 
-      setLoading(false);
       onSaved();
+      onClose();
     } catch (err) {
       setErrorMsg(err.message);
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title="Ingreso Manual de Material">
-      <form onSubmit={handleSubmit} className={styles.modalForm}>
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <ErrorText>{errorMsg}</ErrorText>
 
-        <div className={styles.formGroup}>
-          <label>Tipo de material</label>
-          <select name="tipo" value={tipo} onChange={(e) => setTipo(e.target.value)}>
-            <option value="perfil">Perfil</option>
-            <option value="vidrio">Vidrio</option>
-            <option value="accesorio">Accesorio</option>
-            <option value="herramienta">Herramienta</option>
-          </select>
-        </div>
+        <Select
+          label="Tipo de material"
+          name="tipo"
+          value={tipo}
+          onChange={(e) => setTipo(e.target.value)}
+          options={["perfil", "vidrio", "accesorio", "herramienta"]}
+        />
 
         {/* Campos específicos */}
         {tipo === "perfil" && (
           <>
-            <input name="codigo" placeholder="Código" onChange={handleChange} required />
-            <input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
-            <input name="color" placeholder="Color" onChange={handleChange} required />
-            <input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
-            <input name="largo" type="number" placeholder="Largo (mm)" onChange={handleChange} required />
-            <input name="pesoxmetro" type="number" placeholder="Peso x metro" onChange={handleChange} required />
+            <Input name="codigo" placeholder="Código" onChange={handleChange} required />
+            <Input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
+            <Input name="color" placeholder="Color" onChange={handleChange} required />
+            <Input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
+            <Input name="largo" type="number" placeholder="Largo (mm)" onChange={handleChange} required />
+            <Input name="pesoxmetro" type="number" placeholder="Peso x metro" onChange={handleChange} required />
           </>
         )}
 
         {tipo === "vidrio" && (
           <>
-            <input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
-            <input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
-            <input name="ancho" type="number" placeholder="Ancho (mm)" onChange={handleChange} required />
-            <input name="alto" type="number" placeholder="Alto (mm)" onChange={handleChange} required />
-            <select name="tipoVidrio" onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))}>
-              <option value="simple">Simple</option>
-              <option value="dvh">DVH</option>
-              <option value="tvh">TVH</option>
-              <option value="laminado">Laminado</option>
-            </select>
+            <Input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
+            <Input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
+            <Input name="ancho" type="number" placeholder="Ancho (mm)" onChange={handleChange} required />
+            <Input name="alto" type="number" placeholder="Alto (mm)" onChange={handleChange} required />
+            <Select
+              name="tipo"
+              label="Tipo de Vidrio"
+              value={formData.tipo || "simple"}
+              onChange={handleChange}
+              options={["simple", "dvh", "tvh", "laminado"]}
+            />
           </>
         )}
 
         {tipo === "accesorio" && (
           <>
-            <input name="codigo" placeholder="Código" onChange={handleChange} required />
-            <input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
-            <input name="color" placeholder="Color" onChange={handleChange} required />
-            <input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
-            <input name="unidad" placeholder="Unidad (u/ml)" onChange={handleChange} defaultValue="u" />
-            <input name="tipoAccesorio" placeholder="Tipo (tornillos, felpas...)" onChange={(e) => setFormData(prev => ({ ...prev, tipo: e.target.value }))} required />
+            <Input name="codigo" placeholder="Código" onChange={handleChange} required />
+            <Input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
+            <Input name="color" placeholder="Color" onChange={handleChange} required />
+            <Input name="cantidad" type="number" placeholder="Cantidad" onChange={handleChange} required />
+            <Input name="unidad" placeholder="Unidad (u/ml)" onChange={handleChange} defaultValue="u" />
+            <Input name="tipo" placeholder="Tipo (tornillos, felpas...)" onChange={handleChange} required />
           </>
         )}
 
         {tipo === "herramienta" && (
           <>
-            <input name="marca" placeholder="Marca" onChange={handleChange} required />
-            <input name="modelo" placeholder="Modelo" onChange={handleChange} required />
-            <input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
-            <input name="numeroSerie" placeholder="Número de Serie" onChange={handleChange} required />
-            <select name="estado" onChange={handleChange} defaultValue="en taller">
-              <option value="en taller">En taller</option>
-              <option value="en obra">En obra</option>
-              <option value="en reparación">En reparación</option>
-            </select>
+            <Input name="marca" placeholder="Marca" onChange={handleChange} required />
+            <Input name="modelo" placeholder="Modelo" onChange={handleChange} required />
+            <Input name="descripcion" placeholder="Descripción" onChange={handleChange} required />
+            <Input name="numeroSerie" placeholder="Número de Serie" onChange={handleChange} required />
+            <Select
+              name="estado"
+              label="Estado"
+              value={formData.estado || "en taller"}
+              onChange={handleChange}
+              options={["en taller", "en obra", "en reparación"]}
+            />
           </>
         )}
 
-        <div className={styles.actions}>
-          <Button type="submit" disabled={loading}>Guardar</Button>
+        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+          <Button type="submit" disabled={loading}>
+            Guardar
+          </Button>
           <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
             Cancelar
           </Button>

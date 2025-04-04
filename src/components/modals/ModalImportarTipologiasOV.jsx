@@ -1,9 +1,10 @@
-// src/components/modals/modalImportarTipologiasOV.jsx
+// src/components/modals/ModalImportarTipologiasOV.jsx
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import Input from "../ui/Input.jsx";
+import ErrorText from "../ui/ErrorText.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -21,6 +22,7 @@ export default function ModalImportarTipologiasOV({ obra, onClose, onCreated }) 
   });
   const [archivoExcel, setArchivoExcel] = useState(null);
   const [search, setSearch] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleArchivo = (e) => setArchivoExcel(e.target.files[0]);
 
@@ -31,7 +33,6 @@ export default function ModalImportarTipologiasOV({ obra, onClose, onCreated }) 
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: "array" });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      // Lee desde la fila 11 (index 10)
       const json = XLSX.utils.sheet_to_json(sheet, { range: 10 });
       const filas = json
         .map((row) => ({
@@ -42,7 +43,8 @@ export default function ModalImportarTipologiasOV({ obra, onClose, onCreated }) 
           cantidad: Number(row["Cant"]),
         }))
         .filter((t) => t.tipo && !isNaN(t.base) && !isNaN(t.altura) && !isNaN(t.cantidad));
-      setTipologias([...tipologias, ...filas]);
+
+      setTipologias((prev) => [...prev, ...filas]);
     };
     reader.readAsArrayBuffer(archivoExcel);
   };
@@ -50,9 +52,10 @@ export default function ModalImportarTipologiasOV({ obra, onClose, onCreated }) 
   const handleAgregarManual = () => {
     const { tipo, descripcion, base, altura, cantidad } = nuevo;
     if (!tipo || !descripcion || !base || !altura) {
-      alert("Completa todos los campos requeridos");
+      setErrorMsg("Completa todos los campos requeridos");
       return;
     }
+    setErrorMsg("");
     setTipologias((prev) => [
       ...prev,
       {
@@ -78,7 +81,7 @@ export default function ModalImportarTipologiasOV({ obra, onClose, onCreated }) 
         body: JSON.stringify({ tipologias: tipologias.map((t) => ({ ...t, obra: obra._id })) }),
       });
       if (!res.ok) throw new Error("Error al guardar tipologías");
-      if (onCreated) onCreated();
+      onCreated?.();
       onClose();
     } catch (err) {
       console.error("Error al guardar:", err);
@@ -86,47 +89,47 @@ export default function ModalImportarTipologiasOV({ obra, onClose, onCreated }) 
     }
   };
 
+  const tipologiasFiltradas = tipologias.filter((t) =>
+    JSON.stringify(t).toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <ModalBase isOpen={true} onClose={onClose} title={`Cargar Tipologías - ${obra?.nombre || ""}`}>
-      <div className={styles.contenedor}>
-        {/* Sección Excel */}
-        <section className={styles.section}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <section>
           <h3>1. Importar desde Excel</h3>
-          <input type="file" accept=".xlsx" onChange={handleArchivo} />
+          <Input type="file" accept=".xlsx" onChange={handleArchivo} />
           <Button onClick={handleLeerExcel}>📥 Leer Excel</Button>
         </section>
 
         <hr />
 
-        {/* Sección Manual */}
-        <section className={styles.section}>
+        <section>
           <h3>2. Agregar Manualmente</h3>
-          <div className={styles.formulario}>
-            <input
-              type="text"
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+            <Input
               placeholder="Tipo"
               value={nuevo.tipo}
               onChange={(e) => setNuevo({ ...nuevo, tipo: e.target.value })}
             />
-            <input
-              type="text"
+            <Input
               placeholder="Descripción"
               value={nuevo.descripcion}
               onChange={(e) => setNuevo({ ...nuevo, descripcion: e.target.value })}
             />
-            <input
+            <Input
               type="number"
               placeholder="Base"
               value={nuevo.base}
               onChange={(e) => setNuevo({ ...nuevo, base: e.target.value })}
             />
-            <input
+            <Input
               type="number"
               placeholder="Altura"
               value={nuevo.altura}
               onChange={(e) => setNuevo({ ...nuevo, altura: e.target.value })}
             />
-            <input
+            <Input
               type="number"
               placeholder="Cantidad"
               value={nuevo.cantidad}
@@ -134,37 +137,30 @@ export default function ModalImportarTipologiasOV({ obra, onClose, onCreated }) 
             />
             <Button onClick={handleAgregarManual}>➕ Agregar</Button>
           </div>
+          <ErrorText>{errorMsg}</ErrorText>
         </section>
 
         <hr />
 
-        {/* Sección Lista */}
-        <section className={styles.section}>
+        <section>
           <h3>3. Lista para Guardar</h3>
-          <input
-            type="text"
-            placeholder="Buscar por código, descripción, color, etc."
+          <Input
+            placeholder="Buscar por tipo, descripción, etc."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className={styles.searchInput}
           />
-          <ul className={styles.lista}>
-            {tipologias
-              .filter((p) =>
-                JSON.stringify(p).toLowerCase().includes(search.toLowerCase())
-              )
-              .map((t, i) => (
-                <li key={i}>
-                  {t.tipo} - {t.descripcion} ({t.base}x{t.altura}) x{t.cantidad}
-                </li>
-              ))}
+          <ul>
+            {tipologiasFiltradas.map((t, i) => (
+              <li key={i}>
+                {t.tipo} - {t.descripcion} ({t.base}x{t.altura}) x{t.cantidad}
+              </li>
+            ))}
           </ul>
         </section>
 
         <hr />
 
-        {/* Sección Guardar */}
-        <section className={styles.section}>
+        <section>
           <Button onClick={handleGuardar} disabled={tipologias.length === 0}>
             💾 Guardar Tipologías
           </Button>
