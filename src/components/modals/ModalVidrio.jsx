@@ -1,10 +1,13 @@
-// src/components/modals/modalVidrio.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
 
-export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave }) {
+export default function ModalVidrio({
+  isOpen,
+  onClose,
+  vidrioData = null,
+  onSave,
+}) {
   const [form, setForm] = useState({
     descripcion: "",
     tipo: "simple",
@@ -12,33 +15,25 @@ export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave
     alto: 0,
     cantidad: 0,
   });
+
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (vidrioData) {
-      setForm({
-        descripcion: vidrioData.descripcion || "",
-        tipo: vidrioData.tipo || "simple",
-        ancho: vidrioData.ancho || 0,
-        alto: vidrioData.alto || 0,
-        cantidad: vidrioData.cantidad || 0,
-      });
-    } else {
-      setForm({
-        descripcion: "",
-        tipo: "simple",
-        ancho: 0,
-        alto: 0,
-        cantidad: 0,
-      });
-    }
+    setForm({
+      descripcion: vidrioData?.descripcion || "",
+      tipo: vidrioData?.tipo || "simple",
+      ancho: vidrioData?.ancho || 0,
+      alto: vidrioData?.alto || 0,
+      cantidad: vidrioData?.cantidad || 0,
+    });
   }, [vidrioData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]:
+        name === "descripcion" || name === "tipo" ? value : parseFloat(value),
     }));
   };
 
@@ -61,45 +56,81 @@ export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave
   if (!isOpen) return null;
 
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title={vidrioData ? "Editar Vidrio" : "Nuevo Vidrio"}>
-      <form onSubmit={handleSubmit} className={styles.modalForm}>
-        <div className={styles.formGroup}>
+    <ModalBase
+      isOpen={isOpen}
+      onClose={onClose}
+      title={vidrioData ? "Editar Vidrio" : "Nuevo Vidrio"}
+    >
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+      >
+        <div>
           <label>Descripción</label>
-          <input type="text" name="descripcion" value={form.descripcion} onChange={handleChange} />
-          {errors.descripcion && <small className={styles.error}>{errors.descripcion}</small>}
+          <input
+            type="text"
+            name="descripcion"
+            value={form.descripcion}
+            onChange={handleChange}
+          />
+          {errors.descripcion && (
+            <small style={{ color: "red" }}>{errors.descripcion}</small>
+          )}
         </div>
 
-        <div className={styles.formGroup}>
+        <div>
           <label>Tipo</label>
           <select name="tipo" value={form.tipo} onChange={handleChange}>
             <option value="simple">Simple</option>
             <option value="dvh">Doble (DVH)</option>
             <option value="tvh">Triple (TVH)</option>
-            <option value="laminado">Laminado</option>
           </select>
         </div>
 
-        <div className={styles.formGroup}>
+        <div>
           <label>Ancho (mm)</label>
-          <input type="number" name="ancho" value={form.ancho} onChange={handleChange} />
-          {errors.ancho && <small className={styles.error}>{errors.ancho}</small>}
+          <input
+            type="number"
+            name="ancho"
+            value={form.ancho}
+            onChange={handleChange}
+          />
+          {errors.ancho && (
+            <small style={{ color: "red" }}>{errors.ancho}</small>
+          )}
         </div>
 
-        <div className={styles.formGroup}>
+        <div>
           <label>Alto (mm)</label>
-          <input type="number" name="alto" value={form.alto} onChange={handleChange} />
-          {errors.alto && <small className={styles.error}>{errors.alto}</small>}
+          <input
+            type="number"
+            name="alto"
+            value={form.alto}
+            onChange={handleChange}
+          />
+          {errors.alto && <small style={{ color: "red" }}>{errors.alto}</small>}
         </div>
 
-        <div className={styles.formGroup}>
+        <div>
           <label>Cantidad</label>
-          <input type="number" name="cantidad" value={form.cantidad} onChange={handleChange} />
-          {errors.cantidad && <small className={styles.error}>{errors.cantidad}</small>}
+          <input
+            type="number"
+            name="cantidad"
+            value={form.cantidad}
+            onChange={handleChange}
+          />
+          {errors.cantidad && (
+            <small style={{ color: "red" }}>{errors.cantidad}</small>
+          )}
         </div>
 
-        <div className={styles.actions}>
+        <div
+          style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
+        >
           <Button type="submit">Guardar</Button>
-          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
+          <Button type="button" variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
         </div>
       </form>
     </ModalBase>

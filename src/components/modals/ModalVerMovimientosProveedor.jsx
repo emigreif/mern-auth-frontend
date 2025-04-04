@@ -18,11 +18,10 @@ export default function ModalVerMovimientosProveedor({ proveedorId, onClose }) {
 
   const fetchMovimientos = async () => {
     setLoading(true);
+    setErrorMsg("");
     try {
       const res = await fetch(`${API_URL}/api/contabilidad/proveedor/${proveedorId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) throw new Error("No se pudieron obtener los movimientos");
       const data = await res.json();
@@ -34,48 +33,47 @@ export default function ModalVerMovimientosProveedor({ proveedorId, onClose }) {
     }
   };
 
+  const renderEstado = (tipo) => {
+    if (tipo.includes("FACTURA")) return "Pendiente";
+    if (tipo.includes("PAGO") || tipo.includes("CHEQUE")) return "Cerrado";
+    return "Activo";
+  };
+
   return (
     <ModalBase isOpen onClose={onClose} title="Movimientos del Proveedor">
-      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+      {errorMsg && <p style={{ color: "red", marginBottom: "1rem" }}>{errorMsg}</p>}
+
       {loading ? (
         <p>Cargando movimientos...</p>
       ) : movimientos.length === 0 ? (
         <p>No hay movimientos registrados.</p>
       ) : (
         <Table
-          headers={[
-            "Tipo",
-            "Fecha",
-            "Descripción",
-            "Monto",
-            "Estado",
-            "Obra"
-          ]}
+          headers={["Tipo", "Fecha", "Descripción", "Monto", "Estado", "Obra"]}
         >
           {movimientos.map((m) => (
             <tr key={m._id}>
-              <td>{m.tipo.replace("_", " ")}</td>
+              <td>{m.tipo.replaceAll("_", " ")}</td>
               <td>{new Date(m.fecha).toLocaleDateString()}</td>
               <td>{m.descripcion || "-"}</td>
               <td>${m.monto?.toFixed(2)}</td>
+              <td>{renderEstado(m.tipo)}</td>
               <td>
-                {m.tipo.includes("FACTURA") ? "Pendiente" :
-                 m.tipo.includes("PAGO") || m.tipo.includes("CHEQUE") ? "Cerrado" :
-                 "Activo"}
-              </td>
-              <td>
-                {m.partidasObra?.length
-                  ? m.partidasObra.map((p, i) => (
-                      <div key={i}>
-                        {p.obra?.nombre || p.obra} (${p.monto})
-                      </div>
-                    ))
-                  : "-"}
+                {m.partidasObra?.length > 0 ? (
+                  m.partidasObra.map((p, i) => (
+                    <div key={i}>
+                      {p.obra?.nombre || p.obra} (${p.monto})
+                    </div>
+                  ))
+                ) : (
+                  "-"
+                )}
               </td>
             </tr>
           ))}
         </Table>
       )}
+
       <div style={{ marginTop: "1rem", textAlign: "right" }}>
         <Button variant="secondary" onClick={onClose}>
           Cerrar
