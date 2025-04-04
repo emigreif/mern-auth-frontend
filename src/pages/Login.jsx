@@ -33,18 +33,34 @@ export default function Login() {
     e.preventDefault();
     setErrorMsg("");
     setLoading(true);
-
+  
     try {
       await login(email, pass);
-
-      // Obtener token para llamar a /api/perfiles
+  
       const currentToken = localStorage.getItem("token");
       if (!currentToken) throw new Error("No se pudo obtener token tras login.");
-
-      await fetch(import.meta.env.VITE_API_URL + "/api/perfiles", {
+  
+      const res = await fetch(import.meta.env.VITE_API_URL + "/api/perfiles", {
         headers: { Authorization: `Bearer ${currentToken}` },
       });
-
+  
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Error al obtener perfiles.");
+      }
+  
+      const perfiles = await res.json();
+  
+      if (!perfiles.length) {
+        throw new Error("No se encontraron perfiles.");
+      }
+  
+      // Si solo hay un perfil (ej. admin generado), lo autocompleta
+      if (perfiles.length === 1 && perfiles[0].nombre === "admin") {
+        setPerfilName("admin");
+        setPerfilPass("1234");
+      }
+  
       setPhase("perfil");
     } catch (error) {
       setErrorMsg(error.message || "Error en el primer login");
@@ -52,6 +68,7 @@ export default function Login() {
       setLoading(false);
     }
   };
+  
 
   /**
    * 2. Segundo login (perfil)
