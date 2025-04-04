@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
+
 import ModalBase from "../components/modals/ModalBase";
 import Button from "../components/ui/Button.jsx";
 import SearchBar from "../components/ui/SearchBar.jsx";
@@ -68,11 +70,23 @@ const BaseMateriales = () => {
     const method = modoEdicion ? "PUT" : "POST";
 
     if (tipo === "proveedores") {
-      datos.emails = datos.emails?.split(",").map((e) => e.trim()).filter(Boolean) || [];
-      datos.telefono = datos.telefono?.split(",").map((t) => t.trim()).filter(Boolean) || [];
-      datos.whatsapp = datos.whatsapp?.split(",").map((w) => w.trim()).filter(Boolean) || [];
-      datos.rubro = datos.rubro?.split(",").map((r) => r.trim()).filter(Boolean) || [];
-      datos.marcas = datos.marcas?.split(",").map((m) => m.trim()).filter(Boolean) || [];
+      emails: Array.isArray(datos.emails)
+      ? datos.emails
+      : datos.emails?.toString().split(",").map(e => e.trim())
+      telefono: Array.isArray(datos.telefono)
+      ? datos.telefono
+      : datos.telefono?.toString().split(",").map(t => t.trim()).filter(Boolean)
+      whatsapp: Array.isArray(datos.whatsapp)
+      ? datos.whatsapp
+      : datos.whatsapp?.toString().split(",").map(w => w.trim()).filter(Boolean)
+    
+    marcas: Array.isArray(datos.marcas)
+      ? datos.marcas
+      : datos.marcas?.toString().split(",").map(m => m.trim()).filter(Boolean)
+    
+    rubro: Array.isArray(datos.rubro)
+      ? datos.rubro
+      : datos.rubro?.toString().split(",").map(r => r.trim()).filter(Boolean)
     }
 
     await fetch(url, {
@@ -296,8 +310,7 @@ const DynamicForm = ({ tipo, data = {}, onSubmit }) => {
       { name: "telefono", placeholder: "Teléfonos (coma)" },
       { name: "whatsapp", placeholder: "WhatsApp (coma)" },
       { name: "marcas", placeholder: "Marcas (coma)" },
-      { name: "rubro", placeholder: "Rubros (coma)" },
-    ],
+        ],
   };
 
   return (
@@ -312,6 +325,28 @@ const DynamicForm = ({ tipo, data = {}, onSubmit }) => {
           onChange={handleChange}
         />
       ))}
+      {tipo === "proveedores" && (
+  <div style={{ marginTop: "10px" }}>
+    <label><strong>Rubros:</strong></label>
+    <Select
+      options={[
+        { value: "Vidrio", label: "Vidrio" },
+        { value: "Perfiles", label: "Perfiles" },
+        { value: "Accesorios", label: "Accesorios" },
+        { value: "Insumos", label: "Insumos" },
+      ]}
+      isMulti
+      value={(form.rubro || []).map((r) => ({ value: r, label: r }))}
+      onChange={(selected) =>
+        setForm((prev) => ({
+          ...prev,
+          rubro: selected.map((s) => s.value),
+        }))
+      }
+    />
+  </div>
+)}
+
       <Button onClick={handleSubmit}>{data?._id ? "Actualizar" : "Guardar"}</Button>
     </>
   );
