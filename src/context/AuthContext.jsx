@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);  // Guardamos el JWT tras 1er login
   const [loading, setLoading] = useState(true);
 
-  // Ajusta la URL de tu backend:
+ 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   /**
@@ -30,8 +30,7 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
-      // O, si quieres forzar a traer el user:
-      // fetchUser(storedToken);
+      fetchUser(storedToken);
     }
     setLoading(false);
   }, []);
