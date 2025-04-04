@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/components/Navbar.module.css";
+import Button from "./ui/Button.jsx";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -19,10 +20,9 @@ const Navbar = () => {
 
       <div className={styles.navRight}>
         {user ? (
-          <>
-            {/* Si está logueado */}
-            <button onClick={handleLogout}>Cerrar Sesión</button>
-          </>
+         <Button onClick={handleLogout} variant="danger" size="sm">
+         Cerrar Sesión
+       </Button>
         ) : (
           <>
             {/* Si NO estás logueado */}
