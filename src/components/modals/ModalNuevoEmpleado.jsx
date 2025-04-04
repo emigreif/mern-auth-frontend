@@ -1,8 +1,10 @@
+// src/components/modals/ModalNuevoEmpleado.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import ErrorText from "../ui/ErrorText.jsx";
 
 export default function ModalNuevoEmpleado({ empleado = null, onCreated, onClose }) {
   const { token } = useAuth();
@@ -19,7 +21,7 @@ export default function ModalNuevoEmpleado({ empleado = null, onCreated, onClose
     salario: 0,
     salarioRegistrado: 0,
     salarioNoRegistrado: 0,
-    activo: true
+    activo: true,
   });
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -30,7 +32,7 @@ export default function ModalNuevoEmpleado({ empleado = null, onCreated, onClose
         ...empleado,
         salario: empleado.salario ?? (empleado.salarioRegistrado + empleado.salarioNoRegistrado),
         salarioRegistrado: empleado.salarioRegistrado ?? 0,
-        salarioNoRegistrado: empleado.salarioNoRegistrado ?? 0
+        salarioNoRegistrado: empleado.salarioNoRegistrado ?? 0,
       });
     }
   }, [empleado]);
@@ -44,7 +46,6 @@ export default function ModalNuevoEmpleado({ empleado = null, onCreated, onClose
         [name]: type === "checkbox" ? checked : type === "number" ? parseFloat(value) || 0 : value,
       };
 
-      // Ajustar el otro campo automáticamente según el total
       if (name === "salarioRegistrado") {
         updated.salarioNoRegistrado = Math.max(updated.salario - updated.salarioRegistrado, 0);
       }
@@ -93,9 +94,9 @@ export default function ModalNuevoEmpleado({ empleado = null, onCreated, onClose
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       });
       if (!res.ok) {
         const errData = await res.json();
@@ -111,51 +112,29 @@ export default function ModalNuevoEmpleado({ empleado = null, onCreated, onClose
 
   return (
     <ModalBase isOpen={true} onClose={onClose} title={empleado ? "Editar Empleado" : "Nuevo Empleado"}>
-      <form onSubmit={handleSubmit} className={styles.modalForm}>
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <Input label="Nombre" name="nombre" value={form.nombre} onChange={handleChange} required />
+        <Input label="Apellido" name="apellido" value={form.apellido} onChange={handleChange} required />
+        <Input label="DNI" name="dni" value={form.dni} onChange={handleChange} required />
+        <Input label="Email" name="email" type="email" value={form.email} onChange={handleChange} />
+        <Input label="Teléfono" name="telefono" value={form.telefono} onChange={handleChange} />
+        <Input label="Dirección" name="direccion" value={form.direccion} onChange={handleChange} />
+        <Input label="Puesto" name="puesto" value={form.puesto} onChange={handleChange} />
 
-        {[
-          { label: "Nombre", name: "nombre" },
-          { label: "Apellido", name: "apellido" },
-          { label: "DNI", name: "dni" },
-          { label: "Email", name: "email", type: "email" },
-          { label: "Teléfono", name: "telefono" },
-          { label: "Dirección", name: "direccion" },
-          { label: "Puesto", name: "puesto" },
-        ].map((field) => (
-          <div className={styles.formGroup} key={field.name}>
-            <label>{field.label}</label>
-            <input
-              type={field.type || "text"}
-              name={field.name}
-              value={form[field.name]}
-              onChange={handleChange}
-              required={["nombre", "apellido", "dni"].includes(field.name)}
-            />
-          </div>
-        ))}
+        <Input label="Salario Total" name="salario" type="number" value={form.salario} onChange={handleChange} />
+        <Input label="Parte Registrada (Blanco)" name="salarioRegistrado" type="number" value={form.salarioRegistrado} onChange={handleChange} />
+        <Input label="Parte No Registrada (Negro)" name="salarioNoRegistrado" type="number" value={form.salarioNoRegistrado} onChange={handleChange} />
 
-        <div className={styles.formGroup}>
-          <label>Salario Total</label>
-          <input type="number" name="salario" value={form.salario} onChange={handleChange} />
+        <div>
+          <label>
+            <input type="checkbox" name="activo" checked={form.activo} onChange={handleChange} />
+            Activo
+          </label>
         </div>
 
-        <div className={styles.formGroup}>
-          <label>Parte Registrada (Blanco)</label>
-          <input type="number" name="salarioRegistrado" value={form.salarioRegistrado} onChange={handleChange} />
-        </div>
+        <ErrorText>{errorMsg}</ErrorText>
 
-        <div className={styles.formGroup}>
-          <label>Parte No Registrada (Negro)</label>
-          <input type="number" name="salarioNoRegistrado" value={form.salarioNoRegistrado} onChange={handleChange} />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>Activo</label>
-          <input type="checkbox" name="activo" checked={form.activo} onChange={handleChange} />
-        </div>
-
-        <div className={styles.actions}>
+        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
           <Button type="submit">Guardar</Button>
           <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
         </div>

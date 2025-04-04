@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Input from "../ui/Input.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/components/Form.module.css";
+import ErrorText from "../ui/ErrorText.jsx";
 
 const ModalNuevoCliente = ({ onClose, onSaved, token, apiUrl }) => {
   const [form, setForm] = useState({
@@ -45,13 +45,13 @@ const ModalNuevoCliente = ({ onClose, onSaved, token, apiUrl }) => {
 
   return (
     <ModalBase title="Nuevo Cliente" isOpen={true} onClose={onClose}>
-      <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-        <Input label="Nombre" name="nombre" value={form.nombre} onChange={handleChange} />
-        <Input label="Dirección" name="direccion" value={form.direccion} onChange={handleChange} />
+      <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <Input label="Nombre" name="nombre" value={form.nombre} onChange={handleChange} required />
+        <Input label="Dirección" name="direccion" value={form.direccion} onChange={handleChange} required />
         <Input label="Teléfono" name="telefono" value={form.telefono} onChange={handleChange} />
         <Input label="Email" name="email" type="email" value={form.email} onChange={handleChange} />
-        {error && <p className={styles.error}>{error}</p>}
-        <div style={{ marginTop: 16, display: "flex", gap: "1rem" }}>
+        <ErrorText>{error}</ErrorText>
+        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
           <Button onClick={handleGuardar}>Guardar</Button>
           <Button variant="secondary" onClick={onClose}>Cancelar</Button>
         </div>

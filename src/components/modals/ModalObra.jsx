@@ -8,18 +8,17 @@ import ModalImportarVidriosOV from "./ModalImportarVidriosOV.jsx";
 import ModalImportarAccesoriosOV from "./ModalImportarAccesoriosOV.jsx";
 import ModalImportarTipologiasOV from "./ModalImportarTipologiasOV.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import ErrorText from "../ui/ErrorText.jsx";
 
 export default function ModalObra({ obra, onClose, onSaved }) {
   const { token } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  const isEdit = !!obra && !!obra._id;
+  const isEdit = !!obra?._id;
 
   const [clientes, setClientes] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
   const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
 
-  // Modales para importar materiales OV
   const [modalPerfilesOpen, setModalPerfilesOpen] = useState(false);
   const [modalVidriosOpen, setModalVidriosOpen] = useState(false);
   const [modalAccesoriosOpen, setModalAccesoriosOpen] = useState(false);
@@ -77,14 +76,10 @@ export default function ModalObra({ obra, onClose, onSaved }) {
     }
   }, [obra]);
 
-  // Actualiza importeTotal cuando importeConFactura o importeSinFactura cambian
   useEffect(() => {
     const cf = parseFloat(form.importeConFactura) || 0;
     const sf = parseFloat(form.importeSinFactura) || 0;
-    setForm((prev) => ({
-      ...prev,
-      importeTotal: cf + sf
-    }));
+    setForm((prev) => ({ ...prev, importeTotal: cf + sf }));
   }, [form.importeConFactura, form.importeSinFactura]);
 
   const fetchClientes = async () => {
@@ -105,17 +100,14 @@ export default function ModalObra({ obra, onClose, onSaved }) {
     const { name, value, type, checked } = e.target;
     if (name.startsWith("estado.")) {
       const campo = name.split(".")[1];
-      setForm((prev) => ({
-        ...prev,
-        estado: { ...prev.estado, [campo]: value }
-      }));
+      setForm((prev) => ({ ...prev, estado: { ...prev.estado, [campo]: value } }));
       return;
     }
     if (type === "checkbox") {
-      setForm({ ...form, [name]: checked });
+      setForm((prev) => ({ ...prev, [name]: checked }));
       return;
     }
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -130,6 +122,7 @@ export default function ModalObra({ obra, onClose, onSaved }) {
       const url = isEdit
         ? `${API_URL}/api/obras/${obra._id}`
         : `${API_URL}/api/obras`;
+
       const res = await fetch(url, {
         method,
         headers: {
@@ -138,6 +131,7 @@ export default function ModalObra({ obra, onClose, onSaved }) {
         },
         body: JSON.stringify(form)
       });
+
       if (!res.ok) throw new Error("Error al guardar la obra");
       onSaved?.();
       onClose();
@@ -149,68 +143,61 @@ export default function ModalObra({ obra, onClose, onSaved }) {
   return (
     <>
       <ModalBase isOpen={true} onClose={onClose} title={isEdit ? "Editar Obra" : "Nueva Obra"}>
-        <form onSubmit={handleSubmit} className={styles.modalForm} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <ErrorText>{errorMsg}</ErrorText>
+
           <label>Nombre</label>
           <input name="nombre" value={form.nombre} onChange={handleChange} required />
+
           <label>Cliente</label>
-          <div className={styles.flexRow}>
+          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
             <select name="cliente" value={form.cliente} onChange={handleChange} required>
               <option value="">Seleccionar cliente</option>
-              {clientes.map(c => (
-                <option key={c._id} value={c._id}>
-                  {c.nombre} {c.apellido}
-                </option>
+              {clientes.map((c) => (
+                <option key={c._id} value={c._id}>{c.nombre} {c.apellido}</option>
               ))}
             </select>
-            <Button onClick={() => setIsClienteModalOpen(true)}>➕</Button>
+            <Button type="button" onClick={() => setIsClienteModalOpen(true)}>➕</Button>
           </div>
+
           <label>Dirección</label>
           <input name="direccion" value={form.direccion} onChange={handleChange} required />
+
           <label>Contacto</label>
           <input name="contacto" value={form.contacto} onChange={handleChange} required />
+
           <label>Fecha de Entrega</label>
           <input type="date" name="fechaEntrega" value={form.fechaEntrega} onChange={handleChange} />
+
           <label>Importes</label>
-          <div className={styles.flexRow}>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
             <input type="number" name="importeConFactura" placeholder="Con factura" value={form.importeConFactura} onChange={handleChange} />
             <input type="number" name="importeSinFactura" placeholder="Sin factura" value={form.importeSinFactura} onChange={handleChange} />
             <input type="number" value={form.importeTotal} readOnly />
           </div>
-           {/* Botones para importar materiales OV */}
-           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-            <button type="button" onClick={() => setModalPerfilesOpen(true)}>📦 Perfiles OV</button>
-            <button type="button" onClick={() => setModalVidriosOpen(true)}>🪟 Vidrios OV</button>
-            <button type="button" onClick={() => setModalAccesoriosOpen(true)}>🔩 Accesorios OV</button>
-            <button type="button" onClick={() => setModalTipologiasOpen(true)}>🧱 Tipologías OV</button>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+            <Button type="button" onClick={() => setModalPerfilesOpen(true)}>📦 Perfiles OV</Button>
+            <Button type="button" onClick={() => setModalVidriosOpen(true)}>🪟 Vidrios OV</Button>
+            <Button type="button" onClick={() => setModalAccesoriosOpen(true)}>🔩 Accesorios OV</Button>
+            <Button type="button" onClick={() => setModalTipologiasOpen(true)}>🧱 Tipologías OV</Button>
           </div>
 
           <label>Observaciones</label>
           <textarea name="observaciones" value={form.observaciones} onChange={handleChange} />
 
-          
-          
-          <div className={styles.flexRowEnd}>
-          
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
             <Button type="submit">Guardar</Button>
-            <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
           </div>
         </form>
       </ModalBase>
-      {/* Modales para materiales OV */}
-      {modalPerfilesOpen && (
-        <ModalImportarPerfilesOV obra={obra} onClose={() => setModalPerfilesOpen(false)} />
-      )}
-      {modalVidriosOpen && (
-        <ModalImportarVidriosOV obra={obra} onClose={() => setModalVidriosOpen(false)} />
-      )}
-      {modalAccesoriosOpen && (
-        <ModalImportarAccesoriosOV obra={obra} onClose={() => setModalAccesoriosOpen(false)} />
-      )}
-      {modalTipologiasOpen && (
-        <ModalImportarTipologiasOV obra={obra} onClose={() => setModalTipologiasOpen(false)} />
-      )}
 
+      {/* Submodales */}
+      {modalPerfilesOpen && <ModalImportarPerfilesOV obra={obra} onClose={() => setModalPerfilesOpen(false)} />}
+      {modalVidriosOpen && <ModalImportarVidriosOV obra={obra} onClose={() => setModalVidriosOpen(false)} />}
+      {modalAccesoriosOpen && <ModalImportarAccesoriosOV obra={obra} onClose={() => setModalAccesoriosOpen(false)} />}
+      {modalTipologiasOpen && <ModalImportarTipologiasOV obra={obra} onClose={() => setModalTipologiasOpen(false)} />}
       {isClienteModalOpen && (
         <ModalNuevoCliente
           onCreated={() => {

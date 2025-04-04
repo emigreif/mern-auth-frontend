@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/modals/GlobalModal.module.css";
+import ErrorText from "../ui/ErrorText.jsx";
 
 export default function ModalPerfil({ isOpen, onClose, perfilData = {}, onSave }) {
   const [formData, setFormData] = useState({
@@ -23,7 +23,7 @@ export default function ModalPerfil({ isOpen, onClose, perfilData = {}, onSave }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
@@ -47,39 +47,45 @@ export default function ModalPerfil({ isOpen, onClose, perfilData = {}, onSave }
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title="Perfil OV">
-      <form onSubmit={handleSave} className={styles.modalForm}>
-        <div className={styles.formGroup}>
+      <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div>
           <label>Código</label>
           <input type="text" name="codigo" value={formData.codigo || ""} onChange={handleChange} />
-          {errors.codigo && <small className={styles.error}>{errors.codigo}</small>}
+          <ErrorText>{errors.codigo}</ErrorText>
         </div>
-        <div className={styles.formGroup}>
+
+        <div>
           <label>Descripción</label>
           <input type="text" name="descripcion" value={formData.descripcion || ""} onChange={handleChange} />
-          {errors.descripcion && <small className={styles.error}>{errors.descripcion}</small>}
+          <ErrorText>{errors.descripcion}</ErrorText>
         </div>
-        <div className={styles.formGroup}>
+
+        <div>
           <label>Color</label>
           <input type="text" name="color" value={formData.color || ""} onChange={handleChange} />
         </div>
-        <div className={styles.formGroup}>
+
+        <div>
           <label>Largo</label>
           <input type="number" name="largo" value={formData.largo || 0} onChange={handleChange} />
-          {errors.largo && <small className={styles.error}>{errors.largo}</small>}
+          <ErrorText>{errors.largo}</ErrorText>
         </div>
-        <div className={styles.formGroup}>
+
+        <div>
           <label>Peso x metro</label>
           <input type="number" name="pesoxmetro" value={formData.pesoxmetro || 0} onChange={handleChange} />
-          {errors.pesoxmetro && <small className={styles.error}>{errors.pesoxmetro}</small>}
+          <ErrorText>{errors.pesoxmetro}</ErrorText>
         </div>
-        <div className={styles.formGroup}>
+
+        <div>
           <label>Cantidad</label>
           <input type="number" name="cantidad" value={formData.cantidad || 0} onChange={handleChange} />
-          {errors.cantidad && <small className={styles.error}>{errors.cantidad}</small>}
+          <ErrorText>{errors.cantidad}</ErrorText>
         </div>
-        <div className={styles.actions}>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
           <Button type="submit">Guardar</Button>
-          <Button variant="secondary" type="button" onClick={onClose}>Cancelar</Button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
         </div>
       </form>
     </ModalBase>

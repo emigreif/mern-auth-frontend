@@ -4,7 +4,7 @@ import ModalBase from "./ModalBase.jsx";
 import Input from "../ui/Input.jsx";
 import MultiSelect from "../ui/MultiSelect.jsx";
 import Button from "../ui/Button.jsx";
-import styles from "../../styles/components/Form.module.css";
+import ErrorText from "../ui/ErrorText.jsx";
 
 const RUBRO_OPTIONS = ["Vidrio", "Perfiles", "Accesorios", "Compras Generales"];
 
@@ -90,26 +90,27 @@ const ModalNuevoProveedor = ({
       isOpen={true}
       onClose={onClose}
     >
-      <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <Input label="Nombre" name="nombre" value={form.nombre} onChange={handleChange} />
         <Input label="Dirección" name="direccion" value={form.direccion} onChange={handleChange} />
         <Input label="Teléfono" name="telefono" value={form.telefono} onChange={handleChange} />
         <Input label="WhatsApp" name="whatsapp" value={form.whatsapp} onChange={handleChange} />
 
-        {form.emails.map((email, i) => (
-          <div key={i} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-            <Input
-              name={`email-${i}`}
-              type="email"
-              placeholder={`Email ${i + 1}`}
-              value={email}
-              onChange={(e) => handleEmailChange(i, e.target.value)}
-            />
-            <Button variant="danger" type="button" onClick={() => handleRemoveEmail(i)}>X</Button>
-          </div>
-        ))}
-
-        <Button type="button" onClick={handleAddEmail}>+ Email</Button>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          {form.emails.map((email, i) => (
+            <div key={i} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+              <Input
+                name={`email-${i}`}
+                type="email"
+                placeholder={`Email ${i + 1}`}
+                value={email}
+                onChange={(e) => handleEmailChange(i, e.target.value)}
+              />
+              <Button variant="danger" type="button" onClick={() => handleRemoveEmail(i)}>X</Button>
+            </div>
+          ))}
+          <Button type="button" onClick={handleAddEmail}>+ Email</Button>
+        </div>
 
         <MultiSelect
           label="Rubros"
@@ -119,9 +120,9 @@ const ModalNuevoProveedor = ({
           options={RUBRO_OPTIONS}
         />
 
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+        <ErrorText>{errorMsg}</ErrorText>
 
-        <div style={{ marginTop: 16, display: "flex", gap: "0.5rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
           <Button onClick={handleGuardar}>{editMode ? "Actualizar" : "Guardar"}</Button>
           <Button variant="secondary" onClick={onClose}>Cancelar</Button>
         </div>
