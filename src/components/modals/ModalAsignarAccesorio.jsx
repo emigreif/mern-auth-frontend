@@ -1,110 +1,127 @@
 // src/components/modals/ModalAsignarAccesorio.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ModalBase from "./ModalBase.jsx";
-import Input from "../ui/Input.jsx";
-import Select from "../ui/Select.jsx";
 import Button from "../ui/Button.jsx";
+import Select from "../ui/Select.jsx";
+import Input from "../ui/Input.jsx";
 import ErrorText from "../ui/ErrorText.jsx";
 
-export default function ModalAsignarAccesorio({ isOpen, onClose, onSave, token, API_URL }) {
-  const [obras, setObras] = useState([]);
-  const [accesorioId, setAccesorioId] = useState("");
-  const [obraId, setObraId] = useState("");
-  const [cantidad, setCantidad] = useState(1);
+export default function ModalAsignarAccesorio({
+  isOpen,
+  onClose,
+  accesorios,
+  obras,
+  token,
+  API_URL,
+  onSuccess
+}) {
+  const [obra, setObra] = useState("");
+  const [items, setItems] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) return;
+  const handleAddItem = () => {
+    setItems((prev) => [...prev, { codigo: "", color: "", cantidad: 1 }]);
+  };
 
-    const fetchObras = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/obras`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setObras(data || []);
-      } catch (error) {
-        console.error("Error al cargar obras:", error);
-      }
-    };
+  const handleChange = (idx, field, value) => {
+    const updated = [...items];
+    updated[idx][field] = field === "cantidad" ? parseFloat(value) : value;
+    setItems(updated);
+  };
 
-    fetchObras();
-  }, [isOpen]);
+  const handleRemove = (idx) => {
+    setItems(items.filter((_, i) => i !== idx));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg("");
-
-    if (!accesorioId || !obraId || cantidad <= 0) {
-      setErrorMsg("Todos los campos son obligatorios y la cantidad debe ser mayor a 0.");
+    if (!obra || items.length === 0) {
+      setErrorMsg("Debes seleccionar una obra y al menos un accesorio.");
       return;
     }
 
     setLoading(true);
+    setErrorMsg("");
 
     try {
-      const res = await fetch(`${API_URL}/api/obras/asignar-accesorio`, {
+      const res = await fetch(`${API_URL}/api/panol/asignar-accesorios-manual`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({
-          accesorio: accesorioId,
-          obra: obraId,
-          cantidad,
-        }),
+        body: JSON.stringify({ obra, items })
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Error al asignar accesorio");
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Error al asignar accesorios");
 
-      onSave?.();
+      onSuccess?.();
       onClose();
-    } catch (error) {
-      setErrorMsg(error.message);
+    } catch (err) {
+      console.error("❌ Error al asignar accesorios:", err);
+      setErrorMsg(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Accesorio a Obra">
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        <Input
-          label="ID del Accesorio (manual)"
-          value={accesorioId}
-          onChange={(e) => setAccesorioId(e.target.value)}
-          required
-        />
+  if (!isOpen) return null;
 
+  return (
+    <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Accesorios a Obra">
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <Select
-          label="Seleccionar Obra"
-          value={obraId}
-          onChange={(e) => setObraId(e.target.value)}
+          label="Obra"
+          value={obra}
+          onChange={(e) => setObra(e.target.value)}
           options={obras.map((o) => ({ label: o.nombre, value: o._id }))}
           required
         />
 
-        <Input
-          label="Cantidad"
-          type="number"
-          value={cantidad}
-          min={1}
-          onChange={(e) => setCantidad(parseInt(e.target.value))}
-          required
-        />
+        <Button onClick={handleAddItem}>+ Añadir accesorio</Button>
+
+        {items.map((item, idx) => (
+          <div key={idx} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+            <Select
+              label="Código"
+              value={item.codigo}
+              onChange={(e) => handleChange(idx, "codigo", e.target.value)}
+              options={[
+                ...new Set(accesorios.map((a) => a.codigo))
+              ].map((codigo) => ({ label: codigo, value: codigo }))}
+              required
+            />
+
+            <Select
+              label="Color"
+              value={item.color}
+              onChange={(e) => handleChange(idx, "color", e.target.value)}
+              options={[
+                ...new Set(accesorios.map((a) => a.color))
+              ].map((color) => ({ label: color, value: color }))}
+              required
+            />
+
+            <Input
+              label="Cantidad"
+              type="number"
+              min="1"
+              value={item.cantidad}
+              onChange={(e) => handleChange(idx, "cantidad", e.target.value)}
+              required
+            />
+
+            <Button variant="danger" type="button" onClick={() => handleRemove(idx)}>🗑</Button>
+          </div>
+        ))}
 
         <ErrorText>{errorMsg}</ErrorText>
 
-        <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
           <Button type="submit" disabled={loading}>Asignar</Button>
-          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
-            Cancelar
-          </Button>
+          <Button variant="secondary" onClick={onClose} disabled={loading}>Cancelar</Button>
         </div>
       </form>
     </ModalBase>

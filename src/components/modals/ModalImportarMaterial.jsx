@@ -5,7 +5,6 @@ import ModalBase from "./ModalBase.jsx";
 import Input from "../ui/Input.jsx";
 import Button from "../ui/Button.jsx";
 import ErrorText from "../ui/ErrorText.jsx";
-import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL, tipo }) {
   const [items, setItems] = useState([]);
@@ -59,28 +58,34 @@ export default function ModalImportarMaterial({ isOpen, onClose, token, API_URL,
   const handleImport = async () => {
     setLoading(true);
     setErrorMsg("");
+    let errores = 0;
 
     try {
       for (const item of items) {
-        const res = await fetch(`${API_URL}/api/panol/${tipo}s`, {
+        const res = await fetch(`${API_URL}/api/panol/${tipo}/import`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(item),
+          body: JSON.stringify([item]), // el backend espera un array
         });
 
         if (!res.ok) {
           const err = await res.json();
           console.warn("Error con item:", item, err.message);
+          errores++;
         }
       }
 
-      onClose();
+      if (errores > 0) {
+        setErrorMsg(`Se importaron con errores ${errores} de ${items.length} ítems.`);
+      } else {
+        onClose();
+      }
     } catch (err) {
       console.error("Error de importación:", err);
-      setErrorMsg("Error al importar algunos ítems.");
+      setErrorMsg("Error al importar ítems.");
     } finally {
       setLoading(false);
     }

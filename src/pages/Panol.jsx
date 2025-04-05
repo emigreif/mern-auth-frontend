@@ -12,6 +12,7 @@ import ModalImportarMaterial from "../components/modals/ModalImportarMaterial.js
 import ModalAsignarPerfil from "../components/modals/ModalAsignarPerfil.jsx";
 import ModalAsignarAccesorio from "../components/modals/ModalAsignarAccesorio.jsx";
 import ModalAsignarVidrio from "../components/modals/ModalAsignarVidrio.jsx";
+import ModalAsignarHerramienta from "../components/modals/ModalAsignarHerramienta.jsx";
 
 // Componentes UI
 import Button from "../components/ui/Button.jsx";
@@ -42,6 +43,8 @@ export default function Panol() {
     asignarAccesorio: false,
     modalImportar: false,
     asignarVidrio: false,
+    asignarHerramienta: false, 
+  
   });
 
   const [loading, setLoading] = useState(false);
@@ -168,36 +171,37 @@ export default function Panol() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <Button onClick={() => setModals({ ...modals, modalImportar: true })}>
-  📥 Importar {tab}
-</Button>
+          📥 Importar {tab}
+        </Button>
 
-        <Button onClick={() => {
-  const modalMap = {
-    herramientas: "herramienta",
-    perfiles: "perfil",
-    vidrios: "vidrio",
-    accesorios: "accesorio",
-  };
-  openModal(modalMap[tab]);
-}}>
-  + Agregar {tab}
-</Button>
+        <Button
+          onClick={() => {
+            const modalMap = {
+              herramientas: "herramienta",
+              perfiles: "perfil",
+              vidrios: "vidrio",
+              accesorios: "accesorio",
+            };
+            openModal(modalMap[tab]);
+          }}
+        >
+          + Agregar {tab}
+        </Button>
         {tab !== "herramientas" && (
-     <Button
-     variant="secondary"
-     onClick={() => {
-       const asignarMap = {
-         perfiles: "asignarPerfil",
-         accesorios: "asignarAccesorio",
-         vidrios: "asignarVidrio",
-       };
-       const modalKey = asignarMap[tab];
-       if (modalKey) setModals({ ...modals, [modalKey]: true });
-     }}
-   >
-     ➡️ Asignar a Obra
-   </Button>
-   
+          <Button
+            variant="secondary"
+            onClick={() => {
+              const asignarMap = {
+                perfiles: "asignarPerfil",
+                accesorios: "asignarAccesorio",
+                vidrios: "asignarVidrio",
+              };
+              const modalKey = asignarMap[tab];
+              if (modalKey) setModals({ ...modals, [modalKey]: true });
+            }}
+          >
+            ➡️ Asignar a Obra
+          </Button>
         )}
       </div>
 
@@ -232,6 +236,7 @@ export default function Panol() {
           onSaved={closeAllModals}
         />
       )}
+
       {modals.perfil && (
         <ModalPerfil
           isOpen
@@ -248,16 +253,26 @@ export default function Panol() {
           onSave={closeAllModals}
         />
       )}
+
       {modals.accesorio && (
         <ModalAccesorio
+          accesorio={editingItem}
+          onClose={closeAllModals}
+          onSaved={closeAllModals}
+          token={token}
+          apiUrl={API_URL}
+        />
+      )}
+      {modals.asignarHerramienta && (
+        <ModalAsignarHerramienta
           isOpen
-          accesorioData={editingItem}
+          API_URL={API_URL}
+          token={token}
           onClose={closeAllModals}
           onSave={closeAllModals}
         />
       )}
 
-      {/* Modales de asignación */}
       {modals.asignarPerfil && (
         <ModalAsignarPerfil
           isOpen
@@ -269,6 +284,7 @@ export default function Panol() {
           onSuccess={closeAllModals}
         />
       )}
+
       {modals.asignarAccesorio && (
         <ModalAsignarAccesorio
           isOpen
@@ -281,14 +297,14 @@ export default function Panol() {
         />
       )}
       {modals.modalImportar && (
-  <ModalImportarMaterial
-    isOpen
-    tipo={tab}
-    token={token}
-    API_URL={API_URL}
-    onClose={closeAllModals}
-  />
-)}
+        <ModalImportarMaterial
+          isOpen
+          tipo={tab}
+          token={token}
+          API_URL={API_URL}
+          onClose={closeAllModals}
+        />
+      )}
 
       {modals.asignarVidrio && (
         <ModalAsignarVidrio

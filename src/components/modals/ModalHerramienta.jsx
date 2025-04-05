@@ -1,4 +1,3 @@
-// src/components/modals/ModalHerramienta.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Input from "../ui/Input.jsx";
@@ -23,15 +22,14 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (herramienta) {
-      setFormData({
-        marca: herramienta.marca || "",
-        modelo: herramienta.modelo || "",
-        descripcion: herramienta.descripcion || "",
-        numeroSerie: herramienta.numeroSerie || "",
-        estado: herramienta.estado || "en taller",
-      });
-    }
+    const defaults = {
+      marca: "",
+      modelo: "",
+      descripcion: "",
+      numeroSerie: "",
+      estado: "en taller",
+    };
+    setFormData({ ...defaults, ...herramienta });
   }, [herramienta]);
 
   const handleChange = (e) => {
@@ -39,14 +37,30 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validate = () => {
+    if (!formData.marca || !formData.modelo || !formData.descripcion || !formData.numeroSerie) {
+      setErrorMsg("Todos los campos son obligatorios");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg("");
+    if (!validate()) return;
+
     setLoading(true);
+    setErrorMsg("");
 
     try {
-      const res = await fetch(`${API_URL}/api/panol/herramientas`, {
-        method: "POST",
+      const url = herramienta
+        ? `${API_URL}/api/panol/herramientas/${herramienta._id}`
+        : `${API_URL}/api/panol/herramientas`;
+
+      const method = herramienta ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -62,7 +76,6 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
       onSaved?.();
       onClose();
     } catch (error) {
-      console.error("Error:", error);
       setErrorMsg(error.message);
     } finally {
       setLoading(false);
@@ -120,7 +133,7 @@ export default function ModalHerramienta({ herramienta, onClose, onSaved }) {
 
         <div style={{ display: "flex", gap: "1rem" }}>
           <Button type="submit" disabled={loading}>
-            Guardar
+            {herramienta ? "Actualizar" : "Guardar"}
           </Button>
           <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
             Cancelar

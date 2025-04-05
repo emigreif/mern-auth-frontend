@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
+import Select from "../ui/Select.jsx";
 import Button from "../ui/Button.jsx";
+import ErrorText from "../ui/ErrorText.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
-export default function ModalVidrio({
-  isOpen,
-  onClose,
-  vidrioData = null,
-  onSave,
-}) {
+export default function ModalVidrio({ isOpen, onClose, vidrioData = null, onSave }) {
+  const { token } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  const safeNumber = (val) => (isNaN(parseFloat(val)) ? 0 : parseFloat(val));
+
   const [form, setForm] = useState({
     descripcion: "",
     tipo: "simple",
@@ -17,23 +21,25 @@ export default function ModalVidrio({
   });
 
   const [errors, setErrors] = useState({});
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setForm({
-      descripcion: vidrioData?.descripcion || "",
-      tipo: vidrioData?.tipo || "simple",
-      ancho: vidrioData?.ancho || 0,
-      alto: vidrioData?.alto || 0,
-      cantidad: vidrioData?.cantidad || 0,
-    });
+    const defaults = {
+      descripcion: "",
+      tipo: "simple",
+      ancho: 0,
+      alto: 0,
+      cantidad: 0,
+    };
+    setForm({ ...defaults, ...vidrioData });
   }, [vidrioData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]:
-        name === "descripcion" || name === "tipo" ? value : parseFloat(value),
+      [name]: ["ancho", "alto", "cantidad"].includes(name) ? safeNumber(value) : value,
     }));
   };
 
@@ -47,88 +53,96 @@ export default function ModalVidrio({
     return Object.keys(err).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    onSave(form);
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const url = vidrioData
+        ? `${API_URL}/api/panol/vidrios/${vidrioData._id}`
+        : `${API_URL}/api/panol/vidrios`;
+      const method = vidrioData ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Error al guardar vidrio");
+      }
+
+      onSave?.();
+      onClose();
+    } catch (err) {
+      setErrorMsg(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <ModalBase
-      isOpen={isOpen}
-      onClose={onClose}
-      title={vidrioData ? "Editar Vidrio" : "Nuevo Vidrio"}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-      >
-        <div>
-          <label>Descripción</label>
-          <input
-            type="text"
-            name="descripcion"
-            value={form.descripcion}
-            onChange={handleChange}
-          />
-          {errors.descripcion && (
-            <small style={{ color: "red" }}>{errors.descripcion}</small>
-          )}
-        </div>
+    <ModalBase isOpen={isOpen} onClose={onClose} title={vidrioData ? "Editar Vidrio" : "Nuevo Vidrio"}>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <Input
+          label="Descripción"
+          name="descripcion"
+          value={form.descripcion}
+          onChange={handleChange}
+        />
+        <Select
+          label="Tipo"
+          name="tipo"
+          value={form.tipo}
+          onChange={handleChange}
+          options={[
+            { value: "simple", label: "Simple" },
+            { value: "dvh", label: "Doble (DVH)" },
+            { value: "tvh", label: "Triple (TVH)" },
+            { value: "laminado", label: "Laminado" },
+          ]}
+        />
+        <Input
+          label="Ancho (mm)"
+          name="ancho"
+          type="number"
+          value={form.ancho}
+          onChange={handleChange}
+        />
+        <Input
+          label="Alto (mm)"
+          name="alto"
+          type="number"
+          value={form.alto}
+          onChange={handleChange}
+        />
+        <Input
+          label="Cantidad"
+          name="cantidad"
+          type="number"
+          value={form.cantidad}
+          onChange={handleChange}
+        />
 
-        <div>
-          <label>Tipo</label>
-          <select name="tipo" value={form.tipo} onChange={handleChange}>
-            <option value="simple">Simple</option>
-            <option value="dvh">Doble (DVH)</option>
-            <option value="tvh">Triple (TVH)</option>
-          </select>
-        </div>
+        {Object.values(errors).map((e, idx) => (
+          <ErrorText key={idx}>{e}</ErrorText>
+        ))}
+        <ErrorText>{errorMsg}</ErrorText>
 
-        <div>
-          <label>Ancho (mm)</label>
-          <input
-            type="number"
-            name="ancho"
-            value={form.ancho}
-            onChange={handleChange}
-          />
-          {errors.ancho && (
-            <small style={{ color: "red" }}>{errors.ancho}</small>
-          )}
-        </div>
-
-        <div>
-          <label>Alto (mm)</label>
-          <input
-            type="number"
-            name="alto"
-            value={form.alto}
-            onChange={handleChange}
-          />
-          {errors.alto && <small style={{ color: "red" }}>{errors.alto}</small>}
-        </div>
-
-        <div>
-          <label>Cantidad</label>
-          <input
-            type="number"
-            name="cantidad"
-            value={form.cantidad}
-            onChange={handleChange}
-          />
-          {errors.cantidad && (
-            <small style={{ color: "red" }}>{errors.cantidad}</small>
-          )}
-        </div>
-
-        <div
-          style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
-        >
-          <Button type="submit">Guardar</Button>
-          <Button type="button" variant="secondary" onClick={onClose}>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+          <Button type="submit" disabled={loading}>
+            {vidrioData ? "Actualizar" : "Guardar"}
+          </Button>
+          <Button variant="secondary" type="button" onClick={onClose} disabled={loading}>
             Cancelar
           </Button>
         </div>

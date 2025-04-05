@@ -1,91 +1,124 @@
-// src/components/modals/modalPerfil.jsx
 import React, { useState, useEffect } from "react";
 import ModalBase from "./ModalBase.jsx";
+import Input from "../ui/Input.jsx";
 import Button from "../ui/Button.jsx";
 import ErrorText from "../ui/ErrorText.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
-export default function ModalPerfil({ isOpen, onClose, perfilData = {}, onSave }) {
-  const [formData, setFormData] = useState({
+export default function ModalPerfil({ isOpen, onClose, perfilData = null, onSave }) {
+  const { token } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  const [form, setForm] = useState({
     codigo: "",
     descripcion: "",
     color: "",
     largo: 0,
     pesoxmetro: 0,
-    cantidad: 0
+    cantidad: 0,
   });
-  const [errors, setErrors] = useState({});
 
+  const [errors, setErrors] = useState({});
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Función auxiliar para prevenir NaN y valores undefined
+  const safeNumber = (val) => (isNaN(parseFloat(val)) ? 0 : parseFloat(val));
+
+  // Aplicar defaults seguros al abrir modal
   useEffect(() => {
-    if (perfilData) {
-      setFormData(perfilData);
-    }
+    const defaults = {
+      codigo: "",
+      descripcion: "",
+      color: "",
+      largo: 0,
+      pesoxmetro: 0,
+      cantidad: 0,
+    };
+    setForm({ ...defaults, ...perfilData });
   }, [perfilData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: ["largo", "pesoxmetro", "cantidad"].includes(name) ? safeNumber(value) : value,
+    }));
   };
 
   const validate = () => {
     const err = {};
-    if (!formData.codigo) err.codigo = "Código requerido";
-    if (!formData.descripcion) err.descripcion = "Descripción requerida";
-    if (formData.cantidad < 0) err.cantidad = "Cantidad no puede ser negativa";
-    if (formData.largo < 0) err.largo = "Largo no puede ser negativo";
-    if (formData.pesoxmetro < 0) err.pesoxmetro = "Peso x metro inválido";
+    if (!form.codigo) err.codigo = "Código requerido";
+    if (!form.descripcion) err.descripcion = "Descripción requerida";
+    if (form.largo <= 0) err.largo = "Largo inválido";
+    if (form.pesoxmetro <= 0) err.pesoxmetro = "Peso x metro inválido";
+    if (form.cantidad < 0) err.cantidad = "Cantidad inválida";
     setErrors(err);
     return Object.keys(err).length === 0;
   };
 
-  const handleSave = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    onSave(formData);
+
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const url = perfilData
+        ? `${API_URL}/api/panol/perfiles/${perfilData._id}`
+        : `${API_URL}/api/panol/perfiles`;
+      const method = perfilData ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Error al guardar perfil");
+      }
+
+      onSave?.();
+      onClose();
+    } catch (err) {
+      console.error("❌ Error al guardar perfil:", err);
+      setErrorMsg(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} title="Perfil OV">
-      <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <div>
-          <label>Código</label>
-          <input type="text" name="codigo" value={formData.codigo || ""} onChange={handleChange} />
-          <ErrorText>{errors.codigo}</ErrorText>
-        </div>
+    <ModalBase isOpen={isOpen} onClose={onClose} title={perfilData ? "Editar Perfil" : "Nuevo Perfil"}>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <Input label="Código" name="codigo" value={form.codigo} onChange={handleChange} />
+        <Input label="Descripción" name="descripcion" value={form.descripcion} onChange={handleChange} />
+        <Input label="Color" name="color" value={form.color} onChange={handleChange} />
+        <Input label="Largo (mm)" type="number" name="largo" value={form.largo} onChange={handleChange} />
+        <Input label="Peso x metro (kg)" type="number" name="pesoxmetro" value={form.pesoxmetro} onChange={handleChange} />
+        <Input label="Cantidad" type="number" name="cantidad" value={form.cantidad} onChange={handleChange} />
 
-        <div>
-          <label>Descripción</label>
-          <input type="text" name="descripcion" value={formData.descripcion || ""} onChange={handleChange} />
-          <ErrorText>{errors.descripcion}</ErrorText>
-        </div>
+        {Object.values(errors).map((e, idx) => (
+          <ErrorText key={idx}>{e}</ErrorText>
+        ))}
+        <ErrorText>{errorMsg}</ErrorText>
 
-        <div>
-          <label>Color</label>
-          <input type="text" name="color" value={formData.color || ""} onChange={handleChange} />
-        </div>
-
-        <div>
-          <label>Largo</label>
-          <input type="number" name="largo" value={formData.largo || 0} onChange={handleChange} />
-          <ErrorText>{errors.largo}</ErrorText>
-        </div>
-
-        <div>
-          <label>Peso x metro</label>
-          <input type="number" name="pesoxmetro" value={formData.pesoxmetro || 0} onChange={handleChange} />
-          <ErrorText>{errors.pesoxmetro}</ErrorText>
-        </div>
-
-        <div>
-          <label>Cantidad</label>
-          <input type="number" name="cantidad" value={formData.cantidad || 0} onChange={handleChange} />
-          <ErrorText>{errors.cantidad}</ErrorText>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
-          <Button type="submit">Guardar</Button>
-          <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+          <Button type="submit" disabled={loading}>
+            {perfilData ? "Actualizar" : "Guardar"}
+          </Button>
+          <Button type="button" variant="secondary" onClick={onClose} disabled={loading}>
+            Cancelar
+          </Button>
         </div>
       </form>
     </ModalBase>

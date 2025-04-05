@@ -1,4 +1,3 @@
-// src/components/modals/ModalAsignarVidrio.jsx
 import React, { useEffect, useState } from "react";
 import ModalBase from "./ModalBase.jsx";
 import Input from "../ui/Input.jsx";
@@ -8,9 +7,9 @@ import ErrorText from "../ui/ErrorText.jsx";
 
 export default function ModalAsignarVidrio({ isOpen, onClose, onSave, token, API_URL }) {
   const [obras, setObras] = useState([]);
-  const [vidrioId, setVidrioId] = useState("");
+  const [ancho, setAncho] = useState("");
+  const [alto, setAlto] = useState("");
   const [obraId, setObraId] = useState("");
-  const [cantidad, setCantidad] = useState(1);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -36,21 +35,27 @@ export default function ModalAsignarVidrio({ isOpen, onClose, onSave, token, API
     e.preventDefault();
     setErrorMsg("");
 
-    if (!vidrioId || !obraId || cantidad <= 0) {
-      setErrorMsg("Todos los campos son obligatorios y la cantidad debe ser mayor a 0.");
+    const anchoNum = parseFloat(ancho);
+    const altoNum = parseFloat(alto);
+
+    if (!obraId || !anchoNum || !altoNum || anchoNum <= 0 || altoNum <= 0) {
+      setErrorMsg("Todos los campos son obligatorios y deben ser válidos.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/obras/asignar-vidrio`, {
+      const res = await fetch(`${API_URL}/api/panol/vidrios/asignar-manual`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ vidrio: vidrioId, obra: obraId, cantidad }),
+        body: JSON.stringify({
+          obra: obraId,
+          items: [{ ancho: anchoNum, alto: altoNum }],
+        }),
       });
 
       if (!res.ok) {
@@ -70,13 +75,6 @@ export default function ModalAsignarVidrio({ isOpen, onClose, onSave, token, API
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} title="Asignar Vidrio a Obra">
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        <Input
-          label="ID del Vidrio (manual)"
-          value={vidrioId}
-          onChange={(e) => setVidrioId(e.target.value)}
-          required
-        />
-
         <Select
           label="Seleccionar Obra"
           value={obraId}
@@ -89,11 +87,18 @@ export default function ModalAsignarVidrio({ isOpen, onClose, onSave, token, API
         />
 
         <Input
-          label="Cantidad"
+          label="Ancho (mm)"
           type="number"
-          value={cantidad}
-          min={1}
-          onChange={(e) => setCantidad(parseInt(e.target.value))}
+          value={ancho}
+          onChange={(e) => setAncho(e.target.value)}
+          required
+        />
+
+        <Input
+          label="Alto (mm)"
+          type="number"
+          value={alto}
+          onChange={(e) => setAlto(e.target.value)}
           required
         />
 
