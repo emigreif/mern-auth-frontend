@@ -1,3 +1,4 @@
+// src/components/modals/ModalPresupuesto.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import ModalBase from "./ModalBase.jsx";
@@ -108,6 +109,15 @@ export default function ModalPresupuesto({ editingPresupuesto, onClose, onSaved,
             </select>
             <Button onClick={onAddCliente}>➕ Nuevo Cliente</Button>
           </div>
+        </label>
+
+        <label>
+          Estado
+          <select name="estado" value={form.estado} onChange={handleChange}>
+            <option value="pendiente">Pendiente</option>
+            <option value="aprobado">Aprobado</option>
+            <option value="perdido">Perdido</option>
+          </select>
         </label>
 
         <label>

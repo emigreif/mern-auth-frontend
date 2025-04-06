@@ -1,8 +1,9 @@
-// src/pages/Reportes.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import ModalBase from "../components/modals/ModalBase.jsx";
+import Input from "../components/ui/Input.jsx";
 import Button from "../components/ui/Button.jsx";
+import ErrorText from "../components/ui/ErrorText.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 export default function Reportes() {
@@ -19,9 +20,7 @@ export default function Reportes() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (token) {
-      fetchReportes();
-    }
+    if (token) fetchReportes();
   }, [token]);
 
   const fetchReportes = async () => {
@@ -76,24 +75,20 @@ export default function Reportes() {
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Reportes</h1>
-        <Button onClick={() => setIsModalOpen(true)}>
-          + Agregar Reporte
-        </Button>
+        <Button onClick={() => setIsModalOpen(true)}>+ Agregar Reporte</Button>
       </div>
 
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-      {loading && <div className={styles.spinner}>Cargando reportes...</div>}
+      {errorMsg && <ErrorText>{errorMsg}</ErrorText>}
+      {loading && <div>Cargando reportes...</div>}
       {!loading && reportes.length === 0 && !errorMsg && (
-        <div className={styles.noData}>No hay reportes para mostrar</div>
+        <div>No hay reportes para mostrar</div>
       )}
       {!loading && reportes.length > 0 && (
-        <div className={styles.list}>
+        <div>
           {reportes.map((r) => (
             <div key={r._id} className={styles.listItem}>
               <h2>{r.categoria}</h2>
-              <p>
-                <strong>Descripción:</strong> {r.descripcion}
-              </p>
+              <p><strong>Descripción:</strong> {r.descripcion}</p>
               <p>
                 <strong>Fecha:</strong>{" "}
                 {r.fecha ? new Date(r.fecha).toLocaleDateString() : ""}
@@ -106,24 +101,26 @@ export default function Reportes() {
       {isModalOpen && (
         <ModalBase isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Agregar Reporte">
           <form onSubmit={handleCreateReporte} className={styles.formBase}>
-            {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-            <div className={styles.formGroup}>
-              <label>Categoría</label>
-              <input
-                type="text"
-                name="categoria"
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            <ErrorText>{errorMsg}</ErrorText>
+
+            <Input
+              name="categoria"
+              label="Categoría"
+              value={nuevoReporte.categoria}
+              onChange={handleInputChange}
+              required
+            />
+
             <div className={styles.formGroup}>
               <label>Descripción</label>
               <textarea
                 name="descripcion"
+                value={nuevoReporte.descripcion}
                 onChange={handleInputChange}
                 required
               />
             </div>
+
             <div className={styles.actions} style={{ marginTop: "1rem" }}>
               <Button type="submit">Guardar</Button>
               <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>

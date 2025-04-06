@@ -5,7 +5,7 @@ import styles from "../../styles/components/Form.module.css";
 const Select = ({
   label,
   name,
-  value,
+  value = "",
   onChange,
   options = [],
   required = false,
@@ -25,7 +25,7 @@ const Select = ({
         {options.map((opt) =>
           typeof opt === "string" ? (
             <option key={opt} value={opt}>
-              {opt}
+              {opt.charAt(0).toUpperCase() + opt.slice(1)}
             </option>
           ) : (
             <option key={opt.value} value={opt.value}>

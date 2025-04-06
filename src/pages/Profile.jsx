@@ -1,8 +1,8 @@
-// src/pages/Profile.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import Button from "../components/ui/Button.jsx";
+import Input from "../components/ui/Input.jsx";
 import { Link } from "react-router-dom";
 
 const Profile = () => {
@@ -20,7 +20,6 @@ const Profile = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Al montar, si hay user, llenamos el formulario
   useEffect(() => {
     if (user) {
       setFormData({
@@ -56,7 +55,6 @@ const Profile = () => {
         throw new Error(data.message || "Error al actualizar perfil");
       }
       setSuccessMsg(data.message || "Perfil actualizado correctamente");
-      // Aquí podrías actualizar el contexto de usuario si lo deseas.
     } catch (error) {
       setErrorMsg(error.message);
     } finally {
@@ -65,77 +63,68 @@ const Profile = () => {
   };
 
   if (!user) {
-    return (
-      <div className={styles.spinner}>
-        Debes iniciar sesión para ver tu perfil.
-      </div>
-    );
+    return <div>Debes iniciar sesión para ver tu perfil.</div>;
   }
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Mi Perfil</h1>
-        <div style={{ display: "flex", flexWrap: "wrap",color: "gray", gap: "50px" }}>
-        <h3>
-          <Link to="/configuracion" > Configuración </Link>
-        </h3>
-        <h3>
-          <Link to="/perfiles">Perfiles</Link>
-        </h3>
+        <div style={{ display: "flex", flexWrap: "wrap", color: "gray", gap: "50px" }}>
+          <h3>
+            <Link to="/configuracion">Configuración</Link>
+          </h3>
+          <h3>
+            <Link to="/perfiles">Perfiles</Link>
+          </h3>
+        </div>
       </div>
-      </div>
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-      {successMsg && <p className={styles.success}>{successMsg}</p>}
 
-      <form onSubmit={handleUpdateProfile} className={styles.formBase}>
-        <div className={styles.formGroup}>
-          <label>Nombre</label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            disabled={loading}
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Apellido</label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            disabled={loading}
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Email (no editable)</label>
-          <input type="email" name="email" value={formData.email} disabled />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Contraseña Actual</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Sólo si cambias la contraseña"
-            value={formData.password}
-            onChange={handleChange}
-            disabled={loading}
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Nueva Contraseña</label>
-          <input
-            type="password"
-            name="newPassword"
-            placeholder="Sólo si cambias la contraseña"
-            value={formData.newPassword}
-            onChange={handleChange}
-            disabled={loading}
-          />
-        </div>
-        <div className={styles.actions}>
+      {errorMsg && <p >{errorMsg}</p>}
+      {successMsg && <p >{successMsg}</p>}
+
+      <form onSubmit={handleUpdateProfile} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <Input
+          label="Nombre"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          disabled={loading}
+        />
+        <Input
+          label="Apellido"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          disabled={loading}
+        />
+        <Input
+          label="Email (no editable)"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          disabled
+        />
+        <Input
+          label="Contraseña Actual"
+          name="password"
+          type="password"
+          placeholder="Sólo si cambias la contraseña"
+          value={formData.password}
+          onChange={handleChange}
+          disabled={loading}
+        />
+        <Input
+          label="Nueva Contraseña"
+          name="newPassword"
+          type="password"
+          placeholder="Sólo si cambias la contraseña"
+          value={formData.newPassword}
+          onChange={handleChange}
+          disabled={loading}
+        />
+        <div >
           <Button type="submit" disabled={loading}>
             {loading ? "Actualizando..." : "Actualizar"}
           </Button>

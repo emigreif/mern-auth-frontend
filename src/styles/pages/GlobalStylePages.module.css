@@ -1,10 +1,3 @@
-/* ======================================================
-   1. CONTAINER & LAYOUT
-====================================================== */
-.container {
-  width: 100%;
-  padding: 15px;
-}
 
 .pageContainer {
   background-color: #fff;
@@ -12,9 +5,6 @@
   padding: 2rem;
 }
 
-/* ======================================================
-   2. HEADER
-====================================================== */
 .header {
   display: flex;
   align-items: center;
@@ -22,71 +12,3 @@
   margin-bottom: 1rem;
 }
 
-.formGroup input,
-.searchInput,
-.filterInput,
-.filterSelect {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-/* ======================================================
-   8. MENSAJES / ESTADOS
-====================================================== */
-.error {
-  color: red;
-  margin-bottom: 1rem;
-}
-
-.noData,
-.noEvents,
-.spinner {
-  text-align: center;
-  margin: 2rem;
-  font-size: 1.2rem;
-  color: #888;
-}
-
-.success {
-  color: green;
-  margin-bottom: 1rem;
-}
-
-/* ======================================================
-   9. FILTROS / BÚSQUEDA
-====================================================== */
-.filters {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.searchSection {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-/* ======================================================
-   13. COMPONENTES ESPECÍFICOS / OTROS
-====================================================== */
-
-.lista {
-  list-style-type: none;
-  padding: 0;
-}
-
-.lista li {
-  padding: 0.25rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-
-.row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}

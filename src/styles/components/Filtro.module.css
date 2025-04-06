@@ -1,0 +1,19 @@
+.panel {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    margin-bottom: 1.5rem;
+  }
+  
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .acciones {
+    margin-top: 1rem;
+    text-align: right;
+  }
+  

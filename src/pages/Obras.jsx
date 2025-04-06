@@ -133,10 +133,10 @@ export default function Obras() {
         />
       </div>
 
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-      {loading && <div className={styles.spinner}>Cargando obras...</div>}
+      {errorMsg && <p >{errorMsg}</p>}
+      {loading && <div>Cargando obras...</div>}
       {!loading && obras.length === 0 && !errorMsg && (
-        <div className={styles.noData}>No hay obras para mostrar</div>
+        <div >No hay obras para mostrar</div>
       )}
 
       {!loading && filteredObras.length > 0 && (

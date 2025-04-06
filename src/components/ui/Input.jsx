@@ -11,6 +11,10 @@ const Input = ({
   placeholder = "",
   required = false,
 }) => {
+  const inputValue = type === "number" && (value === null || value === undefined || isNaN(value))
+    ? 0
+    : value;
+
   return (
     <div className={styles.formGroup}>
       {label && <label htmlFor={name}>{label}</label>}
@@ -19,7 +23,7 @@ const Input = ({
         id={name}
         name={name}
         className={styles.input}
-        value={value}
+        value={inputValue}
         onChange={onChange}
         placeholder={placeholder}
         required={required}

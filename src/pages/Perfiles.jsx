@@ -100,12 +100,12 @@ const Perfiles = () => {
         
       </div>
 
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+      {errorMsg && <p >{errorMsg}</p>}
       {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
-      {loading && <div className={styles.spinner}>Cargando perfiles...</div>}
+      {loading && <div >Cargando perfiles...</div>}
 
       {!loading && perfiles.length === 0 && !errorMsg && (
-        <div className={styles.noData}>No hay perfiles para mostrar</div>
+        <div >No hay perfiles para mostrar</div>
       )}
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "50px" }}>

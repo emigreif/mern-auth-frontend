@@ -187,7 +187,7 @@ const Nomina = () => {
           onClose={() => { setShowAumentoModal(false); setAumentoEmpleado(null); }}
           title={`Aumento ${aumentoEmpleado ? "Empleado" : "General"}`}
         >
-          <div className={styles.modalForm}>
+          <div >
             <label>Aplicar a:</label>
             <select value={aumentoData.aplicarA} onChange={(e) => setAumentoData({ ...aumentoData, aplicarA: e.target.value })}>
               <option value="blanco">Registrado</option>
@@ -208,7 +208,7 @@ const Nomina = () => {
               onChange={(e) => setAumentoData({ ...aumentoData, valor: parseFloat(e.target.value) || 0 })}
             />
 
-            <div className={styles.actions}>
+            <div >
               <Button onClick={handleAumento}>Aplicar</Button>
               <Button variant="secondary" onClick={() => setShowAumentoModal(false)}>Cancelar</Button>
             </div>
@@ -223,7 +223,7 @@ const Nomina = () => {
           title="Editar Sueldo"
           onClose={() => setEditSueldo(null)}
         >
-          <div className={styles.modalForm}>
+          <div>
             <label>Registrado (blanco):</label>
             <input
               type="number"
@@ -250,7 +250,7 @@ const Nomina = () => {
                 }));
               }}
             />
-            <div className={styles.actions}>
+            <div >
               <Button onClick={handleEditSueldo}>Guardar</Button>
               <Button variant="secondary" onClick={() => setEditSueldo(null)}>Cancelar</Button>
             </div>

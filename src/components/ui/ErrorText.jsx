@@ -4,7 +4,7 @@ import styles from "../../styles/pages/GlobalStylePages.module.css"; // Usa .err
 
 const ErrorText = ({ children }) => {
   if (!children) return null;
-  return <p className={styles.error}>{children}</p>;
+  return <p >{children}</p>;
 };
 
 export default ErrorText;

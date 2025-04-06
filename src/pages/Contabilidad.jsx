@@ -126,7 +126,7 @@ export default function Contabilidad() {
         <Button onClick={handleOpenNuevo}>➕ Nuevo Movimiento</Button>
       </div>
 
-      <div className={styles.filtros}>
+      <div>
         <select name="tipo" value={filtros.tipo} onChange={handleFiltroChange}>
           <option value="">-- Tipo --</option>
           {[

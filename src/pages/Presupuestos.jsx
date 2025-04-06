@@ -1,10 +1,10 @@
-// src/pages/Presupuestos.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 import ModalPresupuesto from "../components/modals/ModalPresupuesto.jsx";
 import ModalObra from "../components/modals/ModalObra.jsx";
 import Button from "../components/ui/Button.jsx";
+import Semaforo from "../components/ui/Semaforo.jsx";
 
 export default function Presupuestos() {
   const { token } = useAuth();
@@ -15,7 +15,6 @@ export default function Presupuestos() {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Modales
   const [isPresupuestoModalOpen, setIsPresupuestoModalOpen] = useState(false);
   const [isObraModalOpen, setIsObraModalOpen] = useState(false);
   const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
@@ -79,8 +78,7 @@ export default function Presupuestos() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro que deseas eliminar este presupuesto?"))
-      return;
+    if (!window.confirm("¿Seguro que deseas eliminar este presupuesto?")) return;
     try {
       const res = await fetch(`${API_URL}/api/presupuestos/${id}`, {
         method: "DELETE",
@@ -103,6 +101,19 @@ export default function Presupuestos() {
     setIsObraModalOpen(true);
   };
 
+  const mapEstadoToColor = (estado) => {
+    switch (estado) {
+      case "aprobado":
+        return "verde";
+      case "pendiente":
+        return "naranja";
+      case "perdido":
+        return "rojo";
+      default:
+        return "gris";
+    }
+  };
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
@@ -110,12 +121,10 @@ export default function Presupuestos() {
         <Button onClick={handleOpenCreate}>+ Nuevo Presupuesto</Button>
       </div>
 
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-      {loading && (
-        <div className={styles.spinner}>Cargando presupuestos...</div>
-      )}
+      {errorMsg && <p>{errorMsg}</p>}
+      {loading && <div>Cargando presupuestos...</div>}
       {!loading && presupuestos.length === 0 && !errorMsg && (
-        <div className={styles.noData}>No hay presupuestos para mostrar</div>
+        <div>No hay presupuestos para mostrar</div>
       )}
       {!loading && presupuestos.length > 0 && (
         <div>
@@ -126,22 +135,21 @@ export default function Presupuestos() {
                   {pres.idPresupuesto ? `#${pres.idPresupuesto} - ` : ""}
                   {pres.nombreObra}
                 </h2>
-                <span className={`${styles.estado} ${styles[pres.estado]}`}>
-                  {pres.estado}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <Semaforo estado={mapEstadoToColor(pres.estado)} />
+                  <span>{pres.estado}</span>
+                </div>
               </div>
+
               <div style={{ display: "flex", flexWrap: "wrap", gap: "50px" }}>
                 <p>
-                  <strong>Cliente:</strong>{" "}
-                  {pres.cliente?.nombre || "Sin cliente"}
+                  <strong>Cliente:</strong> {pres.cliente?.nombre || "Sin cliente"}
                 </p>
                 <p>
                   <strong>Dirección:</strong> {pres.direccion}
                 </p>
-                
                 <p>
-                  <strong>Total Presupuestado:</strong> $
-                  {pres.totalPresupuestado || 0}
+                  <strong>Total Presupuestado:</strong> ${pres.totalPresupuestado || 0}
                 </p>
                 <p>
                   <strong>Fecha Entrega:</strong>{" "}
@@ -149,10 +157,9 @@ export default function Presupuestos() {
                     ? new Date(pres.fechaEntrega).toLocaleDateString()
                     : "N/D"}
                 </p>
-                
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "flex-end" }}>
 
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "flex-end" }}>
                 <Button onClick={() => handleOpenEdit(pres)}>✏️ Editar</Button>
                 <Button variant="danger" onClick={() => handleDelete(pres._id)}>
                   🗑️ Eliminar
@@ -178,6 +185,7 @@ export default function Presupuestos() {
           onAddCliente={() => setIsClienteModalOpen(true)}
         />
       )}
+
       {isObraModalOpen && obraForm && (
         <ModalObra
           obra={obraForm}

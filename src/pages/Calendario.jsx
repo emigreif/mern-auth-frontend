@@ -72,9 +72,9 @@ const Calendario = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.header}>
+      <div>
         <h1>Calendario</h1>
-        <div className={styles.filters}>
+        <div >
           <select value={obraId} onChange={(e) => setObraId(e.target.value)}>
             <option value="">Todas las Obras</option>
             {obras.map((o) => (
@@ -95,13 +95,13 @@ const Calendario = () => {
         </div>
       </div>
 
-      {loading && <div className={styles.spinner}>Cargando eventos...</div>}
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+      {loading && <div >Cargando eventos...</div>}
+      {errorMsg && <p >{errorMsg}</p>}
       {!loading && eventos.length === 0 && !errorMsg && (
-        <div className={styles.noEvents}>No hay eventos para mostrar</div>
+        <div className>No hay eventos para mostrar</div>
       )}
       {!loading && eventos.length > 0 && (
-        <div className={styles.calendarWrapper}>
+        <div >
           <FullCalendar
             plugins={[dayGridPlugin]}
             initialView="dayGridMonth"

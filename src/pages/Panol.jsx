@@ -150,7 +150,7 @@ export default function Panol() {
       {errorMsg && <p className={globalStyles.error}>{errorMsg}</p>}
       {loading && <p>Cargando datos...</p>}
 
-      <div className={styles.tabs}>
+      <div >
         {["herramientas", "perfiles", "vidrios", "accesorios"].map((t) => (
           <button
             key={t}
@@ -162,7 +162,7 @@ export default function Panol() {
         ))}
       </div>
 
-      <div className={styles.searchSection}>
+      <div>
         <input
           type="text"
           className={styles.searchInput}
@@ -205,7 +205,7 @@ export default function Panol() {
         )}
       </div>
 
-      <table className={styles.tableBase}>
+      <table>
         <thead>
           <tr>
             {renderFields().map((field) => (

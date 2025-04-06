@@ -5,6 +5,7 @@ import Button from "../components/ui/Button.jsx";
 import Table from "../components/ui/Table.jsx";
 import SearchBar from "../components/ui/SearchBar.jsx";
 import ModalBase from "../components/modals/ModalBase.jsx";
+import ModalNuevoCliente from "../components/modals/ModalNuevoCliente.jsx";
 
 export default function Clientes() {
   const { token } = useAuth();
@@ -144,7 +145,7 @@ export default function Clientes() {
         />
       </div>
 
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+      {errorMsg && <p>{errorMsg}</p>}
       {loading && <p>Cargando clientes...</p>}
 
       {!loading && (
@@ -184,18 +185,13 @@ export default function Clientes() {
       )}
 
       {isModalOpen && (
-        <ModalBase
-          isOpen={true}
+        <ModalNuevoCliente
           onClose={() => handleCloseModal()}
-          title={editingCliente ? "Editar Cliente" : "Nuevo Cliente"}
-        >
-          <ClienteForm
-            cliente={editingCliente}
-            onSuccess={() => handleCloseModal(true)}
-            API_URL={API_URL}
-            token={token}
-          />
-        </ModalBase>
+          onSaved={() => handleCloseModal(true)}
+          token={token}
+          apiUrl={API_URL}
+          cliente={editingCliente}
+        />
       )}
 
       {clienteSeleccionado && (
@@ -218,72 +214,6 @@ export default function Clientes() {
           )}
         </ModalBase>
       )}
-    </div>
-  );
-}
-
-function ClienteForm({ cliente, onSuccess, API_URL, token }) {
-  const [form, setForm] = useState({
-    nombre: cliente?.nombre || "",
-    apellido: cliente?.apellido || "",
-    email: cliente?.email || "",
-    telefono: cliente?.telefono || "",
-    calle: cliente?.direccion?.calle || "",
-    ciudad: cliente?.direccion?.ciudad || "",
-    condicionFiscal: cliente?.condicionFiscal || "Consumidor Final",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async () => {
-    const body = {
-      nombre: form.nombre,
-      apellido: form.apellido,
-      email: form.email,
-      telefono: form.telefono,
-      direccion: {
-        calle: form.calle,
-        ciudad: form.ciudad,
-      },
-      condicionFiscal: form.condicionFiscal,
-    };
-
-    const method = cliente ? "PUT" : "POST";
-    const endpoint = cliente ? `/api/clientes/${cliente._id}` : `/api/clientes`;
-
-    const res = await fetch(`${API_URL}${endpoint}`, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.ok) {
-      onSuccess();
-    } else {
-      alert("Error al guardar el cliente");
-    }
-  };
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      <input name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre *" />
-      <input name="apellido" value={form.apellido} onChange={handleChange} placeholder="Apellido *" />
-      <input name="email" value={form.email} onChange={handleChange} placeholder="Email *" />
-      <input name="telefono" value={form.telefono} onChange={handleChange} placeholder="Teléfono" />
-      <input name="calle" value={form.calle} onChange={handleChange} placeholder="Dirección - Calle" />
-      <input name="ciudad" value={form.ciudad} onChange={handleChange} placeholder="Dirección - Ciudad" />
-      <select name="condicionFiscal" value={form.condicionFiscal} onChange={handleChange}>
-        <option value="Consumidor Final">Consumidor Final</option>
-        <option value="Responsable Inscripto">Responsable Inscripto</option>
-        <option value="Monotributo">Monotributo</option>
-      </select>
-      <Button onClick={handleSubmit}>Guardar</Button>
     </div>
   );
 }

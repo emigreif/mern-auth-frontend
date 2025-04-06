@@ -17,10 +17,9 @@ const ModalBase = ({ isOpen, onClose, title, children }) => {
       aria-modal="true"
     >
       <div className={styles.modal} onClick={handleContentClick}>
-        <div className={styles.modalContent}>
+        <div>
           <Button
             variant="secondary"
-            className={styles.closeBtn}
             onClick={onClose}
             aria-label="Cerrar modal"
           >

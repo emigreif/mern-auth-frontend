@@ -3,7 +3,7 @@ import React from "react";
 import styles from "../../styles/components/List.module.css";
 
 export default function List({ items = [], renderItem }) {
-  if (!items.length) return <p className={styles.noData}>Lista vacía</p>;
+  if (!items.length) return <p >Lista vacía</p>;
 
   return <ul className={styles.list}>{items.map(renderItem)}</ul>;
 }

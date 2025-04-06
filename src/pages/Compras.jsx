@@ -32,7 +32,7 @@ export default function Compras() {
     try {
       const url = `${API_URL}/api/compras/${tipo}`;
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
         const errData = await res.json();
@@ -82,7 +82,7 @@ export default function Compras() {
       const url = `${API_URL}/api/compras/${c.tipo}/${compraId}`;
       const res = await fetch(url, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
         const errData = await res.json();
@@ -95,12 +95,17 @@ export default function Compras() {
   };
 
   const renderSemaforo = (compra) => {
-    if (compra.estado === "anulado") return <Semaforo estado="rojo" texto="Anulado" />;
-    if (compra.estado === "completado") return <Semaforo estado="verde" texto="Completado" />;
+    if (compra.estado === "anulado")
+      return <Semaforo estado="rojo" texto="Anulado" />;
+    if (compra.estado === "completado")
+      return <Semaforo estado="verde" texto="Completado" />;
 
-    if (!compra.fechaEstimadaEntrega) return <Semaforo estado="amarillo" texto="Pendiente" />;
+    if (!compra.fechaEstimadaEntrega)
+      return <Semaforo estado="amarillo" texto="Pendiente" />;
 
-    const diasRestantes = (new Date(compra.fechaEstimadaEntrega) - new Date()) / (1000 * 60 * 60 * 24);
+    const diasRestantes =
+      (new Date(compra.fechaEstimadaEntrega) - new Date()) /
+      (1000 * 60 * 60 * 24);
     if (diasRestantes < 0) return <Semaforo estado="rojo" texto="Vencido" />;
     if (diasRestantes < 3) return <Semaforo estado="naranja" texto="Próximo" />;
 
@@ -126,13 +131,20 @@ export default function Compras() {
 
   const obtenerValor = (item, key) => {
     switch (key) {
-      case "numeroOC": return String(item.numeroOC || "");
-      case "codigoObra": return String(item.obra?.codigoObra || "");
-      case "nombreObra": return String(item.obra?.nombre || "");
-      case "tipo": return String(item.tipo || "");
-      case "proveedor": return String(item.proveedor?.nombre || "");
-      case "estado": return String(item.estado || "");
-      default: return "";
+      case "numeroOC":
+        return String(item.numeroOC || "");
+      case "codigoObra":
+        return String(item.obra?.codigoObra || "");
+      case "nombreObra":
+        return String(item.obra?.nombre || "");
+      case "tipo":
+        return String(item.tipo || "");
+      case "proveedor":
+        return String(item.proveedor?.nombre || "");
+      case "estado":
+        return String(item.estado || "");
+      default:
+        return "";
     }
   };
 
@@ -140,17 +152,13 @@ export default function Compras() {
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <h1>Portal de Compras</h1>
-        <Button onClick={handleOpenCreate} className={styles.newCompraBtn}>
+        <Button onClick={handleOpenCreate} >
           + Nueva Compra
         </Button>
       </div>
 
-      <div className={styles.filters}>
-        <select
-          className={styles.filterSelect}
-          value={tipo}
-          onChange={(e) => setTipo(e.target.value)}
-        >
+      <div>
+        <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
           <option value="todas">Todas</option>
           <option value="aluminio">Aluminio</option>
           <option value="vidrios">Vidrios</option>
@@ -158,10 +166,10 @@ export default function Compras() {
         </select>
       </div>
 
-      {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-      {loading && <div className={styles.spinner}>Cargando compras...</div>}
+      {errorMsg && <p >{errorMsg}</p>}
+      {loading && <div>Cargando compras...</div>}
       {!loading && sortedCompras.length === 0 && !errorMsg && (
-        <div className={styles.noData}>No hay compras para mostrar</div>
+        <div>No hay compras para mostrar</div>
       )}
 
       {!loading && sortedCompras.length > 0 && (
@@ -192,8 +200,15 @@ export default function Compras() {
                 {c.estado !== "anulado" && c.estado !== "completado" && (
                   <>
                     <Button onClick={() => handleOpenEdit(c)}>✏️ Editar</Button>
-                    <Button onClick={() => handleOpenIngreso(c)}>Ingreso</Button>
-                    <Button variant="danger" onClick={() => handleAnular(c._id)}>Anular</Button>
+                    <Button onClick={() => handleOpenIngreso(c)}>
+                      Ingreso
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleAnular(c._id)}
+                    >
+                      Anular
+                    </Button>
                   </>
                 )}
               </td>
