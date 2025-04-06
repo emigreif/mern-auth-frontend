@@ -1,24 +1,23 @@
-// src/pages/Panol.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-// Modales base
+// Modales
 import ModalHerramienta from "../components/modals/ModalHerramienta.jsx";
 import ModalPerfil from "../components/modals/ModalPerfil.jsx";
 import ModalVidrio from "../components/modals/ModalVidrio.jsx";
 import ModalAccesorio from "../components/modals/ModalAccesorio.jsx";
 import ModalImportarMaterial from "../components/modals/ModalImportarMaterial.jsx";
-// Nuevos modales de asignación
 import ModalAsignarPerfil from "../components/modals/ModalAsignarPerfil.jsx";
 import ModalAsignarAccesorio from "../components/modals/ModalAsignarAccesorio.jsx";
 import ModalAsignarVidrio from "../components/modals/ModalAsignarVidrio.jsx";
 import ModalAsignarHerramienta from "../components/modals/ModalAsignarHerramienta.jsx";
 
-// Componentes UI
+// UI
 import Button from "../components/ui/Button.jsx";
+import SearchBar from "../components/ui/SearchBar.jsx";
+import Table from "../components/ui/Table.jsx";
 
 import globalStyles from "../styles/pages/GlobalStylePages.module.css";
-import styles from "../styles/pages/Panol.module.css";
 
 export default function Panol() {
   const { token } = useAuth();
@@ -43,17 +42,22 @@ export default function Panol() {
     asignarAccesorio: false,
     modalImportar: false,
     asignarVidrio: false,
-    asignarHerramienta: false, 
-  
+    asignarHerramienta: false,
   });
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  useEffect(() => {
+    if (token) {
+      fetchData();
+      fetchObras();
+    }
+  }, [token]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
-      setErrorMsg("");
       const res = await fetch(`${API_URL}/api/panol`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -74,19 +78,11 @@ export default function Panol() {
       const res = await fetch(`${API_URL}/api/obras`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      setObras(data || []);
+      setObras(await res.json());
     } catch {
       console.error("Error al obtener obras");
     }
   };
-
-  useEffect(() => {
-    if (token) {
-      fetchData();
-      fetchObras();
-    }
-  }, [token]);
 
   const filteredList = (list) =>
     list.filter((item) =>
@@ -107,7 +103,9 @@ export default function Panol() {
       accesorio: false,
       asignarPerfil: false,
       asignarAccesorio: false,
+      modalImportar: false,
       asignarVidrio: false,
+      asignarHerramienta: false,
     });
     fetchData();
   };
@@ -141,6 +139,11 @@ export default function Panol() {
     }
   };
 
+  const headers = renderFields().map((key) => ({
+    key,
+    label: key.charAt(0).toUpperCase() + key.slice(1),
+  })).concat({ key: "acciones", label: "Acciones" });
+
   return (
     <div className={globalStyles.pageContainer}>
       <div className={globalStyles.header}>
@@ -150,85 +153,68 @@ export default function Panol() {
       {errorMsg && <p className={globalStyles.error}>{errorMsg}</p>}
       {loading && <p>Cargando datos...</p>}
 
-      <div >
+      <div style={{ display: "flex", gap: "30px", fontWeight: "bold", marginBottom: "20px" }}>
         {["herramientas", "perfiles", "vidrios", "accesorios"].map((t) => (
-          <button
+          <div
             key={t}
-            className={`${styles.tabBtn} ${tab === t ? styles.active : ""}`}
+            style={{
+              cursor: "pointer",
+              color: tab === t ? "black" : "gray",
+              borderBottom: tab === t ? "2px solid black" : "2px solid transparent",
+              paddingBottom: "5px",
+            }}
             onClick={() => setTab(t)}
           >
-            {t.charAt(0).toUpperCase() + t.slice(1)}
-          </button>
+            {t.toUpperCase()}
+          </div>
         ))}
       </div>
 
-      <div>
-        <input
-          type="text"
-          className={styles.searchInput}
-          placeholder={`Buscar ${tab}...`}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "20px" }}>
+        <SearchBar value={search} onChange={setSearch} placeholder={`Buscar ${tab}...`} />
         <Button onClick={() => setModals({ ...modals, modalImportar: true })}>
           📥 Importar {tab}
         </Button>
-
-        <Button
-          onClick={() => {
-            const modalMap = {
-              herramientas: "herramienta",
-              perfiles: "perfil",
-              vidrios: "vidrio",
-              accesorios: "accesorio",
-            };
-            openModal(modalMap[tab]);
-          }}
-        >
+        <Button onClick={() => {
+          const modalMap = {
+            herramientas: "herramienta",
+            perfiles: "perfil",
+            vidrios: "vidrio",
+            accesorios: "accesorio",
+          };
+          openModal(modalMap[tab]);
+        }}>
           + Agregar {tab}
         </Button>
         {tab !== "herramientas" && (
-          <Button
-            variant="secondary"
-            onClick={() => {
-              const asignarMap = {
-                perfiles: "asignarPerfil",
-                accesorios: "asignarAccesorio",
-                vidrios: "asignarVidrio",
-              };
-              const modalKey = asignarMap[tab];
-              if (modalKey) setModals({ ...modals, [modalKey]: true });
-            }}
-          >
+          <Button variant="secondary" onClick={() => {
+            const asignarMap = {
+              perfiles: "asignarPerfil",
+              accesorios: "asignarAccesorio",
+              vidrios: "asignarVidrio",
+            };
+            const modalKey = asignarMap[tab];
+            if (modalKey) setModals({ ...modals, [modalKey]: true });
+          }}>
             ➡️ Asignar a Obra
           </Button>
         )}
       </div>
 
-      <table>
-        <thead>
-          <tr>
+      <Table headers={headers}>
+        {renderTableData().map((item) => (
+          <tr key={item._id}>
             {renderFields().map((field) => (
-              <th key={field}>{field.toUpperCase()}</th>
+              <td key={field}>{item[field]}</td>
             ))}
-            <th>Acciones</th>
+            <td>
+              <Button onClick={() => openModal(tab, item)}>✏️ Editar</Button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {renderTableData().map((item) => (
-            <tr key={item._id}>
-              {renderFields().map((field) => (
-                <td key={field}>{item[field]}</td>
-              ))}
-              <td>
-                <Button onClick={() => openModal(tab, item)}>✏️ Editar</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        ))}
+      </Table>
 
-      {/* Modales dinámicos */}
+      {/* Modales */}
       {modals.herramienta && (
         <ModalHerramienta
           herramienta={editingItem}
@@ -236,7 +222,6 @@ export default function Panol() {
           onSaved={closeAllModals}
         />
       )}
-
       {modals.perfil && (
         <ModalPerfil
           isOpen
@@ -253,7 +238,6 @@ export default function Panol() {
           onSave={closeAllModals}
         />
       )}
-
       {modals.accesorio && (
         <ModalAccesorio
           accesorio={editingItem}
@@ -272,7 +256,6 @@ export default function Panol() {
           onSave={closeAllModals}
         />
       )}
-
       {modals.asignarPerfil && (
         <ModalAsignarPerfil
           isOpen
@@ -284,7 +267,6 @@ export default function Panol() {
           onSuccess={closeAllModals}
         />
       )}
-
       {modals.asignarAccesorio && (
         <ModalAsignarAccesorio
           isOpen
@@ -305,7 +287,6 @@ export default function Panol() {
           onClose={closeAllModals}
         />
       )}
-
       {modals.asignarVidrio && (
         <ModalAsignarVidrio
           isOpen

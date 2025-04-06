@@ -4,6 +4,8 @@ import { Outlet } from "react-router-dom";
 import ModalMovimientoContable from "../components/modals/ModalMovimientoContable.jsx";
 import Button from "../components/ui/Button.jsx";
 import Table from "../components/ui/Table.jsx";
+import Filtro from "../components/ui/Filtro.jsx";
+import Input from "../components/ui/Input.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
 export default function Contabilidad() {
@@ -11,12 +13,13 @@ export default function Contabilidad() {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [movimientos, setMovimientos] = useState([]);
+  const [showFiltroAvanzado, setShowFiltroAvanzado] = useState(false);
+  const [search, setSearch] = useState("");
   const [filtros, setFiltros] = useState({
     tipo: "",
     proveedor: "",
     cliente: "",
     obra: "",
-    estadoCheque: "",
     desde: "",
     hasta: "",
   });
@@ -40,15 +43,9 @@ export default function Contabilidad() {
   const fetchDatos = async () => {
     try {
       const [resObras, resProvs, resClients] = await Promise.all([
-        fetch(`${API_URL}/api/obras`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API_URL}/api/proveedores`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API_URL}/api/clientes`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        fetch(`${API_URL}/api/obras`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_URL}/api/proveedores`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_URL}/api/clientes`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       setObras(await resObras.json());
       setProveedores(await resProvs.json());
@@ -62,7 +59,7 @@ export default function Contabilidad() {
     setLoading(true);
     setErrorMsg("");
     try {
-      const params = new URLSearchParams(filtros);
+      const params = new URLSearchParams({ ...filtros, search });
       const res = await fetch(`${API_URL}/api/contabilidad?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -78,6 +75,29 @@ export default function Contabilidad() {
 
   const handleFiltroChange = (e) => {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const handleFiltroReset = () => {
+    setFiltros({
+      tipo: "",
+      proveedor: "",
+      cliente: "",
+      obra: "",
+      desde: "",
+      hasta: "",
+    });
+  };
+
+  const ordenarPor = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
   };
 
   const handleOpenNuevo = () => {
@@ -104,20 +124,59 @@ export default function Contabilidad() {
     }
   };
 
-  const ordenarPor = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
-
   const sortedMovs = [...movimientos].sort((a, b) => {
     if (!sortConfig.key) return 0;
     const valA = String(a[sortConfig.key] || "").toLowerCase();
     const valB = String(b[sortConfig.key] || "").toLowerCase();
     return sortConfig.direction === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
   });
+
+  const filtrosData = [
+    {
+      name: "tipo",
+      label: "Tipo",
+      type: "select",
+      value: filtros.tipo,
+      options: [
+        "FACTURA_EMITIDA", "FACTURA_RECIBIDA", "PAGO_EMITIDO", "PAGO_RECIBIDO",
+        "CHEQUE_EMITIDO", "CHEQUE_RECIBIDO", "EFECTIVO_EMITIDO", "EFECTIVO_RECIBIDO",
+        "TRANSFERENCIA_EMITIDA", "TRANSFERENCIA_RECIBIDA",
+      ],
+    },
+    {
+      name: "proveedor",
+      label: "Proveedor",
+      type: "select",
+      value: filtros.proveedor,
+      options: proveedores.map((p) => ({ value: p._id, label: p.nombre })),
+    },
+    {
+      name: "cliente",
+      label: "Cliente",
+      type: "select",
+      value: filtros.cliente,
+      options: clientes.map((c) => ({ value: c._id, label: c.nombre })),
+    },
+    {
+      name: "obra",
+      label: "Obra",
+      type: "select",
+      value: filtros.obra,
+      options: obras.map((o) => ({ value: o._id, label: o.nombre })),
+    },
+    {
+      name: "desde",
+      label: "Desde",
+      type: "date",
+      value: filtros.desde,
+    },
+    {
+      name: "hasta",
+      label: "Hasta",
+      type: "date",
+      value: filtros.hasta,
+    },
+  ];
 
   return (
     <div className={styles.pageContainer}>
@@ -126,39 +185,22 @@ export default function Contabilidad() {
         <Button onClick={handleOpenNuevo}>➕ Nuevo Movimiento</Button>
       </div>
 
-      <div>
-        <select name="tipo" value={filtros.tipo} onChange={handleFiltroChange}>
-          <option value="">-- Tipo --</option>
-          {[
-            "FACTURA_EMITIDA", "FACTURA_RECIBIDA", "PAGO_EMITIDO", "PAGO_RECIBIDO",
-            "CHEQUE_EMITIDO", "CHEQUE_RECIBIDO", "EFECTIVO_EMITIDO", "EFECTIVO_RECIBIDO",
-            "TRANSFERENCIA_EMITIDA", "TRANSFERENCIA_RECIBIDA",
-          ].map((t) => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
-        <select name="proveedor" value={filtros.proveedor} onChange={handleFiltroChange}>
-          <option value="">-- Proveedor --</option>
-          {proveedores.map((p) => (
-            <option key={p._id} value={p._id}>{p.nombre}</option>
-          ))}
-        </select>
-        <select name="cliente" value={filtros.cliente} onChange={handleFiltroChange}>
-          <option value="">-- Cliente --</option>
-          {clientes.map((c) => (
-            <option key={c._id} value={c._id}>{c.nombre}</option>
-          ))}
-        </select>
-        <select name="obra" value={filtros.obra} onChange={handleFiltroChange}>
-          <option value="">-- Obra --</option>
-          {obras.map((o) => (
-            <option key={o._id} value={o._id}>{o.nombre}</option>
-          ))}
-        </select>
-        <input type="date" name="desde" value={filtros.desde} onChange={handleFiltroChange} />
-        <input type="date" name="hasta" value={filtros.hasta} onChange={handleFiltroChange} />
+      <div style={{ display: "flex", gap: "1rem", alignItems: "flex-end", marginBottom: "1rem" }}>
+        <Input
+          name="search"
+          placeholder="Buscar por texto..."
+          value={search}
+          onChange={handleSearchChange}
+        />
         <Button onClick={fetchMovimientos}>Buscar</Button>
+        <Button variant="secondary" onClick={() => setShowFiltroAvanzado((prev) => !prev)}>
+          {showFiltroAvanzado ? "Ocultar Filtros" : "Filtros Avanzados"}
+        </Button>
       </div>
+
+      {showFiltroAvanzado && (
+        <Filtro filtros={filtrosData} onChange={handleFiltroChange} onReset={handleFiltroReset} />
+      )}
 
       {loading ? (
         <p>Cargando movimientos...</p>

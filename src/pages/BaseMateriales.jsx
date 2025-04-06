@@ -4,6 +4,7 @@ import Select from "react-select";
 import ModalBase from "../components/modals/ModalBase";
 import Button from "../components/ui/Button.jsx";
 import SearchBar from "../components/ui/SearchBar.jsx";
+
 import Table from "../components/ui/Table.jsx";
 import styles from "../styles/pages/GlobalStylePages.module.css";
 
