@@ -49,7 +49,7 @@ export default function ModalAsignarHerramienta({ isOpen, onClose, onSave, token
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/obras/asignar-herramienta`, {
+      const res = await fetch(`${API_URL}/api/panol/asignar/herramienta`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

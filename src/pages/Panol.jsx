@@ -1,3 +1,4 @@
+// src/pages/Panol.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -26,12 +27,14 @@ export default function Panol() {
   const [tab, setTab] = useState("herramientas");
   const [search, setSearch] = useState("");
   const [editingItem, setEditingItem] = useState(null);
-
-  const [herramientas, setHerramientas] = useState([]);
-  const [perfiles, setPerfiles] = useState([]);
-  const [vidrios, setVidrios] = useState([]);
-  const [accesorios, setAccesorios] = useState([]);
   const [obras, setObras] = useState([]);
+
+  const [data, setData] = useState({
+    herramientas: [],
+    perfiles: [],
+    vidrios: [],
+    accesorios: []
+  });
 
   const [modals, setModals] = useState({
     herramienta: false,
@@ -40,54 +43,55 @@ export default function Panol() {
     accesorio: false,
     asignarPerfil: false,
     asignarAccesorio: false,
-    modalImportar: false,
     asignarVidrio: false,
     asignarHerramienta: false,
+    modalImportar: false,
   });
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
-  useEffect(() => {
-    if (token) {
-      fetchData();
-      fetchObras();
-    }
-  }, [token]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${API_URL}/api/panol`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setHerramientas(data.herramientas || []);
-      setPerfiles(data.perfiles || []);
-      setVidrios(data.vidrios || []);
-      setAccesorios(data.accesorios || []);
-    } catch {
-      setErrorMsg("Error al obtener datos del pañol");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchObras = async () => {
     try {
       const res = await fetch(`${API_URL}/api/obras`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setObras(await res.json());
+      const data = await res.json();
+      setObras(data || []);
     } catch {
       console.error("Error al obtener obras");
     }
   };
 
-  const filteredList = (list) =>
-    list.filter((item) =>
-      JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
-    );
+  const fetchTipo = async (tipo) => {
+    try {
+      const res = await fetch(`${API_URL}/api/panol/${tipo}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const list = await res.json();
+      setData((prev) => ({ ...prev, [tipo]: list }));
+    } catch {
+      console.error(`❌ Error cargando ${tipo}`);
+    }
+  };
+
+  const fetchAll = async () => {
+    setLoading(true);
+    setErrorMsg("");
+    await Promise.all(["herramientas", "perfiles", "vidrios", "accesorios"].map(fetchTipo));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchAll();
+      fetchObras();
+    }
+  }, [token]);
+
+  const filteredList = Array.isArray(data[tab]) ? data[tab].filter((item) =>
+    JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
+  ) : [];
 
   const openModal = (type, item = null) => {
     setEditingItem(item);
@@ -96,46 +100,19 @@ export default function Panol() {
 
   const closeAllModals = () => {
     setEditingItem(null);
-    setModals({
-      herramienta: false,
-      perfil: false,
-      vidrio: false,
-      accesorio: false,
-      asignarPerfil: false,
-      asignarAccesorio: false,
-      modalImportar: false,
-      asignarVidrio: false,
-      asignarHerramienta: false,
-    });
-    fetchData();
-  };
-
-  const renderTableData = () => {
-    switch (tab) {
-      case "herramientas":
-        return filteredList(herramientas);
-      case "perfiles":
-        return filteredList(perfiles);
-      case "vidrios":
-        return filteredList(vidrios);
-      case "accesorios":
-        return filteredList(accesorios);
-      default:
-        return [];
-    }
+    const reset = {};
+    Object.keys(modals).forEach((k) => (reset[k] = false));
+    setModals(reset);
+    fetchAll();
   };
 
   const renderFields = () => {
     switch (tab) {
-      case "herramientas":
-        return ["marca", "modelo", "estado"];
+      case "herramientas": return ["marca", "modelo", "estado"];
       case "perfiles":
-      case "accesorios":
-        return ["codigo", "descripcion", "color", "cantidad"];
-      case "vidrios":
-        return ["tipo", "ancho", "alto", "cantidad"];
-      default:
-        return [];
+      case "accesorios": return ["codigo", "descripcion", "color", "cantidad"];
+      case "vidrios": return ["tipo", "ancho", "alto", "cantidad"];
+      default: return [];
     }
   };
 
@@ -146,75 +123,74 @@ export default function Panol() {
 
   return (
     <div className={globalStyles.pageContainer}>
-      <div className={globalStyles.header}>
-        <h1>Pañol</h1>
-      </div>
-
+      <h1>Pañol</h1>
       {errorMsg && <p className={globalStyles.error}>{errorMsg}</p>}
       {loading && <p>Cargando datos...</p>}
 
-      <div style={{ display: "flex", gap: "30px", fontWeight: "bold", marginBottom: "20px" }}>
-        {["herramientas", "perfiles", "vidrios", "accesorios"].map((t) => (
+      {/* Tabs */}
+      <div style={{ display: "flex", gap: "30px", marginBottom: 20 }}>
+        {Object.keys(data).map((key) => (
           <div
-            key={t}
+            key={key}
             style={{
               cursor: "pointer",
-              color: tab === t ? "black" : "gray",
-              borderBottom: tab === t ? "2px solid black" : "2px solid transparent",
-              paddingBottom: "5px",
+              borderBottom: tab === key ? "2px solid black" : "none"
             }}
-            onClick={() => setTab(t)}
+            onClick={() => setTab(key)}
           >
-            {t.toUpperCase()}
+            {key.toUpperCase()}
           </div>
         ))}
       </div>
 
-      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "20px" }}>
-        <SearchBar value={search} onChange={setSearch} placeholder={`Buscar ${tab}...`} />
-        <Button onClick={() => setModals({ ...modals, modalImportar: true })}>
+      {/* Actions */}
+      <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+        <SearchBar value={search} onChange={setSearch} placeholder={`Buscar ${tab}`} />
+        <Button onClick={() => setModals((m) => ({ ...m, modalImportar: true }))}>
           📥 Importar {tab}
         </Button>
-        <Button onClick={() => {
-          const modalMap = {
-            herramientas: "herramienta",
-            perfiles: "perfil",
-            vidrios: "vidrio",
-            accesorios: "accesorio",
-          };
-          openModal(modalMap[tab]);
-        }}>
-          + Agregar {tab}
-        </Button>
+        <Button
+  onClick={() => {
+    const modalMap = {
+      herramientas: "herramienta",
+      perfiles: "perfil",
+      vidrios: "vidrio",
+      accesorios: "accesorio",
+    };
+    openModal(modalMap[tab]);
+  }}
+>
+  + Agregar
+</Button>
         {tab !== "herramientas" && (
-          <Button variant="secondary" onClick={() => {
-            const asignarMap = {
-              perfiles: "asignarPerfil",
-              accesorios: "asignarAccesorio",
-              vidrios: "asignarVidrio",
-            };
-            const modalKey = asignarMap[tab];
-            if (modalKey) setModals({ ...modals, [modalKey]: true });
-          }}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              const map = {
+                perfiles: "asignarPerfil",
+                accesorios: "asignarAccesorio",
+                vidrios: "asignarVidrio",
+              };
+              const modal = map[tab];
+              if (modal) setModals((m) => ({ ...m, [modal]: true }));
+            }}
+          >
             ➡️ Asignar a Obra
           </Button>
         )}
       </div>
 
+      {/* Tabla */}
       <Table headers={headers}>
-        {renderTableData().map((item) => (
+        {filteredList.map((item) => (
           <tr key={item._id}>
-            {renderFields().map((field) => (
-              <td key={field}>{item[field]}</td>
-            ))}
-            <td>
-              <Button onClick={() => openModal(tab, item)}>✏️ Editar</Button>
-            </td>
+            {renderFields().map((f) => <td key={f}>{item[f]}</td>)}
+            <td><Button onClick={() => openModal(tab, item)}>✏️ Editar</Button></td>
           </tr>
         ))}
       </Table>
 
-      {/* Modales */}
+      {/* Modales dinámicos */}
       {modals.herramienta && (
         <ModalHerramienta
           herramienta={editingItem}
@@ -247,19 +223,10 @@ export default function Panol() {
           apiUrl={API_URL}
         />
       )}
-      {modals.asignarHerramienta && (
-        <ModalAsignarHerramienta
-          isOpen
-          API_URL={API_URL}
-          token={token}
-          onClose={closeAllModals}
-          onSave={closeAllModals}
-        />
-      )}
       {modals.asignarPerfil && (
         <ModalAsignarPerfil
           isOpen
-          perfiles={perfiles}
+          perfiles={data.perfiles}
           obras={obras}
           token={token}
           API_URL={API_URL}
@@ -270,7 +237,18 @@ export default function Panol() {
       {modals.asignarAccesorio && (
         <ModalAsignarAccesorio
           isOpen
-          accesorios={accesorios}
+          accesorios={data.accesorios}
+          obras={obras}
+          token={token}
+          API_URL={API_URL}
+          onClose={closeAllModals}
+          onSuccess={closeAllModals}
+        />
+      )}
+      {modals.asignarVidrio && (
+        <ModalAsignarVidrio
+          isOpen
+          vidrios={data.vidrios}
           obras={obras}
           token={token}
           API_URL={API_URL}
@@ -285,17 +263,6 @@ export default function Panol() {
           token={token}
           API_URL={API_URL}
           onClose={closeAllModals}
-        />
-      )}
-      {modals.asignarVidrio && (
-        <ModalAsignarVidrio
-          isOpen
-          vidrios={vidrios}
-          obras={obras}
-          token={token}
-          API_URL={API_URL}
-          onClose={closeAllModals}
-          onSuccess={closeAllModals}
         />
       )}
     </div>

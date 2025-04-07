@@ -46,7 +46,7 @@ export default function ModalAsignarVidrio({ isOpen, onClose, onSave, token, API
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/panol/vidrios/asignar-manual`, {
+      const res = await fetch(`${API_URL}/api/panol/asignar/vidrios`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

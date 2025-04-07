@@ -45,7 +45,7 @@ export default function ModalAsignarPerfil({
     setErrorMsg("");
 
     try {
-      const res = await fetch(`${API_URL}/api/panol/asignar-perfiles-manual`, {
+      const res = await + fetch(`${API_URL}/api/panol/asignar/perfiles`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -45,7 +45,7 @@ export default function ModalAsignarAccesorio({
     setErrorMsg("");
 
     try {
-      const res = await fetch(`${API_URL}/api/panol/asignar-accesorios-manual`, {
+      const res = await fetch(`${API_URL}/api/panol/asignar/accesorios`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
