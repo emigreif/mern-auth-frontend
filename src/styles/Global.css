@@ -1,26 +1,51 @@
-/* src/styles/Global.css*/
+:root {
+  --color-fondo: #ffffff;
+  --color-texto: #333333;
+  --color-acento: #00aa63;
+  --color-acento-hover: #008f57;
+  --color-borde: #cccccc;
+  --color-sombra: rgba(0, 0, 0, 0.1);
+  --color-input-bg: #ffffff;
+  --color-error: red;
+}
+
+body.dark {
+  --color-fondo: #121212;
+  --color-texto: #f5f5f5;
+  --color-acento: #00d084;
+  --color-acento-hover: #00b374;
+  --color-borde: #444444;
+  --color-sombra: rgba(0, 0, 0, 0.4);
+  --color-input-bg: #1e1e1e;
+  --color-error: #ff6b6b;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   font-family: Arial, sans-serif;
   background-color: var(--color-fondo);
   color: var(--color-texto);
 }
+
 a {
   text-decoration: none;
   color: inherit;
 }
-.app-container {
-  background-color: #00a46e;
 
+.app-container {
+  background-color: var(--color-fondo);
   min-height: 100vh;
 }
+
 .main-content.with-sidebar-collapsed {
   margin-left: 60px;
 }
+
 .main-content.with-sidebar-expanded {
   margin-left: 180px;
 }

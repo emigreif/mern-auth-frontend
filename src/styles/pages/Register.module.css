@@ -1,11 +1,11 @@
-/* src/pages/Register/Register.module.css */
 .registerContainer {
   display: flex;
   height: calc(100vh - 60px);
 }
+
 .leftSide {
   width: 50%;
-  background-color: #fff;
+  background-color: var(--color-fondo);
   display: flex;
   padding: 2rem;
   overflow-y: auto;
@@ -13,20 +13,18 @@
 }
 
 .formBox {
-  background: #fff;
+  background-color: var(--color-fondo);
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px var(--color-sombra);
   width: 100%;
   max-width: 400px;
-
   min-height: 100%;
-
 }
 
 .formBox h2 {
   margin-bottom: 1rem;
-  color: #333;
+  color: var(--color-texto);
 }
 
 .formGroup {
@@ -37,19 +35,21 @@
   display: block;
   margin-bottom: 0.3rem;
   font-weight: bold;
-  color: #555;
+  color: var(--color-texto);
 }
 
 .formGroup input {
   width: 100%;
   padding: 0.7rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-borde);
   border-radius: 4px;
+  background-color: var(--color-input-bg);
+  color: var(--color-texto);
 }
 
 .submitBtn {
   width: 100%;
-  background-color: #00aa63;
+  background-color: var(--color-acento);
   color: #fff;
   border: none;
   padding: 0.7rem;
@@ -61,21 +61,21 @@
 }
 
 .submitBtn:hover {
-  background-color: #008f57;
+  background-color: var(--color-acento-hover);
 }
 
 .message {
   margin-top: 1rem;
-  color: #333;
+  color: var(--color-texto);
 }
 
 .message.error {
-  color: red;
+  color: var(--color-error);
 }
 
 .rightSide {
   width: 50%;
-  color: #fff;
+  color: var(--color-texto);
   display: flex;
   flex-direction: column;
   justify-content: center;

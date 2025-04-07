@@ -2,11 +2,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import useDarkMode from "../hooks/useDarkMode.js";
 import styles from "../styles/components/Navbar.module.css";
 import Button from "./ui/Button.jsx";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const [isDark, setIsDark] = useDarkMode();
 
   const handleLogout = async () => {
     await logout();
@@ -19,13 +21,21 @@ const Navbar = () => {
       </div>
 
       <div className={styles.navRight}>
+        {/* 🌙 Toggle Tema */}
+        <Button
+          onClick={() => setIsDark(prev => !prev)}
+          variant="secondary"
+          size="sm"
+        >
+          {isDark ? "☀️ Claro" : "🌙 Oscuro"}
+        </Button>
+
         {user ? (
-         <Button onClick={handleLogout} variant="danger" size="sm">
-         Cerrar Sesión
-       </Button>
+          <Button onClick={handleLogout} variant="danger" size="sm">
+            Cerrar Sesión
+          </Button>
         ) : (
           <>
-            {/* Si NO estás logueado */}
             <Link to="/">Home</Link>
             <Link to="/about">About</Link>
             <Link to="/planner">Planner</Link>
